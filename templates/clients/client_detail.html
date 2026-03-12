@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Client Detail - {{ client.name }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-light border-primary">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-0">{{ client.first_name }} {{ client.last_name }}</h2>
+                    <p class="text-muted mb-0">BR Number: {{ client.br_number }} | Status: <span class="badge {% if client.status == 'active' %}bg-success{% else %}bg-secondary{% endif %}">{{ client.status }}</span></p>
+                </div>
+                <div>
+                    <a href="{% url 'audit-list' table_name='client' %}?client_uuid={{ client.client_uuid }}&record_id={{ client.id }}" class="btn btn-outline-secondary">View History</a>
+                    <button class="btn btn-outline-info" onclick="viewTechnicalDetails('client', '{{ client.id }}')">Technical Details</button>
+                    {% if user.role != 'VIEWER' %}
+                        <a href="{% url 'generic-edit' table_name='client' pk=client.id %}" class="btn btn-outline-primary">Edit Client</a>
+                    {% endif %}
+                    <button class="btn btn-outline-secondary" onclick="location.reload();">Refresh Data</button>
+                    <a href="/" class="btn btn-outline-dark">Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="dynamic-tables-container">
+    <!-- Dynamic tables will be injected here -->
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const tablesMeta = {{ tables_meta_json|safe }};
+    const clientUuid = "{{ client.client_uuid }}";
+    const userRole = "{{ user.role }}";
+
+    $(document).ready(function() {
+        const container = $('#dynamic-tables-container');
+        
+        // Loop through each registered table and create a section
+        Object.keys(tablesMeta).forEach(tableName => {
+            const meta = tablesMeta[tableName];
+            const canEdit = userRole !== 'VIEWER';
+
+            const sectionHtml = `
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0">${meta.verbose_name}</h5>
+                                <div>
+                                    <a href="/api/audit/gui/${tableName}/?client_uuid=${clientUuid}" class="btn btn-sm btn-outline-secondary me-2">View ${meta.verbose_name} History</a>
+                                    ${canEdit ? `<a href="/api/gui/${tableName}/add/?client_uuid=${clientUuid}" class="btn btn-sm btn-outline-success">+ Add</a>` : ''}
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <table id="table-${tableName}" class="table table-striped table-bordered w-100">
+                                    <thead>
+                                        <tr>
+                                            ${meta.columns.map(col => `<th>${col.title}</th>`).join('')}
+                                            <th style="width: 150px">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.append(sectionHtml);
+
+            // Add actions column to the data columns
+            const columns = [...meta.columns, {
+                data: 'id',
+                orderable: false,
+                render: function(data) {
+                    return `
+                        <div class="btn-group">
+                            <button class="btn btn-sm btn-outline-info" onclick="viewTechnicalDetails('${tableName}', '${data}')">Details</button>
+                            ${canEdit ? `<a href="/api/gui/${tableName}/${data}/edit/?client_uuid=${clientUuid}" class="btn btn-sm btn-outline-primary">Edit</a>` : ''}
+                        </div>
+                    `;
+                }
+            }];
+
+            // Initialize DataTable for this section
+            initDataTable(`#table-${tableName}`, meta.endpoint, columns, { client_uuid: clientUuid });
+        });
+    });
+
+    function viewTechnicalDetails(tableName, recordId) {
+        $.get(`/api/table/${tableName}/${recordId}/`, function(data) {
+            let detailsHtml = '<table class="table table-sm table-striped">';
+            Object.keys(data).forEach(key => {
+                detailsHtml += `
+                    <tr>
+                        <th style="width: 30%">${key.replace(/_/g, ' ').toUpperCase()}</th>
+                        <td class="text-break font-monospace">${data[key]}</td>
+                    </tr>
+                `;
+            });
+            detailsHtml += '</table>';
+            
+            const modalHtml = `
+                <div class="modal fade" id="detailsModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">${tableName.toUpperCase()} Technical Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                ${detailsHtml}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            $('#detailsModal').remove();
+            $('body').append(modalHtml);
+            new bootstrap.Modal('#detailsModal').show();
+        });
+    }
+</script>
+{% endblock %}
