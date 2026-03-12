@@ -51,7 +51,7 @@ class Communication(ClientRelatedModel):
     is_main = models.BooleanField(default=False, verbose_name="Main Contact")
 
 class Portfolio(ClientRelatedModel):
-    portfolio_number = models.CharField(max_length=50, unique=True)
+    portfolio_number = models.CharField(max_length=50, unique=False)
     name = models.CharField(max_length=255)
 
 class Account(ClientRelatedModel):
