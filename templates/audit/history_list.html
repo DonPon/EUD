@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}History - {{ verbose_name_plural }}{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-light">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-0">{{ verbose_name }} History</h2>
+                    <p class="text-muted mb-0">Audit trail for {{ verbose_name_plural }} of client: {{ client_uuid }} {% if record_id %}| Specific Record: {{ record_id }}{% endif %}</p>
+                </div>
+                <div>
+                    <a href="{% url 'clients:detail' client_uuid=client_uuid %}" class="btn btn-outline-dark">Back to Client</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <table id="history-table" class="table table-striped table-bordered w-100">
+                    <thead>
+                        <tr>
+                            <th>Timestamp</th>
+                            <th>User</th>
+                            <th>Action</th>
+                            <th style="width: 200px">Record ID</th>
+                            <th>Changes</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        const columns = [
+            { 
+                data: 'timestamp',
+                render: function(data) {
+                    return new Date(data).toLocaleString();
+                }
+            },
+            { data: 'user' },
+            { 
+                data: 'type',
+                render: function(data) {
+                    const badges = {
+                        '+': '<span class="badge bg-success">Created</span>',
+                        '~': '<span class="badge bg-primary">Updated</span>',
+                        '-': '<span class="badge bg-danger">Deleted</span>'
+                    };
+                    return badges[data] || data;
+                }
+            },
+            { 
+                data: 'record_id',
+                className: 'font-monospace small'
+            },
+            { 
+                data: 'changes',
+                orderable: false,
+                render: function(data) {
+                    if (!data || data.length === 0) return '<em>No changes</em>';
+                    let list = '<ul class="mb-0 small" style="padding-left: 1.2rem;">';
+                    data.forEach(c => {
+                        const oldVal = c.old === null || c.old === "None" ? '<em>None</em>' : `<code>${c.old}</code>`;
+                        const newVal = c.new === null || c.new === "None" ? '<em>None</em>' : `<code>${c.new}</code>`;
+                        list += `<li><strong>${c.field}:</strong> ${oldVal} &rarr; ${newVal}</li>`;
+                    });
+                    list += '</ul>';
+                    return list;
+                }
+            }
+        ];
+
+        // Custom init to handle the nested audit API response
+        $('#history-table').DataTable({
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: `/api/audit/{{ table_name }}/`,
+                data: function(d) {
+                    const params = {
+                        limit: d.length,
+                        offset: d.start,
+                        client_uuid: "{{ client_uuid }}"
+                    };
+                    const rid = "{{ record_id }}";
+                    if (rid && rid !== 'None') {
+                        params.record_id = rid;
+                    }
+                    return params;
+                },
+                dataSrc: function(json) {
+                    // Our get_table_history returns paginated results
+                    json.recordsTotal = json.count;
+                    json.recordsFiltered = json.count;
+                    return json.results;
+                }
+            },
+            columns: columns,
+            dom: 'Bfrtip',
+            buttons: ['csv'],
+            order: [[0, 'desc']],
+            pageLength: 25
+        });
+    });
+</script>
+{% endblock %}

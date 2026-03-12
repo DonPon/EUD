@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EUD Client Manager{% endblock %}</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.bootstrap5.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        body { padding-top: 4.5rem; background-color: #f8f9fa; }
+        .card { margin-bottom: 20px; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">EUD Manager</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Clients</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    {% if user.is_authenticated %}
+                        <span class="navbar-text me-3">Welcome, {{ user.username }} ({{ user.role }})</span>
+                        <a href="/admin/logout/" class="btn btn-outline-light btn-sm">Logout</a>
+                    {% else %}
+                        <a href="/admin/login/" class="btn btn-outline-light btn-sm">Login</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container-fluid">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.html5.min.js"></script>
+
+    <!-- Generic DataTables Wrapper -->
+    <script>
+        $(document).ready(function() {
+            // Disable DataTables default alert error mode globally
+            if ($.fn.dataTable) {
+                $.fn.dataTable.ext.errMode = 'none';
+            }
+        });
+
+        function initDataTable(selector, endpoint, columns, extraParams = {}) {
+            const table = $(selector);
+            console.log('Initializing DataTable for: ' + selector, { endpoint, columns, extraParams });
+            
+            // Listen for errors and log to console instead of alerting
+            table.on('error.dt', function(e, settings, techNote, message) {
+                console.error('DataTables error for ' + selector + ': ', message);
+            });
+
+            return table.DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: endpoint,
+                    data: function(d) {
+                        // DRF uses offset/limit for pagination
+                        const params = {
+                            limit: d.length,
+                            offset: d.start,
+                            ordering: d.order.length ? (d.order[0].dir === 'desc' ? '-' : '') + d.columns[d.order[0].column].data : '',
+                            search: d.search.value
+                        };
+                        return Object.assign(params, extraParams);
+                    },
+                    dataSrc: function(json) {
+                        // DRF LimitOffsetPagination returns { count, results, next, previous }
+                        json.recordsTotal = json.count;
+                        json.recordsFiltered = json.count;
+                        return json.results;
+                    }
+                },
+                columns: columns,
+                dom: 'Bfrtip',
+                buttons: ['csv'],
+                pageLength: 25
+            });
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
