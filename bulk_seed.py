@@ -5,7 +5,7 @@ import random
 from datetime import date, timedelta
 from faker import Faker
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'eud_test.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'eud_gui.settings')
 django.setup()
 
 from apps.users.models import User
