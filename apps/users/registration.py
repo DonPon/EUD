@@ -10,5 +10,6 @@ def register_users_models():
         'fields': ['id', 'username', 'email', 'first_name', 'last_name', 'role', 'is_active', 'is_staff', 'date_joined'],
         'list_display': ['username', 'email', 'role', 'is_active', 'is_staff'],
         'filter_fields': ['role', 'is_active', 'is_staff'],
-        'search_fields': ['username', 'email', 'first_name', 'last_name']
+        'search_fields': ['username', 'email', 'first_name', 'last_name'],
+        'is_client_related': False
     })
