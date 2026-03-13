@@ -37,11 +37,25 @@ class DynamicViewSetFactory:
             ordering_fields = '__all__'
 
             def get_queryset(self):
-                # Only filter by client_uuid if it's explicitly provided and non-empty
                 client_uuid = self.request.query_params.get('client_uuid')
                 qs = model_class.objects.all().order_by(ordering)
+                
                 if client_uuid and client_uuid != 'undefined':
-                    qs = qs.filter(client_uuid=client_uuid)
+                    # Support linking via alternate fields (e.g., bank_rel)
+                    filter_field = config.get('client_filter_field', 'client_uuid')
+                    
+                    if filter_field == 'bank_rel':
+                        # Special case: resolving bank_rel from client_uuid
+                        from apps.clients.models import Client
+                        try:
+                            client = Client.objects.get(client_uuid=client_uuid)
+                            qs = qs.filter(bank_rel=client.br_number)
+                        except Client.DoesNotExist:
+                            qs = qs.none()
+                    else:
+                        filter_kwarg = {filter_field: client_uuid}
+                        qs = qs.filter(**filter_kwarg)
+                        
                 return qs
 
             def perform_create(self, serializer):

@@ -7,13 +7,15 @@ def register_dashboard_models():
     CrudRegistry.register(Bot, {
         'fields': ['id', 'client_uuid', 'name', 'description', 'created_at'],
         'list_display': ['name', 'description'],
-        'search_fields': ['name', 'description']
+        'search_fields': ['name', 'description'],
+        'is_client_related': False
     })
     
     CrudRegistry.register(BotStatus, {
         'fields': ['id', 'client_uuid', 'bot', 'bot_status', 'created_at'],
         'list_display': ['bot', 'bot_status'],
-        'filter_fields': ['bot_status']
+        'filter_fields': ['bot_status'],
+        'is_client_related': False
     })
     
     CrudRegistry.register(BotRecord, {
@@ -24,5 +26,7 @@ def register_dashboard_models():
         ],
         'list_display': ['bot_name', 'bank_rel', 'status', 'created'],
         'filter_fields': ['bot_name', 'status', 'bank_rel'],
-        'search_fields': ['bot_name', 'bank_rel', 'message']
+        'client_filter_field': 'bank_rel',
+        'search_fields': ['bot_name', 'bank_rel', 'message'],
+        'read_only': True
     })

@@ -43,7 +43,8 @@
         // Loop through each registered table and create a section
         Object.keys(tablesMeta).forEach(tableName => {
             const meta = tablesMeta[tableName];
-            const canEdit = userRole !== 'VIEWER';
+            // Table can be edited if user is not VIEWER AND the table is not marked read_only
+            const canEdit = (userRole !== 'VIEWER') && (!meta.read_only);
 
             const sectionHtml = `
                 <div class="row">

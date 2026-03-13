@@ -22,11 +22,19 @@ class Loan(ClientRelatedModel):
 Open `apps/clients/registration.py` and register the model with the engine.
 - **`fields`**: List all fields for the API and the Form (include `id`, `client_uuid`, etc.).
 - **`list_display`**: List only the fields you want visible in the main table (exclude UUIDs and timestamps).
+- **Optional Advanced Flags:** 
+  - `is_client_related` (bool): Set to `False` to prevent the table from appearing on the Client Detail page (for global configurations).
+  - `client_filter_field` (str): Define an alternate field to link to the Client (e.g., `'bank_rel'`). Defaults to `'client_uuid'`.
+  - `read_only` (bool): Set to `True` to hide the UI buttons for adding or editing records.
+
 ```python
 CrudRegistry.register(Loan, {
     'fields': ['id', 'client_uuid', 'loan_amount', 'interest_rate', 'created_at'],
     'list_display': ['loan_amount', 'interest_rate'],
     'filter_fields': ['client_uuid'],
+    # 'is_client_related': False,
+    # 'client_filter_field': 'bank_rel',
+    # 'read_only': True
 })
 ```
 

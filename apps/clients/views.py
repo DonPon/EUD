@@ -25,6 +25,9 @@ class ClientDetailView(LoginRequiredMixin, DetailView):
             model = details['model']
             config = details['config']
             
+            if config.get('is_client_related', True) == False:
+                continue
+            
             # Use list_display if provided, otherwise exclude internal fields
             fields = config.get('list_display')
             if not fields:
@@ -45,7 +48,8 @@ class ClientDetailView(LoginRequiredMixin, DetailView):
             tables_meta[name] = {
                 'verbose_name': model._meta.verbose_name_plural.title(),
                 'columns': columns,
-                'endpoint': f"/api/table/{name}/"
+                'endpoint': f"/api/table/{name}/",
+                'read_only': config.get('read_only', False)
             }
         
         context['tables_meta_json'] = json.dumps(tables_meta)
