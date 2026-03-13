@@ -8,13 +8,23 @@ from .permissions import RoleBasedPermission
 
 class DynamicViewSetFactory:
     @staticmethod
+    def _get_default_ordering(model_class):
+        field_names = [f.name for f in model_class._meta.fields]
+        if 'created_at' in field_names:
+            return '-created_at'
+        if 'date_joined' in field_names:
+            return '-date_joined'
+        return 'id'
+
+    @staticmethod
     def create_viewset(model_class, config=None):
         """Create a ModelViewSet for a given model on the fly."""
         config = config or {}
         dynamic_serializer = DynamicSerializerFactory.create_serializer(model_class, config)
+        ordering = DynamicViewSetFactory._get_default_ordering(model_class)
         
         class DynamicViewSet(viewsets.ModelViewSet):
-            queryset = model_class.objects.all().order_by('-created_at')
+            queryset = model_class.objects.all().order_by(ordering)
             serializer_class = dynamic_serializer
             permission_classes = config.get('permission_classes', [RoleBasedPermission])
             filter_backends = [
@@ -29,7 +39,7 @@ class DynamicViewSetFactory:
             def get_queryset(self):
                 # Only filter by client_uuid if it's explicitly provided and non-empty
                 client_uuid = self.request.query_params.get('client_uuid')
-                qs = model_class.objects.all().order_by('-created_at')
+                qs = model_class.objects.all().order_by(ordering)
                 if client_uuid and client_uuid != 'undefined':
                     qs = qs.filter(client_uuid=client_uuid)
                 return qs
@@ -55,7 +65,10 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
 
     def _get_exclude_fields(self, model, table_name):
         """Standardized list of fields to exclude from forms."""
-        exclude = ['id', 'created_at', 'updated_at', 'history']
+        exclude = ['id', 'created_at', 'updated_at', 'history', 'last_login', 'date_joined']
+        # For User model, exclude fields that shouldn't be edited via generic form
+        if table_name == 'user':
+            exclude += ['password', 'groups', 'user_permissions', 'is_superuser']
         # Never show client_uuid in any form; we handle it automatically
         if 'client_uuid' in [f.name for f in model._meta.fields]:
             exclude.append('client_uuid')
@@ -169,6 +182,9 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
             
             if hasattr(obj, 'client_uuid') and obj.client_uuid:
                 return redirect(reverse('clients:detail', kwargs={'client_uuid': obj.client_uuid}))
+            
+            if table_name == 'user':
+                return redirect(reverse('users:management'))
             return redirect(reverse('clients:list'))
             
         print(f"DEBUG: Form validation failed for {table_name}: {form.errors}")

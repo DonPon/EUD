@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,15 +12,28 @@
     <link href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.bootstrap5.min.css" rel="stylesheet">
     <!-- Custom CSS -->
     <style>
-        body { padding-top: 4.5rem; background-color: #f8f9fa; }
-        .card { margin-bottom: 20px; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); }
+        body { padding-top: 4.5rem; background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .navbar { background-color: #ffffff; border-bottom: 2px solid #e11a2d; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05); }
+        .navbar-brand { font-weight: 700; color: #333 !important; }
+        .navbar-brand img { max-height: 24px; margin-right: 12px; }
+        .nav-link { color: #555 !important; font-weight: 500; }
+        .nav-link:hover { color: #e11a2d !important; }
+        .card { margin-bottom: 20px; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); border: none; border-radius: 8px; }
+        .card-header { background-color: #ffffff; border-bottom: 1px solid #eee; font-weight: 600; }
+        .btn-ubs { background-color: #e11a2d; color: white; border: none; }
+        .btn-ubs:hover { background-color: #c41727; color: white; }
+        .btn-outline-ubs { color: #e11a2d; border-color: #e11a2d; }
+        .btn-outline-ubs:hover { background-color: #e11a2d; color: white; }
     </style>
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <nav class="navbar navbar-expand-md navbar-light fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/">EUD Manager</a>
+            <a class="navbar-brand d-flex align-items-center" href="/">
+                <img src="{% static 'ubs-logo.png' %}" alt="UBS Logo">
+                <span>EUD Manager</span>
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -28,13 +42,18 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/">Clients</a>
                     </li>
+                    {% if user.role == 'ADMIN' %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'users:management' %}">Users</a>
+                    </li>
+                    {% endif %}
                 </ul>
-                <div class="d-flex">
+                <div class="d-flex align-items-center">
                     {% if user.is_authenticated %}
-                        <span class="navbar-text me-3">Welcome, {{ user.username }} ({{ user.role }})</span>
-                        <a href="/admin/logout/" class="btn btn-outline-light btn-sm">Logout</a>
+                        <span class="navbar-text me-3 text-dark">Welcome, <strong>{{ user.username }}</strong> ({{ user.role }})</span>
+                        <a href="/admin/logout/" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Logout</a>
                     {% else %}
-                        <a href="/admin/login/" class="btn btn-outline-light btn-sm">Login</a>
+                        <a href="/admin/login/" class="btn btn-ubs btn-sm rounded-pill px-3">Login</a>
                     {% endif %}
                 </div>
             </div>

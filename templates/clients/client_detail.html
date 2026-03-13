@@ -12,13 +12,13 @@
                     <p class="text-muted mb-0">BR Number: {{ client.br_number }} | Status: <span class="badge {% if client.status == 'active' %}bg-success{% else %}bg-secondary{% endif %}">{{ client.status }}</span></p>
                 </div>
                 <div>
-                    <a href="{% url 'audit-list' table_name='client' %}?client_uuid={{ client.client_uuid }}&record_id={{ client.id }}" class="btn btn-outline-secondary">View History</a>
-                    <button class="btn btn-outline-info" onclick="viewTechnicalDetails('client', '{{ client.id }}')">Technical Details</button>
+                    <a href="{% url 'audit-list' table_name='client' %}?client_uuid={{ client.client_uuid }}&record_id={{ client.id }}" class="btn btn-outline-secondary btn-sm">View History</a>
+                    <button class="btn btn-outline-dark btn-sm" onclick="viewTechnicalDetails('client', '{{ client.id }}')">Technical Details</button>
                     {% if user.role != 'VIEWER' %}
-                        <a href="{% url 'generic-edit' table_name='client' pk=client.id %}" class="btn btn-outline-primary">Edit Client</a>
+                        <a href="{% url 'generic-edit' table_name='client' pk=client.id %}" class="btn btn-ubs btn-sm">Edit Client</a>
                     {% endif %}
-                    <button class="btn btn-outline-secondary" onclick="location.reload();">Refresh Data</button>
-                    <a href="/" class="btn btn-outline-dark">Back to List</a>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="location.reload();">Refresh</button>
+                    <a href="/" class="btn btn-outline-dark btn-sm">Back</a>
                 </div>
             </div>
         </div>
@@ -52,8 +52,8 @@
                             <div class="card-header bg-white d-flex justify-content-between align-items-center">
                                 <h5 class="mb-0">${meta.verbose_name}</h5>
                                 <div>
-                                    <a href="/api/audit/gui/${tableName}/?client_uuid=${clientUuid}" class="btn btn-sm btn-outline-secondary me-2">View ${meta.verbose_name} History</a>
-                                    ${canEdit ? `<a href="/api/gui/${tableName}/add/?client_uuid=${clientUuid}" class="btn btn-sm btn-outline-success">+ Add</a>` : ''}
+                                    <a href="/api/audit/gui/${tableName}/?client_uuid=${clientUuid}" class="btn btn-sm btn-outline-secondary me-2">History</a>
+                                    ${canEdit ? `<a href="/api/gui/${tableName}/add/?client_uuid=${clientUuid}" class="btn btn-sm btn-ubs">+ Add ${meta.verbose_name}</a>` : ''}
                                 </div>
                             </div>
                             <div class="card-body">
@@ -80,8 +80,8 @@
                 render: function(data) {
                     return `
                         <div class="btn-group">
-                            <button class="btn btn-sm btn-outline-info" onclick="viewTechnicalDetails('${tableName}', '${data}')">Details</button>
-                            ${canEdit ? `<a href="/api/gui/${tableName}/${data}/edit/?client_uuid=${clientUuid}" class="btn btn-sm btn-outline-primary">Edit</a>` : ''}
+                            <button class="btn btn-sm btn-outline-dark" onclick="viewTechnicalDetails('${tableName}', '${data}')">Details</button>
+                            ${canEdit ? `<a href="/api/gui/${tableName}/${data}/edit/?client_uuid=${clientUuid}" class="btn btn-sm btn-outline-ubs">Edit</a>` : ''}
                         </div>
                     `;
                 }
