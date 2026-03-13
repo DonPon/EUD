@@ -9,4 +9,5 @@ urlpatterns = [
     path('api/audit/', include('apps.audit.urls')),
     path('', include('apps.clients.urls')),
     path('users/', include('apps.users.urls')),
+    path('dashboard/', include('apps.dashboard_bots.urls')),
 ]

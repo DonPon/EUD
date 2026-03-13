@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'apps.clients',
     'apps.generic_crud',
     'apps.audit',
+    'apps.dashboard_bots',
 ]
 
 MIDDLEWARE = [
