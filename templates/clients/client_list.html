@@ -9,7 +9,7 @@
             <div class="card-header d-flex justify-content-between align-items-center bg-white">
                 <h5 class="mb-0">Client Registry</h5>
                 {% if user.role != 'VIEWER' %}
-                    <a href="{% url 'generic-add' table_name='client' %}" class="btn btn-success btn-sm">+ New Client</a>
+                    <a href="{% url 'generic-add' table_name='client' %}" class="btn btn-ubs btn-sm">+ New Client</a>
                 {% endif %}
             </div>
             <div class="card-body">
@@ -49,7 +49,7 @@
                 data: 'client_uuid',
                 orderable: false,
                 render: function(data) {
-                    return `<a href="/clients/${data}/" class="btn btn-primary btn-sm">View Details</a>`;
+                    return `<a href="/clients/${data}/" class="btn btn-outline-dark btn-sm">View Details</a>`;
                 }
             }
         ];
