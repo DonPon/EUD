@@ -1,7 +1,13 @@
 import os
+import sys
 import django
 import uuid
+from pathlib import Path
 from django.utils import timezone
+
+# Add the project root to sys.path
+BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.append(str(BASE_DIR))
 
 # Set up Django environment
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'eud_gui.settings')
@@ -22,7 +28,7 @@ def seed_data():
         ("Bot 11", "Client Reporting and Monthly Statement Generator."),
     ]
 
-    statuses = ["Success", "Failed", "Success", "Running", "Failed", "Success"]
+    statuses = ["Not Running", "Not Running", "Not Running", "Not Running", "Not Running", "Not Running"]
     
     # Zero UUID for global system records as per project mandate
     SYSTEM_UUID = uuid.UUID('00000000-0000-0000-0000-000000000000')

@@ -12,14 +12,40 @@
                     <p class="text-muted mb-0">BR Number: {{ client.br_number }} | Status: <span class="badge {% if client.status == 'active' %}bg-success{% else %}bg-secondary{% endif %}">{{ client.status }}</span></p>
                 </div>
                 <div>
-                    <a href="{% url 'audit-list' table_name='client' %}?client_uuid={{ client.client_uuid }}&record_id={{ client.id }}" class="btn btn-outline-secondary btn-sm">View History</a>
-                    <button class="btn btn-outline-dark btn-sm" onclick="viewTechnicalDetails('client', '{{ client.id }}')">Technical Details</button>
+                    <a href="{% url 'audit-list' table_name='client' %}?client_uuid={{ client.client_uuid }}&record_id={{ client.id }}"
+                        class="btn btn-outline-secondary btn-sm">View History</a>
+                    <button class="btn btn-outline-dark btn-sm"
+                        onclick="viewTechnicalDetails('client', '{{ client.id }}')">Technical Details</button>
                     {% if user.role != 'VIEWER' %}
-                        <a href="{% url 'generic-edit' table_name='client' pk=client.id %}" class="btn btn-ubs btn-sm">Edit Client</a>
+                    <a href="{% url 'generic-edit' table_name='client' pk=client.id %}" class="btn btn-ubs btn-sm">Edit
+                        Client</a>
                     {% endif %}
                     <button class="btn btn-outline-secondary btn-sm" onclick="location.reload();">Refresh</button>
                     <a href="/" class="btn btn-outline-dark btn-sm">Back</a>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Client Information Table -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-white">
+                <h5 class="mb-0">Client Information</h5>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-bordered mb-0">
+                    <tbody class="row g-0">
+                        {% for item in client_info %}
+                            <tr class="col-md-6 d-flex border-bottom-0">
+                                <th class="bg-light p-2" style="width: 40%; border-right: 1px solid #dee2e6;">{{ item.label }}</th>
+                                <td class="p-2 flex-grow-1">{{ item.value|default:"-" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -37,9 +63,9 @@
     const clientUuid = "{{ client.client_uuid }}";
     const userRole = "{{ user.role }}";
 
-    $(document).ready(function() {
+    $(document).ready(function () {
         const container = $('#dynamic-tables-container');
-        
+
         // Loop through each registered table and create a section
         Object.keys(tablesMeta).forEach(tableName => {
             const meta = tablesMeta[tableName];
@@ -78,7 +104,7 @@
             const columns = [...meta.columns, {
                 data: 'id',
                 orderable: false,
-                render: function(data) {
+                render: function (data) {
                     return `
                         <div class="btn-group">
                             <button class="btn btn-sm btn-outline-dark" onclick="viewTechnicalDetails('${tableName}', '${data}')">Details</button>
@@ -89,12 +115,12 @@
             }];
 
             // Initialize DataTable for this section
-            initDataTable(`#table-${tableName}`, meta.endpoint, columns, { client_uuid: clientUuid });
+            initDataTable(`#table-${tableName}`, meta.endpoint, columns, { client_uuid: clientUuid }, { searching: false });
         });
     });
 
     function viewTechnicalDetails(tableName, recordId) {
-        $.get(`/api/table/${tableName}/${recordId}/`, function(data) {
+        $.get(`/api/table/${tableName}/${recordId}/`, function (data) {
             let detailsHtml = '<table class="table table-sm table-striped">';
             Object.keys(data).forEach(key => {
                 detailsHtml += `
@@ -105,7 +131,7 @@
                 `;
             });
             detailsHtml += '</table>';
-            
+
             const modalHtml = `
                 <div class="modal fade" id="detailsModal" tabindex="-1">
                     <div class="modal-dialog modal-lg">

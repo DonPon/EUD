@@ -1,9 +1,15 @@
 import os
+import sys
 import django
 import uuid
 import random
 from datetime import date, timedelta
+from pathlib import Path
 from faker import Faker
+
+# Add the project root to sys.path
+BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.append(str(BASE_DIR))
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'eud_gui.settings')
 django.setup()
@@ -47,7 +53,7 @@ def bulk_seed(num_clients=100):
             )
 
         # Create 1-2 Addresses
-        for _ in range(random.randint(1, 2)):
+        for _ in range(random.randint(1, 3)):
             Address.objects.create(
                 client_uuid=client_id,
                 street=fake.street_address(),
@@ -61,7 +67,7 @@ def bulk_seed(num_clients=100):
             )
 
         # Create 1-3 Communications
-        for _ in range(random.randint(1, 3)):
+        for _ in range(random.randint(1, 6)):
             comm_type = random.choice(['EMAIL', 'PHONE'])
             val = fake.email() if comm_type == 'EMAIL' else fake.phone_number()
             Communication.objects.create(
@@ -72,7 +78,7 @@ def bulk_seed(num_clients=100):
             )
 
         # Create 1-2 Portfolios
-        for _ in range(random.randint(1, 2)):
+        for _ in range(random.randint(1, 10)):
             portfolio_id = uuid.uuid4()
             Portfolio.objects.create(
                 id=portfolio_id,
@@ -82,7 +88,7 @@ def bulk_seed(num_clients=100):
             )
 
             # Create 1-4 Accounts per Portfolio
-            for _ in range(random.randint(1, 4)):
+            for _ in range(random.randint(1, 15)):
                 Account.objects.create(
                     client_uuid=client_id,
                     portfolio_uuid=portfolio_id,

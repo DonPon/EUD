@@ -2,11 +2,8 @@ from django.views.generic import ListView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Bot, BotStatus, BotRecord
 
-class DashboardView(LoginRequiredMixin, TemplateView):
-    template_name = 'dashboard_bots/dashboard.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+class BotListMixin:
+    def get_bot_list(self):
         bots = Bot.objects.all()
         bot_list = []
         for bot in bots:
@@ -21,7 +18,22 @@ class DashboardView(LoginRequiredMixin, TemplateView):
                 'description': bot.description,
                 'status': display_status
             })
-        context['bots'] = bot_list
+        return bot_list
+
+class DashboardView(LoginRequiredMixin, BotListMixin, TemplateView):
+    template_name = 'dashboard_bots/dashboard.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['bots'] = self.get_bot_list()
+        return context
+
+class DashboardBotsPartialView(LoginRequiredMixin, BotListMixin, TemplateView):
+    template_name = 'dashboard_bots/_bot_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['bots'] = self.get_bot_list()
         return context
 
 class BotDetailsView(LoginRequiredMixin, ListView):

@@ -1,7 +1,13 @@
 import os
+import sys
 import django
 import uuid
 from datetime import date
+from pathlib import Path
+
+# Add the project root to sys.path
+BASE_DIR = Path(__file__).resolve().parent.parent
+sys.path.append(str(BASE_DIR))
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'eud_gui.settings')
 django.setup()

@@ -88,18 +88,22 @@
             }
         });
 
-        function initDataTable(selector, endpoint, columns, extraParams = {}) {
+        function initDataTable(selector, endpoint, columns, extraParams = {}, options = {}) {
             const table = $(selector);
-            console.log('Initializing DataTable for: ' + selector, { endpoint, columns, extraParams });
+            console.log('Initializing DataTable for: ' + selector, { endpoint, columns, extraParams, options });
             
             // Listen for errors and log to console instead of alerting
             table.on('error.dt', function(e, settings, techNote, message) {
                 console.error('DataTables error for ' + selector + ': ', message);
             });
 
+            const searching = options.searching !== false;
+            const dom = searching ? 'Bfrtip' : 'Brtip';
+
             return table.DataTable({
                 processing: true,
                 serverSide: true,
+                searching: searching,
                 ajax: {
                     url: endpoint,
                     data: function(d) {
@@ -108,7 +112,7 @@
                             limit: d.length,
                             offset: d.start,
                             ordering: d.order.length ? (d.order[0].dir === 'desc' ? '-' : '') + d.columns[d.order[0].column].data : '',
-                            search: d.search.value
+                            search: d.search ? d.search.value : ''
                         };
                         return Object.assign(params, extraParams);
                     },
@@ -120,7 +124,7 @@
                     }
                 },
                 columns: columns,
-                dom: 'Bfrtip',
+                dom: dom,
                 buttons: ['csv'],
                 pageLength: 25
             });
