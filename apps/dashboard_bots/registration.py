@@ -27,6 +27,6 @@ def register_dashboard_models():
         'list_display': ['bot_name', 'bank_rel', 'status', 'created'],
         'filter_fields': ['bot_name', 'status', 'bank_rel'],
         'client_filter_field': 'bank_rel',
-        'search_fields': ['bot_name', 'bank_rel', 'message'],
+        'search_fields': ['bot_name', 'bank_rel', 'message', 'status', 'client_type'],
         'read_only': True
     })

@@ -59,9 +59,10 @@ python manage.py migrate
 
 ### 5.1. Seeding Data
 Choose the appropriate script to seed your local database:
-- `python seed_data.py`: Creates Admin user and a sample Bank Client.
-- `python bulk_seed.py`: Generates larger volumes of test clients via the Faker library.
-- `python seed_bots.py`: Seeds initial bot reference data and execution records.
+- `python seeds/seed_data.py`: Creates Admin user and a sample Bank Client.
+- `python seeds/bulk_seed.py`: Generates larger volumes of test clients via the Faker library.
+- `python seeds/seed_bots.py`: Seeds initial bot reference data and execution records.
+- `python seeds/simulate_bots.py <seconds>`: Runs a real-time activity simulation for the bots dashboard.
 
 ```bash
 python manage.py runserver

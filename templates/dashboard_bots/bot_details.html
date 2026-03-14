@@ -36,25 +36,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for record in records %}
-                        <tr>
-                            <td>{{ record.bot_name }}</td>
-                            <td>{{ record.bank_rel }}</td>
-                            <td>{{ record.start_time|date:"Y-m-d H:i:s" }}</td>
-                            <td>{{ record.end_time|date:"Y-m-d H:i:s" }}</td>
-                            <td>
-                                <span class="badge {% if record.status == 'Success' %}bg-success{% elif record.status == 'Failed' %}bg-danger{% else %}bg-secondary{% endif %}">
-                                    {{ record.status }}
-                                </span>
-                            </td>
-                            <td>{{ record.message|truncatewords:10 }}</td>
-                            <td>{{ record.client_type }}</td>
-                            <td>{{ record.t_number }}</td>
-                            <td>{{ record.run_identifier }}</td>
-                            <td>{{ record.modified|date:"Y-m-d H:i:s" }}</td>
-                            <td>{{ record.created|date:"Y-m-d H:i:s" }}</td>
-                        </tr>
-                        {% endfor %}
+                        <!-- Data will be loaded via AJAX by DataTables -->
                     </tbody>
                 </table>
             </div>
@@ -65,13 +47,85 @@
 
 {% block extra_js %}
 <script>
-    $(document).ready(function() {
-        $('#bot-records-table').DataTable({
-            dom: 'Bfrtip',
-            buttons: ['csv'],
-            pageLength: 25,
-            order: [[10, 'desc']] // Order by Created column desc
-        });
+    $(document).ready(function () {
+        // Initialize DataTable using generic wrapper pointing to DRF endpoint
+        // BotRecord is registered in apps.dashboard_bots.registration 
+        const botName = "{{ bot_name }}";
+        const endpoint = "/api/table/botrecord/";
+
+        const columns = [
+            { data: 'bot_name', name: 'bot_name' },
+            { data: 'bank_rel', name: 'bank_rel' },
+            {
+                data: 'start_time',
+                name: 'start_time',
+                render: function (data) {
+                    if (!data) return '';
+                    return new Date(data).toLocaleString();
+                }
+            },
+            {
+                data: 'end_time',
+                name: 'end_time',
+                render: function (data) {
+                    if (!data) return '';
+                    return new Date(data).toLocaleString();
+                }
+            },
+            {
+                data: 'status',
+                name: 'status',
+                render: function (data) {
+                    let badgeClass = 'bg-secondary';
+                    if (data === 'Success') badgeClass = 'bg-success';
+                    else if (data === 'Failed') badgeClass = 'bg-danger';
+                    return `<span class="badge ${badgeClass}">${data}</span>`;
+                }
+            },
+            {
+                data: 'message',
+                name: 'message',
+                render: function (data) {
+                    if (!data) return '';
+                    return data.length > 50 ? data.substring(0, 50) + '...' : data;
+                }
+            },
+            { data: 'client_type', name: 'client_type' },
+            { data: 't_number', name: 't_number' },
+            { data: 'run_identifier', name: 'run_identifier' },
+            {
+                data: 'modified',
+                name: 'modified',
+                render: function (data) {
+                    if (!data) return '';
+                    return new Date(data).toLocaleString();
+                }
+            },
+            {
+                data: 'created',
+                name: 'created',
+                render: function (data) {
+                    if (!data) return '';
+                    return new Date(data).toLocaleString();
+                }
+            }
+        ];
+
+        // We filter by bot_name so this table only shows records for this bot
+        const extraParams = {
+            bot_name: botName
+        };
+
+        const table = initDataTable('#bot-records-table', endpoint, columns, extraParams);
+
+        // Order by Created column desc initially (column index 10)
+        table.order([10, 'desc']).draw();
+
+        // Implement AJAX Polling
+        setInterval(function () {
+            // reload(null, false) reloads data while keeping current pagination/sorting
+            table.ajax.reload(null, false);
+        }, 10000); // 10 seconds
     });
 </script>
 {% endblock %}

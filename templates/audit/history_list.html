@@ -9,10 +9,12 @@
             <div class="card-body d-flex justify-content-between align-items-center">
                 <div>
                     <h2 class="mb-0">{{ verbose_name }} History</h2>
-                    <p class="text-muted mb-0">Audit trail for {{ verbose_name_plural }} of client: {{ client_uuid }} {% if record_id %}| Specific Record: {{ record_id }}{% endif %}</p>
+                    <p class="text-muted mb-0">Audit trail for {{ verbose_name_plural }} of client: {{ client_uuid }}
+                        {%if record_id %}| Specific Record: {{ record_id }}{% endif %}</p>
                 </div>
                 <div>
-                    <a href="{% url 'clients:detail' client_uuid=client_uuid %}" class="btn btn-outline-dark">Back to Client</a>
+                    <a href="{% url 'clients:detail' client_uuid=client_uuid %}" class="btn btn-outline-dark">Back to
+                        Client</a>
                 </div>
             </div>
         </div>
@@ -43,18 +45,18 @@
 
 {% block extra_js %}
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         const columns = [
-            { 
+            {
                 data: 'timestamp',
-                render: function(data) {
+                render: function (data) {
                     return new Date(data).toLocaleString();
                 }
             },
             { data: 'user' },
-            { 
+            {
                 data: 'type',
-                render: function(data) {
+                render: function (data) {
                     const badges = {
                         '+': '<span class="badge bg-success">Created</span>',
                         '~': '<span class="badge bg-primary">Updated</span>',
@@ -63,14 +65,14 @@
                     return badges[data] || data;
                 }
             },
-            { 
+            {
                 data: 'record_id',
                 className: 'font-monospace small'
             },
-            { 
+            {
                 data: 'changes',
                 orderable: false,
-                render: function(data) {
+                render: function (data) {
                     if (!data || data.length === 0) return '<em>No changes</em>';
                     let list = '<ul class="mb-0 small" style="padding-left: 1.2rem;">';
                     data.forEach(c => {
@@ -90,7 +92,7 @@
             serverSide: true,
             ajax: {
                 url: `/api/audit/{{ table_name }}/`,
-                data: function(d) {
+                data: function (d) {
                     const params = {
                         limit: d.length,
                         offset: d.start,
@@ -102,7 +104,7 @@
                     }
                     return params;
                 },
-                dataSrc: function(json) {
+                dataSrc: function (json) {
                     // Our get_table_history returns paginated results
                     json.recordsTotal = json.count;
                     json.recordsFiltered = json.count;
@@ -110,7 +112,8 @@
                 }
             },
             columns: columns,
-            dom: 'Bfrtip',
+            searching: false,
+            dom: 'Brtip',
             buttons: ['csv'],
             order: [[0, 'desc']],
             pageLength: 25
