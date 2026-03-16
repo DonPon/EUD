@@ -30,7 +30,7 @@
 <body>
     <nav class="navbar navbar-expand-md navbar-light fixed-top">
         <div class="container-fluid">
-            <a class="navbar-brand d-flex align-items-center" href="/">
+            <a class="navbar-brand d-flex align-items-center" href="{% url 'core:home' %}">
                 <img src="{% static 'ubs-logo.png' %}" alt="UBS Logo">
                 <span>EUD Manager</span>
             </a>
@@ -40,7 +40,7 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav me-auto mb-2 mb-md-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Clients</a>
+                        <a class="nav-link" href="{% url 'clients:list' %}">Clients</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'dashboard:index' %}">Dashboard</a>

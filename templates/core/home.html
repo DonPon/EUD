@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}EUD Manager - Home{% endblock %}
+
+{% block extra_css %}
+<style>
+    .home-hero {
+        padding: 4rem 0;
+        background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+        margin-bottom: 3rem;
+        border-radius: 0 0 50px 50px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .landing-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+        height: 100%;
+        border-radius: 15px;
+        overflow: hidden;
+    }
+
+    .landing-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-icon {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+        color: #e11a2d;
+    }
+
+    .card-title {
+        font-weight: 700;
+        font-size: 1.5rem;
+    }
+
+    .btn-landing {
+        border-radius: 25px;
+        padding: 10px 30px;
+        font-weight: 600;
+        margin-top: 1rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row home-hero text-center animate__animated animate__fadeIn">
+    <div class="col-12">
+        <h1 class="display-4 fw-bold mb-3">Welcome to Europe Domestic Client Onboarding GUI</h1>
+        <p class="lead text-muted mx-auto" style="max-width: 700px;">
+            Central hub for managing client onboarding and monitoring automation bots.
+            Please select a section below to get started.
+        </p>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="row g-4 justify-content-center">
+
+        <!-- Dashboard Section -->
+        <div class="col-md-5 col-lg-4">
+            <div class="card landing-card border-0 text-center p-4">
+                <div class="card-body d-flex flex-column align-items-center">
+                    <div class="card-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor"
+                            class="bi bi-speedometer2" viewBox="0 0 16 16">
+                            <path
+                                d="M8 4a.5.5 0 0 1 .5.5V6a.5.5 0 0 1-1 0V4.5A.5.5 0 0 1 8 4zM3.732 5.732a.5.5 0 0 1 .707 0l.915.914a.5.5 0 1 1-.708.708l-.914-.915a.5.5 0 0 1 0-.707zM2 10a.5.5 0 0 1 .5-.5h1.586a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 10zm9.5 0a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5zm.754-4.246a.389.389 0 0 0-.527-.02L7.547 9.31a.91.91 0 1 0 .552.713l3.556-3.992a.388.388 0 0 0-.153-.651z" />
+                            <path
+                                d="M0 10a8 8 0 1 1 16 0c0 .188-.006.375-.018.56a.5.5 0 0 1-.985-.103 7.007 7.007 0 0 0 .003-.457 7 7 0 1 0-13.907 1.483.5.5 0 1 1-.968.253A7.99 7.99 0 0 1 0 10z" />
+                        </svg>
+                    </div>
+                    <h5 class="card-title mb-3">Bot Dashboard</h5>
+                    <p class="card-text text-muted mb-4">
+                        Monitor bot executions in real-time across the system.
+                    </p>
+                    <a href="{% url 'dashboard:index' %}" class="btn btn-outline-ubs btn-landing mt-auto">View Bot
+                        Dashboard</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Clients Section -->
+        <div class="col-md-5 col-lg-4">
+            <div class="card landing-card border-0 text-center p-4">
+                <div class="card-body d-flex flex-column align-items-center">
+                    <div class="card-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor"
+                            class="bi bi-people-fill" viewBox="0 0 16 16">
+                            <path
+                                d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                        </svg>
+                    </div>
+                    <h5 class="card-title mb-3">Clients</h5>
+                    <p class="card-text text-muted mb-4">
+                        Search, view, and manage clients.
+                    </p>
+                    <a href="{% url 'clients:list' %}" class="btn btn-ubs btn-landing mt-auto">Go to Clients</a>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+{% endblock %}
