@@ -32,7 +32,7 @@
         <div class="container-fluid">
             <a class="navbar-brand d-flex align-items-center" href="{% url 'core:home' %}">
                 <img src="{% static 'ubs-logo.png' %}" alt="UBS Logo">
-                <span>EUD Manager</span>
+                <span>EUD Onboarding</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                 <span class="navbar-toggler-icon"></span>
@@ -40,10 +40,10 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav me-auto mb-2 mb-md-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'clients:list' %}">Clients</a>
+                        <a class="nav-link" href="{% url 'dashboard:index' %}">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'dashboard:index' %}">Dashboard</a>
+                        <a class="nav-link" href="{% url 'clients:list' %}">Clients</a>
                     </li>
                     {% if user.role == 'ADMIN' %}
                     <li class="nav-item">

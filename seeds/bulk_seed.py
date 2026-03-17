@@ -21,13 +21,8 @@ fake = Faker()
 
 def bulk_seed(num_clients=100):
     print(f"Starting bulk seed of {num_clients} clients...")
-    
-    # 1. Ensure Admin exists
-    if not User.objects.filter(username='admin').exists():
-        User.objects.create_superuser('admin', 'admin@example.com', 'admin123', role='ADMIN')
-        print("Superuser 'admin' created (pass: admin123)")
 
-    # 2. Clear existing data for a clean test environment (optional, but recommended for testing)
+    # Optional. Clear existing data for a clean test environment (optional, but recommended for testing)
     # Client.objects.all().delete() 
 
     for i in range(num_clients):
