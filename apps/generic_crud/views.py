@@ -82,7 +82,7 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
         exclude = ['id', 'created_at', 'updated_at', 'history', 'last_login', 'date_joined']
         # For User model, exclude fields that shouldn't be edited via generic form
         if table_name == 'user':
-            exclude += ['password', 'groups', 'user_permissions', 'is_superuser']
+            exclude += ['password', 'groups', 'user_permissions', 'is_superuser', 'email']
         # Never show client_uuid in any form; we handle it automatically
         if 'client_uuid' in [f.name for f in model._meta.fields]:
             exclude.append('client_uuid')
