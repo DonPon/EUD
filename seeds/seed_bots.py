@@ -30,16 +30,12 @@ def seed_data():
 
     statuses = ["Not Running", "Not Running", "Not Running", "Not Running", "Not Running", "Not Running"]
     
-    # Zero UUID for global system records as per project mandate
-    SYSTEM_UUID = uuid.UUID('00000000-0000-0000-0000-000000000000')
-
     for i, (name, desc) in enumerate(bots_to_create):
         # 1. Create Bot Configuration
         bot, created = Bot.objects.get_or_create(
             name=name,
             defaults={
                 'description': desc,
-                'client_uuid': SYSTEM_UUID
             }
         )
         if created:
@@ -51,7 +47,6 @@ def seed_data():
             bot=name,
             defaults={
                 'bot_status': status_val,
-                'client_uuid': SYSTEM_UUID
             }
         )
         print(f"Set status for {name} to {status_val}")
@@ -72,7 +67,6 @@ def seed_data():
                 client_type="Individual" if j % 2 == 0 else "Corporate",
                 t_number=f"T{8000 + i}",
                 run_identifier=f"RUN-{uuid.uuid4().hex[:8].upper()}",
-                client_uuid=SYSTEM_UUID # In a real scenario, this would match a client's UUID
             )
         print(f"Generated 5 sample records for {name}")
 

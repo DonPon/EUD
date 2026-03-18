@@ -1,3 +1,5 @@
+import uuid
+
 from django.db import models
 from apps.core.models import ClientRelatedModel
 
@@ -51,6 +53,7 @@ class Communication(ClientRelatedModel):
     is_main = models.BooleanField(default=False, verbose_name="Main Contact")
 
 class Portfolio(ClientRelatedModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     portfolio_number = models.CharField(max_length=50, unique=False)
     name = models.CharField(max_length=255)
 
