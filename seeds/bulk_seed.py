@@ -23,7 +23,7 @@ from apps.clients.models import (
 
 fake = Faker()
 
-def bulk_seed(num_clients=100):
+def bulk_seed(num_clients=20):
     print(f"Starting bulk seed of {num_clients} banking relationships...")
 
     # Optional. Clear existing data for a clean test environment
@@ -31,6 +31,8 @@ def bulk_seed(num_clients=100):
 
     # Collect client_uuids to create relationships later
     all_client_uuids = []
+
+    status_options = ['review_needed', 'ready_for_bot_1', 'ready_for_bot_2', 'ready_for_bot_3','ready_for_bot_4', 'ready_for_bot_5', 'ready_for_bot_6', 'ready_for_bot_7', 'ready_for_bot_8', 'completed']
 
     for i in range(num_clients):
         client_uuid = uuid.uuid4()
@@ -53,6 +55,7 @@ def bulk_seed(num_clients=100):
             language=random.choice(['German', 'English', 'Spanish']),
             opened_in_ubs_premises=random.choice([True, False]),
             instructions=fake.paragraph(),
+            status=random.sample(status_options, k=random.randint(0, 3)),
             account_and_securities_statements=random.sample(['Monthly', 'Collective settlement', 'Additional on a daily basis'], k=random.randint(1, 2)),
             type_and_purpose=random.sample(['Payment transactions', 'Asset/Cash investment', 'Credit Business', 'Other'], k=random.randint(1, 2)),
             agreement_distribution_fees=random.choice(['Normal case', 'Complete payout', 'Partial payout']),
@@ -207,7 +210,7 @@ def bulk_seed(num_clients=100):
     print(f"Successfully seeded {num_clients} relationships and thousands of related records.")
 
 if __name__ == "__main__":
-    count = 100
+    count = 20
     if len(sys.argv) > 1:
         try:
             count = int(sys.argv[1])

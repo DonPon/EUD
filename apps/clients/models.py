@@ -38,6 +38,20 @@ class BankingRelationship(ClientRelatedModel):
         ('Partial payout', 'Partial payout'),
     ]
 
+    STATUS_CHOICES = [
+        ('review_needed', 'Review Needed'),
+        ('review_completed', 'Review Completed'),
+        ('ready_for_bot_1', 'Ready for Bot 1'),
+        ('ready_for_bot_2', 'Ready for Bot 2'),
+        ('ready_for_bot_3', 'Ready for Bot 3'),
+        ('ready_for_bot_4', 'Ready for Bot 4'),
+        ('ready_for_bot_5', 'Ready for Bot 5'),
+        ('ready_for_bot_6', 'Ready for Bot 6'),
+        ('ready_for_bot_7', 'Ready for Bot 7'),
+        ('ready_for_bot_8', 'Ready for Bot 8'),
+        ('completed', 'Completed'),
+    ]
+
     banking_relationship = models.CharField(max_length=255, blank=True)
     technical_account = models.BooleanField(default=False)
     additional_br = models.CharField(max_length=255, blank=True)
@@ -52,6 +66,7 @@ class BankingRelationship(ClientRelatedModel):
     language = models.CharField(max_length=50, choices=LANGUAGE_CHOICES, blank=True)
     opened_in_ubs_premises = models.BooleanField(default=False)
     instructions = models.TextField(blank=True)
+    status = models.JSONField(default=list, blank=True)
     
     # JSON Fields for multi-select
     account_and_securities_statements = models.JSONField(default=list, blank=True)

@@ -9,9 +9,24 @@
             <div class="card-body d-flex justify-content-between align-items-center">
                 <div>
                     <h2 class="mb-0">{{ client.name_of_banking_relationship }}</h2>
-                    <p class="text-muted mb-0">BR Number: {{ client.banking_relationship }} | Account Type: <span class="badge bg-secondary">{{ client.type_of_account }}</span></p>
+                    <p class="text-muted mb-0">
+                        BR Number: {{ client.banking_relationship }} | 
+                        Account Type: <span class="badge bg-secondary">{{ client.type_of_account }}</span> | 
+                        Status: 
+                        {% for badge in status_badges %}
+                            <span class="badge {{ badge.class }} me-1">
+                                {{ badge.label }}
+                            </span>
+                        {% endfor %}
+                    </p>
                 </div>
                 <div>
+                    {% if 'review_needed' in client.status %}
+                    <form action="{% url 'clients:complete-review' client_uuid=client.client_uuid %}" method="POST" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-warning btn-sm fw-bold px-3">Review Completed</button>
+                    </form>
+                    {% endif %}
                     <a href="{% url 'audit-list' table_name='bankingrelationship' %}?client_uuid={{ client.client_uuid }}&record_id={{ client.id }}"
                         class="btn btn-outline-secondary btn-sm">View History</a>
                     <button class="btn btn-outline-dark btn-sm"

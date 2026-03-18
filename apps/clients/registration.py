@@ -14,11 +14,11 @@ def register_clients_models():
             'distribution_list', 'name_of_banking_relationship', 'type_of_account',
             'type_of_signature', 'client_segment', 'code_ksc', 'recording_phone_calls',
             'declaration_email', 'language', 'opened_in_ubs_premises', 'instructions',
-            'account_and_securities_statements', 'type_and_purpose',
+            'status', 'account_and_securities_statements', 'type_and_purpose',
             'agreement_distribution_fees', 'send_documents', 'csc', 'ateco', 'sae',
             'level_of_professionalism', 'number_of_portfolios', 'created_at'
         ],
-        'list_display': ['name_of_banking_relationship', 'banking_relationship', 'type_of_account', 'client_segment'],
+        'list_display': ['name_of_banking_relationship', 'banking_relationship', 'type_of_account', 'client_segment', 'status'],
         'filter_fields': ['type_of_account', 'client_segment', 'code_ksc', 'language'],
         'search_fields': ['name_of_banking_relationship', 'banking_relationship'],
     })

@@ -138,6 +138,25 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
         form_class = modelform_factory(model, exclude=exclude, widgets=widgets)
         form = kwargs.get('form') or form_class(instance=instance, initial=initial)
         
+        # Handle JSONFields that should be Multi-Select
+        for field_name in form.fields:
+            try:
+                model_field = model._meta.get_field(field_name)
+                if model_field.get_internal_type() == 'JSONField':
+                    # Check if the model has a matching _CHOICES constant
+                    choices_attr = f"{field_name.upper()}_CHOICES"
+                    if hasattr(model, choices_attr):
+                        from django.forms import MultipleChoiceField, SelectMultiple
+                        choices = getattr(model, choices_attr)
+                        form.fields[field_name] = MultipleChoiceField(
+                            choices=choices,
+                            widget=SelectMultiple(attrs={'class': 'form-select', 'size': '5'}),
+                            required=False,
+                            initial=getattr(instance, field_name) if instance else []
+                        )
+            except:
+                pass
+
         # Apply dynamic choices (e.g. Portfolio dropdown)
         self._apply_dynamic_choices(form, model, client_uuid or (instance.client_uuid if instance and hasattr(instance, 'client_uuid') else None))
         
@@ -174,6 +193,21 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
         form_class = modelform_factory(model, exclude=exclude, widgets=widgets)
         form = form_class(request.POST, instance=instance)
         
+        # Re-apply MultipleChoiceField for JSONFields so validation passes
+        for field_name in form.fields:
+            try:
+                model_field = model._meta.get_field(field_name)
+                if model_field.get_internal_type() == 'JSONField':
+                    choices_attr = f"{field_name.upper()}_CHOICES"
+                    if hasattr(model, choices_attr):
+                        from django.forms import MultipleChoiceField
+                        form.fields[field_name] = MultipleChoiceField(
+                            choices=getattr(model, choices_attr),
+                            required=False
+                        )
+            except:
+                pass
+
         # Apply choices for validation
         client_uuid = request.GET.get('client_uuid') or (instance.client_uuid if instance and hasattr(instance, 'client_uuid') else None)
         self._apply_dynamic_choices(form, model, client_uuid)
