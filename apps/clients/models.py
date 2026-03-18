@@ -226,14 +226,6 @@ class EBanking(ClientRelatedModel):
         verbose_name = "E-Banking"
         verbose_name_plural = "E-Banking"
 
-class Product(ClientRelatedModel):
-    product_name = models.CharField(max_length=255, blank=True)
-    product_id = models.CharField(max_length=255, blank=True)
-    status = models.CharField(max_length=100, blank=True)
-
-    def __str__(self):
-        return f"{self.product_name} ({self.product_id})"
-
 class MeetingPreparation(ClientRelatedModel):
     PLACE_CHOICES = [('Internal', 'Internal'), ('External', 'External')]
     HOSPITALITY_CHOICES = [
@@ -265,6 +257,15 @@ class Relationship(ClientRelatedModel):
 
     def __str__(self):
         return f"Relation: {self.client_uuid} -> {self.child_unique_id}"
+
+class Product(ClientRelatedModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    product_name = models.CharField(max_length=255, blank=True)
+    product_id = models.CharField(max_length=255, blank=True)
+    status = models.CharField(max_length=100, blank=True)
+
+    def __str__(self):
+        return f"{self.product_name} ({self.product_id})"
 
 class Account(ClientRelatedModel):
     product_uuid = models.UUIDField(db_index=True, null=True, blank=True)
