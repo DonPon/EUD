@@ -23,18 +23,6 @@ def register_clients_models():
         'search_fields': ['name_of_banking_relationship', 'banking_relationship'],
     })
 
-    CrudRegistry.register(AdditionalFormDE, {
-        'fields': [
-            'id', 'client_uuid', 'request_to_become_professional', 'forward_trading_transactions',
-            'exemption_order', 'last_name', 'first_name', 'identification_number',
-            'date_of_birth', 'amount', 'timeline', 'execution', 'until_canceled',
-            'limited_power_of_attorney', 'poa_all_accounts', 'poa_in_case_of_death',
-            'tax_at_source_canada', 'ubs_digital_banking_authorization'
-        ],
-        'list_display': ['last_name', 'first_name', 'identification_number', 'amount'],
-        'filter_fields': ['amount', 'execution'],
-    })
-
     CrudRegistry.register(PersonalInformation, {
         'fields': [
             'id', 'client_uuid', 'first_name', 'last_name', 'date_of_birth',
@@ -44,6 +32,15 @@ def register_clients_models():
         'list_display': ['first_name', 'last_name', 'date_of_birth', 'marital_status'],
         'filter_fields': ['marital_status', 'sensitive_client'],
         'search_fields': ['first_name', 'last_name', 'fiscal_identifier'],
+    })
+
+    CrudRegistry.register(Nationality, {
+        'fields': [
+            'id', 'client_uuid', 'is_main_nationality', 'nationality', 'nci', 'id_type',
+            'fiscal_code', 'release_authority', 'release_date', 'expiry_date'
+        ],
+        'list_display': ['nationality', 'is_main_nationality', 'id_type', 'expiry_date'],
+        'filter_fields': ['is_main_nationality', 'id_type'],
     })
 
     CrudRegistry.register(Address, {
@@ -56,6 +53,11 @@ def register_clients_models():
         'search_fields': ['city', 'street', 'last_name'],
     })
 
+    CrudRegistry.register(TIN, {
+        'fields': ['id', 'client_uuid', 'aei_tin'],
+        'list_display': ['aei_tin'],
+    })
+
     CrudRegistry.register(Communication, {
         'fields': [
             'id', 'client_uuid', 'first_and_last_name', 'landline', 'phone', 'phone_number',
@@ -65,43 +67,9 @@ def register_clients_models():
         'search_fields': ['first_and_last_name', 'email_address'],
     })
 
-    CrudRegistry.register(ClientAdvisor, {
-        'fields': ['id', 'client_uuid', 'first_name', 'last_name', 'email', 'desk', 'branch', 'role'],
-        'list_display': ['last_name', 'first_name', 'role', 'branch'],
-        'filter_fields': ['role', 'branch'],
-    })
-
-    CrudRegistry.register(Nationality, {
-        'fields': [
-            'id', 'client_uuid', 'is_main_nationality', 'nationality', 'nci', 'id_type',
-            'fiscal_code', 'release_authority', 'release_date', 'expiry_date'
-        ],
-        'list_display': ['nationality', 'is_main_nationality', 'id_type', 'expiry_date'],
-        'filter_fields': ['is_main_nationality', 'id_type'],
-    })
-
-    CrudRegistry.register(TIN, {
-        'fields': ['id', 'client_uuid', 'aei_tin'],
-        'list_display': ['aei_tin'],
-    })
-
     CrudRegistry.register(EBanking, {
         'fields': ['id', 'client_uuid', 'has_ebanking', 'contract_number'],
         'list_display': ['has_ebanking', 'contract_number'],
-    })
-
-    CrudRegistry.register(Product, {
-        'fields': ['id', 'client_uuid', 'product_name', 'product_id', 'status'],
-        'list_display': ['product_name', 'product_id', 'status'],
-        'filter_fields': ['status'],
-    })
-
-    CrudRegistry.register(MeetingPreparation, {
-        'fields': [
-            'id', 'client_uuid', 'place', 'date_of_meeting', 'time',
-            'hospitality', 'performance_since_beginning'
-        ],
-        'list_display': ['date_of_meeting', 'time', 'place', 'hospitality'],
     })
 
     CrudRegistry.register(Relationship, {
@@ -112,10 +80,42 @@ def register_clients_models():
         'list_display': ['client_uuid', 'child_unique_id', 'type_of_relationship', 'relation_with_owner'],
         'filter_fields': ['type_of_relationship'],
     })
-    
+
+    CrudRegistry.register(Product, {
+        'fields': ['id', 'client_uuid', 'product_name', 'product_id', 'status'],
+        'list_display': ['product_name', 'product_id', 'status'],
+        'filter_fields': ['status'],
+    })
+
     CrudRegistry.register(Account, {
         'fields': ['id', 'client_uuid', 'product_uuid', 'product_info', 'account_number', 'currency', 'balance', 'created_at'],
         'list_display': ['account_number', 'product_info', 'currency', 'balance'],
         'filter_fields': ['client_uuid', 'product_uuid', 'currency'],
         'search_fields': ['account_number', 'currency', 'balance'],
+    })
+
+    CrudRegistry.register(ClientAdvisor, {
+        'fields': ['id', 'client_uuid', 'first_name', 'last_name', 'email', 'desk', 'branch', 'role'],
+        'list_display': ['last_name', 'first_name', 'role', 'branch'],
+        'filter_fields': ['role', 'branch'],
+    })
+
+    CrudRegistry.register(MeetingPreparation, {
+        'fields': [
+            'id', 'client_uuid', 'place', 'date_of_meeting', 'time',
+            'hospitality', 'performance_since_beginning'
+        ],
+        'list_display': ['date_of_meeting', 'time', 'place', 'hospitality'],
+    })
+
+    CrudRegistry.register(AdditionalFormDE, {
+        'fields': [
+            'id', 'client_uuid', 'request_to_become_professional', 'forward_trading_transactions',
+            'exemption_order', 'last_name', 'first_name', 'identification_number',
+            'date_of_birth', 'amount', 'timeline', 'execution', 'until_canceled',
+            'limited_power_of_attorney', 'poa_all_accounts', 'poa_in_case_of_death',
+            'tax_at_source_canada', 'ubs_digital_banking_authorization'
+        ],
+        'list_display': ['last_name', 'first_name', 'identification_number', 'amount'],
+        'filter_fields': ['amount', 'execution'],
     })

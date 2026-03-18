@@ -57,11 +57,16 @@
         <div class="card">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Personal Information</h5>
-                {% if personal_info_obj and user.role != 'VIEWER' %}
-                    <a href="{% url 'generic-edit' table_name='personalinformation' pk=personal_info_obj.id %}?client_uuid={{ client.client_uuid }}" class="btn btn-ubs btn-sm">Edit Personal Info</a>
-                {% elif not personal_info_obj and user.role != 'VIEWER' %}
-                    <a href="{% url 'generic-add' table_name='personalinformation' %}?client_uuid={{ client.client_uuid }}" class="btn btn-ubs btn-sm">+ Add Personal Info</a>
-                {% endif %}
+                <div>
+                    {% if personal_info_obj %}
+                        <a href="{% url 'audit-list' table_name='personalinformation' %}?client_uuid={{ client.client_uuid }}&record_id={{ personal_info_obj.id }}" class="btn btn-sm btn-outline-secondary me-2">History</a>
+                        {% if user.role != 'VIEWER' %}
+                            <a href="{% url 'generic-edit' table_name='personalinformation' pk=personal_info_obj.id %}?client_uuid={{ client.client_uuid }}" class="btn btn-ubs btn-sm">Edit Personal Info</a>
+                        {% endif %}
+                    {% elif user.role != 'VIEWER' %}
+                        <a href="{% url 'generic-add' table_name='personalinformation' %}?client_uuid={{ client.client_uuid }}" class="btn btn-ubs btn-sm">+ Add Personal Info</a>
+                    {% endif %}
+                </div>
             </div>
             <div class="card-body p-0">
                 {% if personal_info %}
