@@ -43,10 +43,10 @@ class BotRecord(models.Model):
     """def save(self, *args, **kwargs):
         if not self.client_uuid:
             # Try to find client by bank_rel (BR Number) if possible
-            from apps.clients.models import Client
+            from apps.clients.models import BankingRelationship
             try:
-                client = Client.objects.get(br_number=self.bank_rel)
+                client = BankingRelationship.objects.get(banking_relationship=self.bank_rel)
                 self.client_uuid = client.client_uuid
-            except Client.DoesNotExist:
+            except BankingRelationship.DoesNotExist:
                 self.client_uuid = uuid.UUID('00000000-0000-0000-0000-000000000000')
         super().save(*args, **kwargs)"""

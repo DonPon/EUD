@@ -1,16 +1,18 @@
 from django.views.generic import ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import Client
+from .models import BankingRelationship
 from apps.generic_crud.registry import CrudRegistry
 import json
 
 class ClientListView(LoginRequiredMixin, ListView):
-    model = Client
+    model = BankingRelationship
     template_name = 'clients/client_list.html'
+    context_object_name = 'clients'
 
 class ClientDetailView(LoginRequiredMixin, DetailView):
-    model = Client
+    model = BankingRelationship
     template_name = 'clients/client_detail.html'
+    context_object_name = 'client'
     slug_field = 'client_uuid'
     slug_url_kwarg = 'client_uuid'
 
@@ -22,7 +24,7 @@ class ClientDetailView(LoginRequiredMixin, DetailView):
         registry = CrudRegistry.get_registered_models()
         
         # 1. Prepare Client Information (Top Table)
-        client_config = registry.get('client', {}).get('config', {})
+        client_config = registry.get('bankingrelationship', {}).get('config', {})
         exclude_from_info = client_config.get('exclude_from_info', ['id', 'client_uuid', 'created_at', 'updated_at'])
         
         client_info = []
@@ -43,10 +45,34 @@ class ClientDetailView(LoginRequiredMixin, DetailView):
         
         context['client_info'] = client_info
 
+        # 1.1 Prepare Personal Information (Second Top Table)
+        from .models import PersonalInformation
+        personal_info_obj = PersonalInformation.objects.filter(client_uuid=client.client_uuid).first()
+        personal_info_list = []
+        
+        if personal_info_obj:
+            exclude_personal = ['id', 'client_uuid', 'created_at', 'updated_at']
+            for field in personal_info_obj._meta.fields:
+                if field.name in exclude_personal:
+                    continue
+                
+                value = getattr(personal_info_obj, field.name)
+                if field.choices:
+                    value = dict(field.choices).get(value, value)
+                
+                personal_info_list.append({
+                    'label': field.verbose_name.title(),
+                    'value': value,
+                    'name': field.name
+                })
+        
+        context['personal_info'] = personal_info_list
+        context['personal_info_obj'] = personal_info_obj
+
         # 2. Prepare Metadata for Related Tables
         tables_meta = {}
         for name, details in registry.items():
-            if name == 'client': continue # Skip main client
+            if name in ['bankingrelationship', 'personalinformation']: continue # Skip main tables
             
             model = details['model']
             config = details['config']
