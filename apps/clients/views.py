@@ -22,6 +22,16 @@ class CompleteReviewView(LoginRequiredMixin, View):
             
         return redirect('clients:detail', client_uuid=client_uuid)
 
+class BulkStatusUpdateView(LoginRequiredMixin, View):
+    def post(self, request):
+        client_ids = request.POST.getlist('client_ids[]')
+        new_statuses = request.POST.getlist('statuses[]')
+        
+        if client_ids and new_statuses is not None:
+            BankingRelationship.objects.filter(id__in=client_ids).update(status=new_statuses)
+            
+        return redirect('clients:list')
+
 class ClientListView(LoginRequiredMixin, ListView):
     model = BankingRelationship
     template_name = 'clients/client_list.html'
