@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Client Detail - {{ client.name }}{% endblock %}
+{% block title %}Client Detail - {{ client.name_of_banking_relationship }}{% endblock %}
 
 {% block content %}
 <div class="row mb-4">
@@ -8,17 +8,17 @@
         <div class="card bg-light border-primary">
             <div class="card-body d-flex justify-content-between align-items-center">
                 <div>
-                    <h2 class="mb-0">{{ client.first_name }} {{ client.last_name }}</h2>
-                    <p class="text-muted mb-0">BR Number: {{ client.br_number }} | Status: <span class="badge {% if client.status == 'active' %}bg-success{% else %}bg-secondary{% endif %}">{{ client.status }}</span></p>
+                    <h2 class="mb-0">{{ client.name_of_banking_relationship }}</h2>
+                    <p class="text-muted mb-0">BR Number: {{ client.banking_relationship }} | Account Type: <span class="badge bg-secondary">{{ client.type_of_account }}</span></p>
                 </div>
                 <div>
-                    <a href="{% url 'audit-list' table_name='client' %}?client_uuid={{ client.client_uuid }}&record_id={{ client.id }}"
+                    <a href="{% url 'audit-list' table_name='bankingrelationship' %}?client_uuid={{ client.client_uuid }}&record_id={{ client.id }}"
                         class="btn btn-outline-secondary btn-sm">View History</a>
                     <button class="btn btn-outline-dark btn-sm"
-                        onclick="viewTechnicalDetails('client', '{{ client.id }}')">Technical Details</button>
+                        onclick="viewTechnicalDetails('bankingrelationship', '{{ client.id }}')">Technical Details</button>
                     {% if user.role != 'VIEWER' %}
-                    <a href="{% url 'generic-edit' table_name='client' pk=client.id %}" class="btn btn-ubs btn-sm">Edit
-                        Client</a>
+                    <a href="{% url 'generic-edit' table_name='bankingrelationship' pk=client.id %}" class="btn btn-ubs btn-sm">Edit
+                        Relationship</a>
                     {% endif %}
                     <button class="btn btn-outline-secondary btn-sm" onclick="location.reload();">Refresh</button>
                     <a href="/" class="btn btn-outline-dark btn-sm">Back</a>
@@ -33,7 +33,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-header bg-white">
-                <h5 class="mb-0">Client Information</h5>
+                <h5 class="mb-0">Banking Relationship Information</h5>
             </div>
             <div class="card-body p-0">
                 <table class="table table-bordered mb-0">
@@ -46,6 +46,38 @@
                         {% endfor %}
                     </tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Personal Information Table -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Personal Information</h5>
+                {% if personal_info_obj and user.role != 'VIEWER' %}
+                    <a href="{% url 'generic-edit' table_name='personalinformation' pk=personal_info_obj.id %}?client_uuid={{ client.client_uuid }}" class="btn btn-ubs btn-sm">Edit Personal Info</a>
+                {% elif not personal_info_obj and user.role != 'VIEWER' %}
+                    <a href="{% url 'generic-add' table_name='personalinformation' %}?client_uuid={{ client.client_uuid }}" class="btn btn-ubs btn-sm">+ Add Personal Info</a>
+                {% endif %}
+            </div>
+            <div class="card-body p-0">
+                {% if personal_info %}
+                <table class="table table-bordered mb-0">
+                    <tbody class="row g-0">
+                        {% for item in personal_info %}
+                            <tr class="col-md-6 d-flex border-bottom-0">
+                                <th class="bg-light p-2" style="width: 40%; border-right: 1px solid #dee2e6;">{{ item.label }}</th>
+                                <td class="p-2 flex-grow-1">{{ item.value|default:"-" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="p-3 text-muted">No personal information found.</div>
+                {% endif %}
             </div>
         </div>
     </div>
@@ -123,10 +155,14 @@
         $.get(`/api/table/${tableName}/${recordId}/`, function (data) {
             let detailsHtml = '<table class="table table-sm table-striped">';
             Object.keys(data).forEach(key => {
+                let value = data[key];
+                if (typeof value === 'object' && value !== null) {
+                    value = JSON.stringify(value, null, 2);
+                }
                 detailsHtml += `
                     <tr>
                         <th style="width: 30%">${key.replace(/_/g, ' ').toUpperCase()}</th>
-                        <td class="text-break font-monospace">${data[key]}</td>
+                        <td class="text-break font-monospace">${value}</td>
                     </tr>
                 `;
             });

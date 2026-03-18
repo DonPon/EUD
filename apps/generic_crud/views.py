@@ -46,11 +46,11 @@ class DynamicViewSetFactory:
                     
                     if filter_field == 'bank_rel':
                         # Special case: resolving bank_rel from client_uuid
-                        from apps.clients.models import Client
+                        from apps.clients.models import BankingRelationship
                         try:
-                            client = Client.objects.get(client_uuid=client_uuid)
-                            qs = qs.filter(bank_rel=client.br_number)
-                        except Client.DoesNotExist:
+                            client = BankingRelationship.objects.get(client_uuid=client_uuid)
+                            qs = qs.filter(bank_rel=client.banking_relationship)
+                        except BankingRelationship.DoesNotExist:
                             qs = qs.none()
                     else:
                         filter_kwarg = {filter_field: client_uuid}
@@ -89,24 +89,24 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
         return exclude
 
     def _apply_dynamic_choices(self, form, model, client_uuid):
-        """Inject dynamic choices for fields like portfolio_uuid."""
-        if 'portfolio_uuid' in form.fields and client_uuid:
+        """Inject dynamic choices for fields like product_uuid."""
+        if 'product_uuid' in form.fields and client_uuid:
             try:
-                from apps.clients.models import Portfolio
-                portfolios = Portfolio.objects.filter(client_uuid=client_uuid)
-                choices = [('', '--- Select Portfolio ---')] + [
-                    (str(p.id), f"{p.portfolio_number} - {p.name}") for p in portfolios
+                from apps.clients.models import Product
+                products = Product.objects.filter(client_uuid=client_uuid)
+                choices = [('', '--- Select Product ---')] + [
+                    (str(p.id), f"{p.product_name} ({p.product_id})") for p in products
                 ]
                 # Replace the field with a choice field
-                form.fields['portfolio_uuid'] = ChoiceField(
+                form.fields['product_uuid'] = ChoiceField(
                     choices=choices, 
-                    label="Portfolio",
+                    label="Product",
                     required=True
                 )
                 # Apply Bootstrap class to the new field
-                form.fields['portfolio_uuid'].widget.attrs.update({'class': 'form-select'})
+                form.fields['product_uuid'].widget.attrs.update({'class': 'form-select'})
             except Exception as e:
-                print(f"DEBUG: Failed to load portfolio choices: {e}")
+                print(f"DEBUG: Failed to load product choices: {e}")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -182,7 +182,7 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
             obj = form.save(commit=False)
             
             # 1. Handle Client Model (Sync ID and client_uuid)
-            if table_name == 'client':
+            if table_name == 'bankingrelationship':
                 if not obj.client_uuid:
                     obj.client_uuid = obj.id
             

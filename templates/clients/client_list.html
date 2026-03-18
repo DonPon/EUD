@@ -1,25 +1,25 @@
 {% extends "base.html" %}
 
-{% block title %}Client List - EUD Manager{% endblock %}
+{% block title %}Banking Relationship List - EUD Manager{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center bg-white">
-                <h5 class="mb-0">Client Registry</h5>
+                <h5 class="mb-0">Banking Relationship Registry</h5>
                 {% if user.role != 'VIEWER' %}
-                    <a href="{% url 'generic-add' table_name='client' %}" class="btn btn-ubs btn-sm">+ New Client</a>
+                    <a href="{% url 'generic-add' table_name='bankingrelationship' %}" class="btn btn-ubs btn-sm">+ New Relationship</a>
                 {% endif %}
             </div>
             <div class="card-body">
                 <table id="client-table" class="table table-striped table-bordered w-100">
                     <thead>
                         <tr>
-                            <th>First Name</th>
-                            <th>Last Name</th>
+                            <th>Relationship Name</th>
                             <th>BR Number</th>
-                            <th>Status</th>
+                            <th>Type of Account</th>
+                            <th>Client Segment</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -35,16 +35,10 @@
 <script>
     $(document).ready(function() {
         const columns = [
-            { data: 'first_name' },
-            { data: 'last_name' },
-            { data: 'br_number' },
-            { 
-                data: 'status',
-                render: function(data) {
-                    const badgeClass = data === 'active' ? 'bg-success' : 'bg-secondary';
-                    return `<span class="badge ${badgeClass}">${data}</span>`;
-                }
-            },
+            { data: 'name_of_banking_relationship' },
+            { data: 'banking_relationship' },
+            { data: 'type_of_account' },
+            { data: 'client_segment' },
             {
                 data: 'client_uuid',
                 orderable: false,
@@ -54,7 +48,7 @@
             }
         ];
 
-        initDataTable('#client-table', '/api/table/client/', columns);
+        initDataTable('#client-table', '/api/table/bankingrelationship/', columns);
     });
 </script>
 {% endblock %}

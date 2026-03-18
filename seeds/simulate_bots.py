@@ -15,7 +15,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'eud_gui.settings')
 django.setup()
 
 from apps.dashboard_bots.models import Bot, BotStatus, BotRecord
-from apps.clients.models import Client
+from apps.clients.models import BankingRelationship
 from django.utils import timezone
 
 def run_simulation(duration_seconds):
@@ -26,10 +26,9 @@ def run_simulation(duration_seconds):
     print(f"Starting Bot Dashboard Simulation")
     print(f"Duration: {duration_seconds} seconds")
     print(f"====================================================")
-    
+
     bots = list(Bot.objects.all()[:2])
-    clients = list(Client.objects.all()[:3])
-    
+    clients = list(BankingRelationship.objects.all()[:3])    
     if not bots:
         print("Error: No bots found in database. Please run 'python seeds/seed_bots.py' first.")
         return
@@ -94,7 +93,7 @@ def run_simulation(duration_seconds):
                     if random.random() < 0.2:
                         if clients:
                             target_client = random.choice(clients)
-                            br_num = target_client.br_number
+                            br_num = target_client.banking_relationship
                             c_type = random.choice(["Individual", "Corporate"])
                         else:
                             br_num = f"BR-{random.randint(100000, 999999)}"
