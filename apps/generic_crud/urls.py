@@ -21,7 +21,7 @@ def get_urlpatterns():
     
     patterns = [
         path('gui/<str:table_name>/add/', GenericFormView.as_view(), name='generic-add'),
-        path('gui/<str:table_name>/<uuid:pk>/edit/', GenericFormView.as_view(), name='generic-edit'),
+        path('gui/<str:table_name>/<pk>/edit/', GenericFormView.as_view(), name='generic-edit'),
     ]
     # Add router URLs to the list
     patterns += router.urls

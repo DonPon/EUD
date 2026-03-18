@@ -1,8 +1,6 @@
 from django.db import models
-from apps.core.models import ClientRelatedModel
-import uuid
 
-class Bot(ClientRelatedModel):
+class Bot(models.Model):
     """Configuration for bots."""
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True, null=True)
@@ -10,14 +8,7 @@ class Bot(ClientRelatedModel):
     def __str__(self):
         return self.name
 
-    def save(self, *args, **kwargs):
-        # Bot is not directly related to one client, using a zero UUID or similar
-        # if not provided. But GEMINI.md mandate says all must have it.
-        if not self.client_uuid:
-            self.client_uuid = uuid.UUID('00000000-0000-0000-0000-000000000000')
-        super().save(*args, **kwargs)
-
-class BotStatus(ClientRelatedModel):
+class BotStatus(models.Model):
     """Current status of each bot."""
     bot = models.CharField(max_length=255, unique=True)
     bot_status = models.CharField(max_length=100)
@@ -29,12 +20,7 @@ class BotStatus(ClientRelatedModel):
     def __str__(self):
         return f"{self.bot}: {self.bot_status}"
 
-    def save(self, *args, **kwargs):
-        if not self.client_uuid:
-            self.client_uuid = uuid.UUID('00000000-0000-0000-0000-000000000000')
-        super().save(*args, **kwargs)
-
-class BotRecord(ClientRelatedModel):
+class BotRecord(models.Model):
     """Execution records for bots."""
     bot_name = models.CharField(max_length=255)
     bank_rel = models.CharField(max_length=255) # Client BR Number
@@ -54,7 +40,7 @@ class BotRecord(ClientRelatedModel):
     def __str__(self):
         return f"{self.bot_name} - {self.bank_rel} - {self.status}"
     
-    def save(self, *args, **kwargs):
+    """def save(self, *args, **kwargs):
         if not self.client_uuid:
             # Try to find client by bank_rel (BR Number) if possible
             from apps.clients.models import Client
@@ -63,4 +49,4 @@ class BotRecord(ClientRelatedModel):
                 self.client_uuid = client.client_uuid
             except Client.DoesNotExist:
                 self.client_uuid = uuid.UUID('00000000-0000-0000-0000-000000000000')
-        super().save(*args, **kwargs)
+        super().save(*args, **kwargs)"""

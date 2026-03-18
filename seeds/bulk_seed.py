@@ -30,7 +30,6 @@ def bulk_seed(num_clients=100):
         
         # Create Client
         client = Client.objects.create(
-            id=client_id,
             client_uuid=client_id,
             first_name=fake.first_name(),
             last_name=fake.last_name(),
@@ -73,7 +72,7 @@ def bulk_seed(num_clients=100):
             )
 
         # Create 1-2 Portfolios
-        for _ in range(random.randint(1, 10)):
+        for _ in range(random.randint(1, 12)):
             portfolio_id = uuid.uuid4()
             Portfolio.objects.create(
                 id=portfolio_id,
@@ -83,7 +82,7 @@ def bulk_seed(num_clients=100):
             )
 
             # Create 1-4 Accounts per Portfolio
-            for _ in range(random.randint(1, 15)):
+            for _ in range(random.randint(1, 2)):
                 Account.objects.create(
                     client_uuid=client_id,
                     portfolio_uuid=portfolio_id,
