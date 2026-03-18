@@ -1,8 +1,26 @@
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, View
+from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import BankingRelationship
 from apps.generic_crud.registry import CrudRegistry
 import json
+
+class CompleteReviewView(LoginRequiredMixin, View):
+    def post(self, request, client_uuid):
+        client = get_object_or_404(BankingRelationship, client_uuid=client_uuid)
+        status_list = client.status or []
+        
+        if 'review_needed' in status_list:
+            # Remove review_needed
+            status_list = [s for s in status_list if s != 'review_needed']
+            # Add review_completed if not already there
+            if 'review_completed' not in status_list:
+                status_list.append('review_completed')
+            
+            client.status = status_list
+            client.save()
+            
+        return redirect('clients:detail', client_uuid=client_uuid)
 
 class ClientListView(LoginRequiredMixin, ListView):
     model = BankingRelationship
@@ -20,6 +38,23 @@ class ClientDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         client = self.get_object()
         
+        # Pre-format status badges for header
+        status_badges = []
+        choices_dict = dict(BankingRelationship.STATUS_CHOICES)
+        for s in (client.status or []):
+            cls = 'bg-secondary'
+            if s == 'review_needed': cls = 'bg-warning text-dark'
+            elif s == 'review_completed': cls = 'bg-success'
+            elif 'ready_for_bot' in s: cls = 'bg-info text-dark'
+            elif s == 'completed': cls = 'bg-success'
+            elif s == 'pending_docs': cls = 'bg-danger'
+            
+            status_badges.append({
+                'label': choices_dict.get(s, s.replace('_', ' ').upper()),
+                'class': cls
+            })
+        context['status_badges'] = status_badges
+
         # Fetch all registered tables metadata for dynamic rendering
         registry = CrudRegistry.get_registered_models()
         
@@ -33,8 +68,18 @@ class ClientDetailView(LoginRequiredMixin, DetailView):
                 continue
             
             value = getattr(client, field.name)
-            # Format choices if applicable
-            if field.choices:
+            
+            # Format JSON list fields (e.g. status)
+            if isinstance(value, list):
+                choices_attr = f"{field.name.upper()}_CHOICES"
+                if hasattr(BankingRelationship, choices_attr):
+                    choices_dict = dict(getattr(BankingRelationship, choices_attr))
+                    value = ", ".join([choices_dict.get(v, v) for v in value])
+                else:
+                    value = ", ".join(map(str, value))
+            
+            # Format single choices if applicable
+            elif field.choices:
                 value = dict(field.choices).get(value, value)
             
             client_info.append({
