@@ -91,17 +91,43 @@ def register_clients_models():
 
     CrudRegistry.register(Product, {
         'section': 'np',
-        'fields': ['id', 'client_uuid', 'product_name', 'product_id', 'status'],
-        'list_display': ['product_name', 'product_id', 'status'],
-        'filter_fields': ['status'],
+        'fields': [
+            'id', 'client_uuid', 'portfolio_id', 'portfolio_name', 'email_waiver',
+            'reference_currency', 'investment_service', 'a_s_authorization_path',
+            'investment_strategy', 'ip_risk_tolerance', 'investment_amount',
+            'selected_service', 'all_in', 'sustainable_investing',
+            'sustainability_preference', 'focus_equity', 'alternative_investment',
+            'direct_instrument', 'initial_amount', 'foreign_hedging',
+            'transaction_confirmation', 'empty_kyc_form_path', 'investor_profile_path',
+            'myway_module_path', 'ntac', 'reporting_loss', 'share_focus',
+            'date_of_alignment', 'end_date_alignment', 'type_of_business_settlement',
+            'special_conditions', 'discount_applied', 'discount_amount_percent',
+            'flat_fee_applied', 'flat_fee_percent', 'invested_assets', 'income_pa',
+            'current_return_on_assets', 'target_roa', 'net_new_money_potential',
+            'business_case_communication', 'fee_model', 'mandate_fee',
+            'service_and_execution', 'no_discount', 'no_discount_amount_percent',
+            'no_flat_fee', 'no_flat_fee_amount', 'transaction_fee',
+            'standard_fee_discount', 'shares_fee', 'shares_fee_amount',
+            'shares_discount', 'shares_discount_amount', 'investment_funds_fee',
+            'investment_fund_fee_amount', 'investment_fund_discount',
+            'investment_fund_discount_amount', 'fixed_income_fee',
+            'fixed_income_fee_amount', 'fixed_income_discount',
+            'fixed_income_discount_amount', 'fixed_income_investment_funds_fee',
+            'fixed_income_investment_funds_fee_amount', 'fixed_income_investment_funds_discount',
+            'fixed_income_investment_funds_discount_amount', 'shares_investment_funds_fee',
+            'shares_investment_funds_fee_amount', 'shares_investment_funds_discount',
+            'shares_investment_funds_discount_amount', 'status'
+        ],
+        'list_display': ['portfolio_name', 'portfolio_id', 'investment_amount', 'reference_currency', 'status'],
+        'filter_fields': ['status', 'reference_currency', 'investment_service'],
     })
 
     CrudRegistry.register(Account, {
         'section': 'np',
-        'fields': ['id', 'client_uuid', 'product_uuid', 'product_info', 'account_number', 'currency', 'balance', 'created_at'],
-        'list_display': ['account_number', 'product_info', 'currency', 'balance'],
-        'filter_fields': ['client_uuid', 'product_uuid', 'currency'],
-        'search_fields': ['account_number', 'currency', 'balance'],
+        'fields': ['id', 'client_uuid', 'product_uuid', 'product_info', 'reference_currency', 'created_at'],
+        'list_display': ['product_info', 'reference_currency'],
+        'filter_fields': ['client_uuid', 'product_uuid', 'reference_currency'],
+        'search_fields': ['reference_currency'],
     })
 
     CrudRegistry.register(ClientAdvisor, {

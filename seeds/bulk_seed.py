@@ -29,7 +29,7 @@ fake = Faker()
 def bulk_seed(num_clients=20, num_le_clients=10):
     print(f"Starting bulk seed of {num_clients} NP and {num_le_clients} LE banking relationships...")
 
-    status_options = ['review_needed', 'ready_for_bot_1', 'ready_for_bot_2', 'ready_for_bot_3','ready_for_bot_4', 'ready_for_bot_5', 'ready_for_bot_6', 'ready_for_bot_7', 'ready_for_bot_8', 'completed']
+    status_options = ['pending_review', 'ready_for_bot_1', 'ready_for_bot_2', 'ready_for_bot_3','ready_for_bot_4', 'ready_for_bot_5', 'ready_for_bot_6', 'ready_for_bot_7', 'ready_for_bot_8', 'completed']
 
     # --- Seed Natural Person (NP) Clients ---
     all_client_uuids = []
@@ -155,8 +155,74 @@ def bulk_seed(num_clients=20, num_le_clients=10):
         for _ in range(random.randint(1, 5)):
             product_obj = Product.objects.create(
                 client_uuid=client_uuid,
-                product_name=random.choice(['Savings Account', 'Credit Card', 'Mortgage', 'Investment Fund', 'Portfolio']),
-                product_id=fake.bothify(text='PROD-####'),
+                portfolio_id=fake.bothify(text='PORT-####'),
+                portfolio_name=fake.company() + " Portfolio",
+                email_waiver=random.choice([True, False]),
+                reference_currency=random.choice(['USD', 'EUR', 'GBP', 'CHF']),
+                investment_service=random.choice(['Asset Management', 'Wealth Management', 'Advisory']),
+                a_s_authorization_path=f"/path/to/auth/{fake.word()}.pdf",
+                investment_strategy=random.choice(['Conservative', 'Balanced', 'Growth', 'Aggressive']),
+                ip_risk_tolerance=random.choice(['Low', 'Medium', 'High']),
+                investment_amount=random.uniform(10000.0, 1000000.0),
+                selected_service=random.choice(['Basic', 'Premium', 'Elite']),
+                all_in=random.choice([True, False]),
+                sustainable_investing=random.choice([True, False]),
+                sustainability_preference=random.choice(['Environmental', 'Social', 'Governance']),
+                focus_equity=random.choice([True, False]),
+                alternative_investment=random.choice([True, False]),
+                direct_instrument=random.choice([True, False]),
+                initial_amount=random.uniform(5000.0, 500000.0),
+                foreign_hedging=random.choice(['Discretion of UBS', 'None for share allocation']),
+                transaction_confirmation=random.choice([True, False]),
+                empty_kyc_form_path=f"/path/to/kyc/{fake.word()}.pdf",
+                investor_profile_path=f"/path/to/profile/{fake.word()}.pdf",
+                myway_module_path=f"/path/to/myway/{fake.word()}.pdf",
+                ntac=random.choice(['Excluded', 'Permitted']),
+                reporting_loss=random.choice(['Monthly', 'Quarterly']),
+                share_focus=random.choice(['EMU: Predominantly...', 'Global equity...']),
+                date_of_alignment=fake.date_between(start_date='-1y', end_date='today'),
+                end_date_alignment=fake.date_between(start_date='today', end_date='+1y'),
+                type_of_business_settlement=random.choice(['Monthly', 'Individual']),
+                special_conditions=fake.paragraph(),
+                discount_applied=random.choice([True, False]),
+                discount_amount_percent=random.uniform(0.0, 50.0),
+                flat_fee_applied=random.choice([True, False]),
+                flat_fee_percent=random.uniform(0.1, 2.0),
+                invested_assets=random.uniform(100000.0, 5000000.0),
+                income_pa=random.uniform(1000.0, 50000.0),
+                current_return_on_assets=random.uniform(0.01, 0.10),
+                target_roa=random.uniform(0.05, 0.15),
+                net_new_money_potential=random.uniform(0.0, 1000000.0),
+                business_case_communication=random.choice(['Option 1 (in person)', 'Option 2 (online)']),
+                fee_model='Advice plus transaction fee',
+                mandate_fee=random.choice([True, False]),
+                service_and_execution=random.choice(['UBS Manage', 'UBS Advice']),
+                no_discount=random.choice([True, False]),
+                no_discount_amount_percent=random.uniform(0.0, 10.0),
+                no_flat_fee=random.choice([True, False]),
+                no_flat_fee_amount=random.uniform(100.0, 1000.0),
+                transaction_fee=random.uniform(10.0, 100.0),
+                standard_fee_discount=random.uniform(0.0, 20.0),
+                shares_fee=random.choice([True, False]),
+                shares_fee_amount=random.uniform(50.0, 500.0),
+                shares_discount=random.choice([True, False]),
+                shares_discount_amount=random.uniform(10.0, 100.0),
+                investment_funds_fee=random.choice([True, False]),
+                investment_fund_fee_amount=random.uniform(50.0, 500.0),
+                investment_fund_discount=random.choice([True, False]),
+                investment_fund_discount_amount=random.uniform(10.0, 100.0),
+                fixed_income_fee=random.choice([True, False]),
+                fixed_income_fee_amount=random.uniform(50.0, 500.0),
+                fixed_income_discount=random.choice([True, False]),
+                fixed_income_discount_amount=random.uniform(10.0, 100.0),
+                fixed_income_investment_funds_fee=random.choice([True, False]),
+                fixed_income_investment_funds_fee_amount=random.uniform(50.0, 500.0),
+                fixed_income_investment_funds_discount=random.choice([True, False]),
+                fixed_income_investment_funds_discount_amount=random.uniform(10.0, 100.0),
+                shares_investment_funds_fee=random.choice([True, False]),
+                shares_investment_funds_fee_amount=random.uniform(50.0, 500.0),
+                shares_investment_funds_discount=random.choice([True, False]),
+                shares_investment_funds_discount_amount=random.uniform(10.0, 100.0),
                 status=random.choice(['Active', 'Pending', 'Closed'])
             )
 
@@ -165,9 +231,7 @@ def bulk_seed(num_clients=20, num_le_clients=10):
                 Account.objects.create(
                     client_uuid=client_uuid,
                     product_uuid=product_obj.id,
-                    account_number=fake.iban(),
-                    currency=random.choice(['USD', 'EUR', 'GBP', 'CHF', 'JPY']),
-                    balance=random.uniform(1000.0, 500000.0)
+                    reference_currency=random.choice(['USD', 'EUR', 'GBP', 'CHF', 'JPY']),
                 )
 
         # 10. Create Meeting Preparation

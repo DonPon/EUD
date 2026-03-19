@@ -5,7 +5,7 @@ from apps.core.models import ClientRelatedModel
 class LE_BankingRelationship(ClientRelatedModel):
     """The Hub for Legal Entity Clients (Star Schema)."""
     STATUS_CHOICES = [
-        ('review_needed', 'Review Needed'),
+        ('pending_review', 'Pending Review'),
         ('review_completed', 'Review Completed'),
         ('ready_for_bot_1', 'Ready for Bot 1'),
         ('ready_for_bot_2', 'Ready for Bot 2'),
