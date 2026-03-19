@@ -110,7 +110,7 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        table_name = self.kwargs.get('table_name')
+        table_name = self.kwargs.get('table_name', '').lower()
         record_id = self.kwargs.get('pk')
         config = CrudRegistry.get_config(table_name)
         
@@ -175,7 +175,7 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
         if request.user.role == 'VIEWER':
             return redirect(reverse('clients:list'))
             
-        table_name = self.kwargs.get('table_name')
+        table_name = self.kwargs.get('table_name', '').lower()
         record_id = self.kwargs.get('pk')
         config = CrudRegistry.get_config(table_name)
         model = config['model']

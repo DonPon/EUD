@@ -98,7 +98,7 @@ class HistoryListView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        table_name = self.kwargs.get('table_name')
+        table_name = self.kwargs.get('table_name', '').lower()
         client_uuid = self.request.GET.get('client_uuid')
         
         config = CrudRegistry.get_config(table_name)
