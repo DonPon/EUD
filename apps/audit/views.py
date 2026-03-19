@@ -106,6 +106,7 @@ class HistoryListView(TemplateView):
             model = config['model']
             context['verbose_name'] = model._meta.verbose_name.title()
             context['verbose_name_plural'] = model._meta.verbose_name_plural.title()
+            context['section'] = config.get('section', 'np')
         
         context['table_name'] = table_name
         context['client_uuid'] = client_uuid

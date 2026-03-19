@@ -49,9 +49,17 @@
 
                     <div class="d-flex justify-content-between mt-4">
                         {% if client_uuid %}
-                            <a href="{% url 'clients:detail' client_uuid=client_uuid %}" class="btn btn-outline-secondary">Cancel</a>
+                            {% if section == 'le' %}
+                                <a href="{% url 'clients_le:detail' client_uuid=client_uuid %}" class="btn btn-outline-secondary">Cancel</a>
+                            {% else %}
+                                <a href="{% url 'clients:detail' client_uuid=client_uuid %}" class="btn btn-outline-secondary">Cancel</a>
+                            {% endif %}
                         {% else %}
-                            <a href="{% url 'clients:list' %}" class="btn btn-outline-secondary">Cancel</a>
+                            {% if section == 'le' %}
+                                <a href="{% url 'clients_le:list' %}" class="btn btn-outline-secondary">Cancel</a>
+                            {% else %}
+                                <a href="{% url 'clients:list' %}" class="btn btn-outline-secondary">Cancel</a>
+                            {% endif %}
                         {% endif %}
                         <button type="submit" class="btn btn-primary">
                             {% if is_edit %}Save Changes{% else %}Create {{ verbose_name }}{% endif %}

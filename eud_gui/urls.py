@@ -9,6 +9,7 @@ urlpatterns = [
     path('api/', include('apps.generic_crud.urls')),
     path('api/audit/', include('apps.audit.urls')),
     path('', include('apps.clients.urls')),
+    path('le/', include('apps.clients_le.urls')),
     path('users/', include('apps.users.urls')),
     path('dashboard/', include('apps.dashboard_bots.urls')),
 ]

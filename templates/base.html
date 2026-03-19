@@ -43,7 +43,10 @@
                         <a class="nav-link" href="{% url 'dashboard:index' %}">Dashboard</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'clients:list' %}">Clients</a>
+                        <a class="nav-link" href="{% url 'clients:list' %}">NP Clients</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'clients_le:list' %}">LE Clients</a>
                     </li>
                     {% if user.role == 'ADMIN' %}
                     <li class="nav-item">

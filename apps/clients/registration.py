@@ -9,6 +9,7 @@ def register_clients_models():
     """Register all Bank Client models for generic CRUD."""
     
     CrudRegistry.register(BankingRelationship, {
+        'section': 'np',
         'fields': [
             'id', 'client_uuid', 'banking_relationship', 'technical_account', 'additional_br',
             'distribution_list', 'name_of_banking_relationship', 'type_of_account',
@@ -24,6 +25,7 @@ def register_clients_models():
     })
 
     CrudRegistry.register(PersonalInformation, {
+        'section': 'np',
         'fields': [
             'id', 'client_uuid', 'first_name', 'last_name', 'date_of_birth',
             'place_of_birth', 'country_of_birth', 'marital_status', 'occupation_sector',
@@ -35,6 +37,7 @@ def register_clients_models():
     })
 
     CrudRegistry.register(Nationality, {
+        'section': 'np',
         'fields': [
             'id', 'client_uuid', 'is_main_nationality', 'nationality', 'nci', 'id_type',
             'fiscal_code', 'release_authority', 'release_date', 'expiry_date'
@@ -44,6 +47,7 @@ def register_clients_models():
     })
 
     CrudRegistry.register(Address, {
+        'section': 'np',
         'fields': [
             'id', 'client_uuid', 'person_entity', 'type_of_address', 'first_name', 'last_name',
             'street', 'no', 'postal_code', 'city', 'province', 'country', 'documents_sent'
@@ -54,11 +58,13 @@ def register_clients_models():
     })
 
     CrudRegistry.register(TIN, {
+        'section': 'np',
         'fields': ['id', 'client_uuid', 'aei_tin'],
         'list_display': ['aei_tin'],
     })
 
     CrudRegistry.register(Communication, {
+        'section': 'np',
         'fields': [
             'id', 'client_uuid', 'first_and_last_name', 'landline', 'phone', 'phone_number',
             'mobile_number', 'email_address', 'fax_address', 'pec_address'
@@ -68,11 +74,13 @@ def register_clients_models():
     })
 
     CrudRegistry.register(EBanking, {
+        'section': 'np',
         'fields': ['id', 'client_uuid', 'has_ebanking', 'contract_number'],
         'list_display': ['has_ebanking', 'contract_number'],
     })
 
     CrudRegistry.register(Relationship, {
+        'section': 'np',
         'fields': [
             'id', 'client_uuid', 'child_unique_id', 'type_of_relationship',
             'type_of_access', 'level_of_access', 'relation_with_owner'
@@ -82,12 +90,14 @@ def register_clients_models():
     })
 
     CrudRegistry.register(Product, {
+        'section': 'np',
         'fields': ['id', 'client_uuid', 'product_name', 'product_id', 'status'],
         'list_display': ['product_name', 'product_id', 'status'],
         'filter_fields': ['status'],
     })
 
     CrudRegistry.register(Account, {
+        'section': 'np',
         'fields': ['id', 'client_uuid', 'product_uuid', 'product_info', 'account_number', 'currency', 'balance', 'created_at'],
         'list_display': ['account_number', 'product_info', 'currency', 'balance'],
         'filter_fields': ['client_uuid', 'product_uuid', 'currency'],
@@ -95,12 +105,14 @@ def register_clients_models():
     })
 
     CrudRegistry.register(ClientAdvisor, {
+        'section': 'np',
         'fields': ['id', 'client_uuid', 'first_name', 'last_name', 'email', 'desk', 'branch', 'role'],
         'list_display': ['last_name', 'first_name', 'role', 'branch'],
         'filter_fields': ['role', 'branch'],
     })
 
     CrudRegistry.register(MeetingPreparation, {
+        'section': 'np',
         'fields': [
             'id', 'client_uuid', 'place', 'date_of_meeting', 'time',
             'hospitality', 'performance_since_beginning'
@@ -109,6 +121,7 @@ def register_clients_models():
     })
 
     CrudRegistry.register(AdditionalFormDE, {
+        'section': 'np',
         'fields': [
             'id', 'client_uuid', 'request_to_become_professional', 'forward_trading_transactions',
             'exemption_order', 'last_name', 'first_name', 'identification_number',
