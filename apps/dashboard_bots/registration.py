@@ -19,6 +19,7 @@ def register_dashboard_models():
     })
     
     CrudRegistry.register(BotRecord, {
+        'section': ['np', 'le'],
         'fields': [
             'id', 'bot_name', 'bank_rel', 'start_time', 'end_time', 
             'status', 'message', 'client_type', 't_number', 'run_identifier', 
