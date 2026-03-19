@@ -16,6 +16,7 @@ django.setup()
 
 from apps.dashboard_bots.models import Bot, BotStatus, BotRecord
 from apps.clients.models import BankingRelationship
+from apps.clients_le.models import LE_BankingRelationship
 from django.utils import timezone
 
 def run_simulation(duration_seconds):
@@ -28,7 +29,12 @@ def run_simulation(duration_seconds):
     print(f"====================================================")
 
     bots = list(Bot.objects.all()[:2])
-    clients = list(BankingRelationship.objects.all()[:3])    
+    
+    # Load regular clients and LE clients
+    regular_clients = list(BankingRelationship.objects.all()[:3])
+    le_clients = list(LE_BankingRelationship.objects.all()[:2])
+    clients = regular_clients + le_clients
+
     if not bots:
         print("Error: No bots found in database. Please run 'python seeds/seed_bots.py' first.")
         return
@@ -36,7 +42,7 @@ def run_simulation(duration_seconds):
     if not clients:
         print("Warning: No clients found in database. Using dummy BR numbers.")
     else:
-        print(f"Loaded {len(clients)} clients for case processing simulation.")
+        print(f"Loaded {len(clients)} clients ({len(regular_clients)} Regular, {len(le_clients)} LE) for case processing simulation.")
 
     start_time = time.time()
     
@@ -94,7 +100,13 @@ def run_simulation(duration_seconds):
                         if clients:
                             target_client = random.choice(clients)
                             br_num = target_client.banking_relationship
-                            c_type = random.choice(["Individual", "Corporate"])
+                            
+                            # Determine client type based on model
+                            if isinstance(target_client, LE_BankingRelationship):
+                                c_type = "Corporate (LE)"
+                            else:
+                                # For regular clients, we could use their segment or just random
+                                c_type = random.choice(["Individual", "Corporate"])
                         else:
                             br_num = f"BR-{random.randint(100000, 999999)}"
                             c_type = "Simulation"
