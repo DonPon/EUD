@@ -66,7 +66,7 @@ class ClientDetailView(LoginRequiredMixin, DetailView):
         context['status_badges'] = status_badges
 
         # Fetch all registered tables metadata for dynamic rendering
-        registry = CrudRegistry.get_registered_models()
+        registry = CrudRegistry.get_registered_models(section='np')
         
         # 1. Prepare Client Information (Top Table)
         client_config = registry.get('bankingrelationship', {}).get('config', {})

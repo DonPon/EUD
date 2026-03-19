@@ -1,28 +1,27 @@
 {% extends "base.html" %}
 
-{% block title %}Banking Relationship List - EUD Manager{% endblock %}
+{% block title %}LE Banking Relationship List - EUD Manager{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-12">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center bg-white">
-                <h5 class="mb-0">Natural Person Banking Relationship</h5>
+                <h5 class="mb-0">Legal Entity Banking Relationship</h5>
                 <div>
                     {% if user.role != 'VIEWER' %}
                         <button type="button" class="btn btn-warning btn-sm me-2" id="bulk-edit-btn" disabled data-bs-toggle="modal" data-bs-target="#bulkStatusModal">Bulk Edit Status</button>
-                        <a href="{% url 'generic-add' table_name='bankingrelationship' %}" class="btn btn-ubs btn-sm">+ New Relationship</a>
+                        <a href="{% url 'generic-add' table_name='le_bankingrelationship' %}" class="btn btn-ubs btn-sm">+ New Relationship</a>
                     {% endif %}
                 </div>
             </div>
             <div class="card-body">
-                <table id="client-table" class="table table-striped table-bordered w-100">
+                <table id="le-client-table" class="table table-striped table-bordered w-100">
                     <thead>
                         <tr>
                             <th style="width: 30px;"><input type="checkbox" id="select-all"></th>
-                            <th>Relationship Name</th>
+                            <th>Legal Name</th>
                             <th>BR Number</th>
-                            <th>Type of Account</th>
                             <th>Client Segment</th>
                             <th>Status</th>
                             <th>Actions</th>
@@ -59,7 +58,6 @@
                             <option value="ready_for_bot_6">Ready for Bot 6</option>
                             <option value="ready_for_bot_7">Ready for Bot 7</option>
                             <option value="ready_for_bot_8">Ready for Bot 8</option>
-                            <option value="pending_docs">Pending Documents</option>
                             <option value="completed">Completed</option>
                         </select>
                         <small class="text-muted">Hold Ctrl to select multiple</small>
@@ -86,9 +84,13 @@
                     return `<input type="checkbox" class="client-checkbox" value="${data}">`;
                 }
             },
-            { data: 'name_of_banking_relationship' },
+            { 
+                data: 'legal_name',
+                render: function(data) {
+                    return `<strong>${data || 'N/A'}</strong>`;
+                }
+            },
             { data: 'banking_relationship' },
-            { data: 'type_of_account' },
             { data: 'client_segment' },
             { 
                 data: 'status',
@@ -101,7 +103,6 @@
                         if (s === 'review_completed') cls = 'bg-success';
                         if (s.startsWith('ready_for_bot')) cls = 'bg-info text-dark';
                         if (s === 'completed') cls = 'bg-success';
-                        if (s === 'pending_docs') cls = 'bg-danger';
                         return `<span class="badge ${cls} me-1">${label}</span>`;
                     }).join('');
                 }
@@ -110,12 +111,12 @@
                 data: 'client_uuid',
                 orderable: false,
                 render: function(data) {
-                    return `<a href="/clients/${data}/" class="btn btn-outline-dark btn-sm">View Details</a>`;
+                    return `<a href="/le/${data}/" class="btn btn-outline-dark btn-sm">View Details</a>`;
                 }
             }
         ];
 
-        const table = initDataTable('#client-table', '/api/table/bankingrelationship/', columns);
+        const table = initDataTable('#le-client-table', '/api/table/le_bankingrelationship/', columns);
 
         // Handle Select All
         $('#select-all').on('change', function() {
@@ -125,7 +126,6 @@
 
         $(document).on('change', '.client-checkbox', function() {
             updateBulkBtn();
-            // Update select-all checkbox state
             const allChecked = $('.client-checkbox').length === $('.client-checkbox:checked').length;
             $('#select-all').prop('checked', allChecked);
         });
@@ -136,14 +136,13 @@
             $('#selected-count').text(count);
         }
 
-        // Handle Bulk Submit
         $('#bulk-status-form').on('submit', function(e) {
             e.preventDefault();
             const selectedIds = $('.client-checkbox:checked').map(function() { return this.value; }).get();
             const statuses = $('#bulk-statuses').val() || [];
             
             $.ajax({
-                url: "{% url 'clients:bulk-status-update' %}",
+                url: "{% url 'clients_le:bulk-status-update' %}",
                 method: "POST",
                 data: {
                     'client_ids[]': selectedIds,

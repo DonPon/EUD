@@ -20,20 +20,19 @@ from apps.clients.models import (
     Communication, ClientAdvisor, Nationality, TIN, EBanking,
     Product, MeetingPreparation, Relationship, Account
 )
+from apps.clients_le.models import (
+    LE_BankingRelationship, LE_Information, LE_Address, LE_Communication
+)
 
 fake = Faker()
 
-def bulk_seed(num_clients=20):
-    print(f"Starting bulk seed of {num_clients} banking relationships...")
-
-    # Optional. Clear existing data for a clean test environment
-    # BankingRelationship.objects.all().delete() 
-
-    # Collect client_uuids to create relationships later
-    all_client_uuids = []
+def bulk_seed(num_clients=20, num_le_clients=10):
+    print(f"Starting bulk seed of {num_clients} NP and {num_le_clients} LE banking relationships...")
 
     status_options = ['review_needed', 'ready_for_bot_1', 'ready_for_bot_2', 'ready_for_bot_3','ready_for_bot_4', 'ready_for_bot_5', 'ready_for_bot_6', 'ready_for_bot_7', 'ready_for_bot_8', 'completed']
 
+    # --- Seed Natural Person (NP) Clients ---
+    all_client_uuids = []
     for i in range(num_clients):
         client_uuid = uuid.uuid4()
         all_client_uuids.append(client_uuid)
@@ -184,7 +183,63 @@ def bulk_seed(num_clients=20):
             )
 
         if (i + 1) % 10 == 0:
-            print(f"Processed {i + 1} clients...")
+            print(f"Processed {i + 1} NP clients...")
+
+    # --- Seed Legal Entity (LE) Clients ---
+    for i in range(num_le_clients):
+        le_client_uuid = uuid.uuid4()
+        legal_name = fake.company()
+        
+        # 1. LE Hub
+        LE_BankingRelationship.objects.create(
+            client_uuid=le_client_uuid,
+            legal_name=legal_name,
+            banking_relationship=f"LE-BR-{random.randint(100000, 999999)}",
+            technical_account=random.choice([True, False]),
+            client_segment=random.choice(['Institutional', 'SME', 'Multinational']),
+            code_ksc=random.choice(['541', '561']),
+            language=random.choice(['English', 'German']),
+            status=random.sample(status_options, k=random.randint(0, 2))
+        )
+
+        # 2. LE Information
+        LE_Information.objects.create(
+            client_uuid=le_client_uuid,
+            legal_name=legal_name,
+            legal_form=random.choice(['AG', 'GmbH', 'Foundation', 'Trust']),
+            registration_number=fake.bothify(text='REG-#######'),
+            country_of_registration=fake.country(),
+            date_of_registration=fake.past_date(),
+            tax_id=fake.bothify(text='VAT-#########'),
+            lei_code=fake.bothify(text='LEI-####################'),
+            industry_sector=fake.bs(),
+            website=fake.url()
+        )
+
+        # 3. LE Addresses
+        for addr_type in ['Registered Office', 'Business Address']:
+            LE_Address.objects.create(
+                client_uuid=le_client_uuid,
+                type_of_address=addr_type,
+                street=fake.street_address(),
+                no=fake.building_number(),
+                postal_code=fake.zipcode(),
+                city=fake.city(),
+                country=fake.country()
+            )
+
+        # 4. LE Communications
+        for dept in ['Finance', 'Legal', 'Operations']:
+            LE_Communication.objects.create(
+                client_uuid=le_client_uuid,
+                department=dept,
+                contact_person=fake.name(),
+                phone_number=fake.phone_number(),
+                email_address=fake.company_email()
+            )
+
+        if (i + 1) % 5 == 0:
+            print(f"Processed {i + 1} LE clients...")
 
     # 11. Create Relationships (Edge Table)
     print("Creating relationships...")

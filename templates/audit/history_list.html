@@ -13,8 +13,11 @@
                         {%if record_id %}| Specific Record: {{ record_id }}{% endif %}</p>
                 </div>
                 <div>
-                    <a href="{% url 'clients:detail' client_uuid=client_uuid %}" class="btn btn-outline-dark">Back to
-                        Client</a>
+                    {% if section == 'le' %}
+                        <a href="{% url 'clients_le:detail' client_uuid=client_uuid %}" class="btn btn-outline-dark">Back to Client</a>
+                    {% else %}
+                        <a href="{% url 'clients:detail' client_uuid=client_uuid %}" class="btn btn-outline-dark">Back to Client</a>
+                    {% endif %}
                 </div>
             </div>
         </div>

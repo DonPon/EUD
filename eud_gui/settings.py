@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'apps.core',
     'apps.users',
     'apps.clients',
+    'apps.clients_le',
     'apps.generic_crud',
     'apps.audit',
     'apps.dashboard_bots',

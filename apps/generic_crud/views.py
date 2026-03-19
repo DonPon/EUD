@@ -166,7 +166,8 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
             'verbose_name': model._meta.verbose_name.title(),
             'is_edit': bool(record_id),
             'client_uuid': client_uuid or (instance.client_uuid if instance and hasattr(instance, 'client_uuid') else None),
-            'user_role': self.request.user.role
+            'user_role': self.request.user.role,
+            'section': config.get('section', 'np')
         })
         return context
 
@@ -178,6 +179,7 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
         record_id = self.kwargs.get('pk')
         config = CrudRegistry.get_config(table_name)
         model = config['model']
+        section = config.get('section', 'np')
         
         exclude = self._get_exclude_fields(model, table_name)
         instance = model.objects.get(id=record_id) if record_id else None
@@ -216,7 +218,7 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
             obj = form.save(commit=False)
             
             # 1. Handle Client Model (Sync ID and client_uuid)
-            if table_name == 'bankingrelationship':
+            if table_name in ['bankingrelationship', 'le_bankingrelationship']:
                 if not obj.client_uuid:
                     obj.client_uuid = obj.id
             
@@ -228,11 +230,17 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
             obj.save()
             print(f"DEBUG: Successfully saved {table_name}: {obj.id}")
             
+            # Dynamic redirection based on section
             if hasattr(obj, 'client_uuid') and obj.client_uuid:
+                if section == 'le':
+                    return redirect(reverse('clients_le:detail', kwargs={'client_uuid': obj.client_uuid}))
                 return redirect(reverse('clients:detail', kwargs={'client_uuid': obj.client_uuid}))
             
             if table_name == 'user':
                 return redirect(reverse('users:management'))
+            
+            if section == 'le':
+                return redirect(reverse('clients_le:list'))
             return redirect(reverse('clients:list'))
             
         print(f"DEBUG: Form validation failed for {table_name}: {form.errors}")

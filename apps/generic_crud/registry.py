@@ -6,6 +6,7 @@ class CrudRegistry:
         """
         Registers a model for CRUD generation.
         config can include:
+            - section: The UI section this model belongs to (e.g. 'np', 'le')
             - fields: list of fields to include in serializers/views
             - list_display: fields to show in DataTables
             - search_fields: fields to include in search
@@ -19,7 +20,19 @@ class CrudRegistry:
         return model_class
 
     @classmethod
-    def get_registered_models(cls):
+    def get_registered_models(cls, section=None):
+        """Returns registered models, optionally filtered by section."""
+        if section:
+            filtered = {}
+            for name, details in cls._registry.items():
+                model_section = details['config'].get('section')
+                # Check if requested section matches a single value or is within a list
+                if isinstance(model_section, list):
+                    if section in model_section:
+                        filtered[name] = details
+                elif model_section == section:
+                    filtered[name] = details
+            return filtered
         return cls._registry
 
     @classmethod
