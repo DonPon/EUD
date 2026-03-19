@@ -21,7 +21,7 @@
                     </p>
                 </div>
                 <div>
-                    {% if 'review_needed' in client.status %}
+                    {% if 'pending_review' in client.status %}
                     <form action="{% url 'clients:complete-review' client_uuid=client.client_uuid %}" method="POST" class="d-inline">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-warning btn-sm fw-bold px-3">Review Completed</button>

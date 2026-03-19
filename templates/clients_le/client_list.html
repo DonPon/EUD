@@ -48,7 +48,7 @@
                     <div class="mb-3">
                         <label class="form-label">New Statuses</label>
                         <select id="bulk-statuses" class="form-select" multiple size="8">
-                            <option value="review_needed">Review Needed</option>
+                            <option value="pending_review">Pending Review</option>
                             <option value="review_completed">Review Completed</option>
                             <option value="ready_for_bot_1">Ready for Bot 1</option>
                             <option value="ready_for_bot_2">Ready for Bot 2</option>
@@ -99,7 +99,7 @@
                     return data.map(s => {
                         let cls = 'bg-secondary';
                         let label = s.replace(/_/g, ' ').toUpperCase();
-                        if (s === 'review_needed') cls = 'bg-warning text-dark';
+                        if (s === 'pending_review') cls = 'bg-warning text-dark';
                         if (s === 'review_completed') cls = 'bg-success';
                         if (s.startsWith('ready_for_bot')) cls = 'bg-info text-dark';
                         if (s === 'completed') cls = 'bg-success';

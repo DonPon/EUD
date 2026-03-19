@@ -39,7 +39,7 @@ class BankingRelationship(ClientRelatedModel):
     ]
 
     STATUS_CHOICES = [
-        ('review_needed', 'Review Needed'),
+        ('pending_review', 'Pending Review'),
         ('review_completed', 'Review Completed'),
         ('ready_for_bot_1', 'Ready for Bot 1'),
         ('ready_for_bot_2', 'Ready for Bot 2'),
@@ -274,19 +274,118 @@ class Relationship(ClientRelatedModel):
         return f"Relation: {self.client_uuid} -> {self.child_unique_id}"
 
 class Product(ClientRelatedModel):
+    # Choices
+    FOREIGN_HEDGING_CHOICES = [
+        ('Discretion of UBS', 'Discretion of UBS'),
+        ('None for share allocation', 'None for share allocation'),
+    ]
+    NTAC_CHOICES = [
+        ('Excluded', 'Excluded'),
+        ('Permitted', 'Permitted'),
+    ]
+    REPORTING_LOSS_CHOICES = [
+        ('Monthly', 'Monthly'),
+        ('Quarterly', 'Quarterly'),
+    ]
+    SHARE_FOCUS_CHOICES = [
+        ('EMU: Predominantly...', 'EMU: Predominantly...'),
+        ('Global equity...', 'Global equity...'),
+    ]
+    TYPE_OF_BUSINESS_SETTLEMENT_CHOICES = [
+        ('Monthly', 'Monthly'),
+        ('Individual', 'Individual'),
+    ]
+    BUSINESS_CASE_COMMUNICATION_CHOICES = [
+        ('Option 1 (in person)', 'Option 1 (in person)'),
+        ('Option 2 (online)', 'Option 2 (online)'),
+    ]
+    FEE_MODEL_CHOICES = [
+        ('Advice plus transaction fee', 'Advice plus transaction fee'),
+        # Add more if needed
+    ]
+    SERVICE_AND_EXECUTION_CHOICES = [
+        ('UBS Manage', 'UBS Manage'),
+        ('UBS Advice', 'UBS Advice'),
+        # Add more if needed
+    ]
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    product_name = models.CharField(max_length=255, blank=True)
-    product_id = models.CharField(max_length=255, blank=True)
+    portfolio_id = models.CharField(max_length=255, blank=True)
+    portfolio_name = models.CharField(max_length=255, blank=True)
+    email_waiver = models.BooleanField(default=False)
+    reference_currency = models.CharField(max_length=10, blank=True)
+    investment_service = models.CharField(max_length=255, blank=True)
+    a_s_authorization_path = models.CharField(max_length=255, blank=True)
+    investment_strategy = models.CharField(max_length=255, blank=True)
+    ip_risk_tolerance = models.CharField(max_length=255, blank=True)
+    investment_amount = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    selected_service = models.CharField(max_length=255, blank=True)
+    all_in = models.BooleanField(default=False)
+    sustainable_investing = models.BooleanField(default=False)
+    sustainability_preference = models.CharField(max_length=255, blank=True)
+    focus_equity = models.BooleanField(default=False)
+    alternative_investment = models.BooleanField(default=False)
+    direct_instrument = models.BooleanField(default=False)
+    initial_amount = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    foreign_hedging = models.CharField(max_length=100, choices=FOREIGN_HEDGING_CHOICES, blank=True)
+    transaction_confirmation = models.BooleanField(default=False)
+    empty_kyc_form_path = models.CharField(max_length=255, blank=True)
+    investor_profile_path = models.CharField(max_length=255, blank=True)
+    myway_module_path = models.CharField(max_length=255, blank=True)
+    ntac = models.CharField(max_length=50, choices=NTAC_CHOICES, blank=True)
+    reporting_loss = models.CharField(max_length=50, choices=REPORTING_LOSS_CHOICES, blank=True)
+    share_focus = models.CharField(max_length=255, choices=SHARE_FOCUS_CHOICES, blank=True)
+    date_of_alignment = models.DateField(null=True, blank=True)
+    end_date_alignment = models.DateField(null=True, blank=True)
+    type_of_business_settlement = models.CharField(max_length=50, choices=TYPE_OF_BUSINESS_SETTLEMENT_CHOICES, blank=True)
+    special_conditions = models.TextField(blank=True)
+    discount_applied = models.BooleanField(default=False)
+    discount_amount_percent = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    flat_fee_applied = models.BooleanField(default=False)
+    flat_fee_percent = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    invested_assets = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    income_pa = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    current_return_on_assets = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    target_roa = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    net_new_money_potential = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    business_case_communication = models.TextField(choices=BUSINESS_CASE_COMMUNICATION_CHOICES, blank=True)
+    fee_model = models.CharField(max_length=255, blank=True)
+    mandate_fee = models.BooleanField(default=False)
+    service_and_execution = models.CharField(max_length=255, blank=True)
+    no_discount = models.BooleanField(default=False)
+    no_discount_amount_percent = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    no_flat_fee = models.BooleanField(default=False)
+    no_flat_fee_amount = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    transaction_fee = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    standard_fee_discount = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    shares_fee = models.BooleanField(default=False)
+    shares_fee_amount = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    shares_discount = models.BooleanField(default=False)
+    shares_discount_amount = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    investment_funds_fee = models.BooleanField(default=False)
+    investment_fund_fee_amount = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    investment_fund_discount = models.BooleanField(default=False)
+    investment_fund_discount_amount = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    fixed_income_fee = models.BooleanField(default=False)
+    fixed_income_fee_amount = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    fixed_income_discount = models.BooleanField(default=False)
+    fixed_income_discount_amount = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    fixed_income_investment_funds_fee = models.BooleanField(default=False)
+    fixed_income_investment_funds_fee_amount = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    fixed_income_investment_funds_discount = models.BooleanField(default=False)
+    fixed_income_investment_funds_discount_amount = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    shares_investment_funds_fee = models.BooleanField(default=False)
+    shares_investment_funds_fee_amount = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
+    shares_investment_funds_discount = models.BooleanField(default=False)
+    shares_investment_funds_discount_amount = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True)
     status = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
-        return f"{self.product_name} ({self.product_id})"
+        return f"{self.portfolio_name} ({self.portfolio_id})"
 
 class Account(ClientRelatedModel):
     product_uuid = models.UUIDField(db_index=True, null=True, blank=True)
-    account_number = models.CharField(max_length=50, unique=True)
-    currency = models.CharField(max_length=3, default='USD')
-    balance = models.DecimalField(max_digits=18, decimal_places=2, default=0.00)
+    reference_currency = models.CharField(max_length=3, default='USD')
 
     @property
     def product_info(self):
@@ -294,6 +393,6 @@ class Account(ClientRelatedModel):
         try:
             from .models import Product
             p = Product.objects.get(id=self.product_uuid)
-            return f"{p.product_name} ({p.product_id})"
+            return f"{p.portfolio_name} ({p.portfolio_id})"
         except:
             return "N/A"

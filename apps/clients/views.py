@@ -10,9 +10,9 @@ class CompleteReviewView(LoginRequiredMixin, View):
         client = get_object_or_404(BankingRelationship, client_uuid=client_uuid)
         status_list = client.status or []
         
-        if 'review_needed' in status_list:
-            # Remove review_needed
-            status_list = [s for s in status_list if s != 'review_needed']
+        if 'pending_review' in status_list:
+            # Remove pending_review
+            status_list = [s for s in status_list if s != 'pending_review']
             # Add review_completed if not already there
             if 'review_completed' not in status_list:
                 status_list.append('review_completed')
