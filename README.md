@@ -29,6 +29,8 @@ python start_app.py --port 8003
 - `--port`: Port to run the server on (default: 8003)
 - `--config-file`: Path to YAML configuration file for database settings
 
+> **Note:** If no `--config-file` argument is provided (in `manage.py`, `start_app.py`, or any script in `seeds/`), the application will default to using the local SQLite database.
+
 ### Option 2: Using `manage.py`
 ```bash
 # With config file
@@ -36,6 +38,13 @@ python manage.py runserver 127.0.0.1:8003 --config-file "path/to/config.yaml"
 
 # Without config file (uses default SQLite)
 python manage.py runserver 127.0.0.1:8003
+```
+
+**Available `manage.py` commands with `--config-file` support:**
+```bash
+python manage.py migrate --config-file "path/to/config.yaml"
+python manage.py makemigrations --config-file "path/to/config.yaml"
+python manage.py shell --config-file "path/to/config.yaml"
 ```
 
 ### Configuration File Format
@@ -170,30 +179,30 @@ The `seeds/` directory contains scripts to populate the database with test data:
 | `seeds/seed_bots.py` | Seeds BOTS table with test data |
 | `seeds/simulate_bots.py` | Simulates BOTS data runs |
 
-**Run the full setup:**
+**All seed scripts support the `--config-file` argument:**
+
+```bash
+# Run full setup with custom config
+cd seeds
+python full_setup.py --config-file "path/to/config.yaml"
+
+# Run individual scripts with config
+cd seeds
+python create_user.py --config-file "path/to/config.yaml"
+python bulk_seed.py --config-file "path/to/config.yaml"
+python seed_bots.py --config-file "path/to/config.yaml"
+python simulate_bots.py 60 --config-file "path/to/config.yaml"
+```
+
+**Run without config (defaults to SQLite):**
 ```bash
 cd seeds
 python full_setup.py
 ```
 
-**Run individual scripts:**
-```bash
-# Create admin user only
-cd seeds
-python create_user.py
-
-# Generate bulk test data (20 clients)
-cd seeds
-python bulk_seed.py
-
-# Seed BOTS data
-cd seeds
-python seed_bots.py
-```
-
 **Note:** Make sure the database is migrated before running seed scripts:
 ```bash
-python manage.py migrate
+python manage.py migrate --config-file "path/to/config.yaml"
 ```
 
 #### Running Tests
