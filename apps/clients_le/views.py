@@ -1,7 +1,7 @@
 from django.views.generic import ListView, DetailView, View
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
-from .models import LE_BankingRelationship, LE_Information
+from .models import LE_BankingRelationship, LE_PersonalInformation, LE_Company
 from apps.generic_crud.registry import CrudRegistry
 import json
 
@@ -82,8 +82,8 @@ class LE_ClientDetailView(LoginRequiredMixin, DetailView):
             })
         context['client_info'] = client_info
 
-        # 2. Prepare LE Information (Legal Entity specific details)
-        le_info_obj = LE_Information.objects.filter(client_uuid=client.client_uuid).first()
+        # 2. Prepare LE Personal Information (Legal Entity specific details)
+        le_info_obj = LE_PersonalInformation.objects.filter(client_uuid=client.client_uuid).first()
         le_info_list = []
         if le_info_obj:
             for field in le_info_obj._meta.fields:
@@ -98,12 +98,28 @@ class LE_ClientDetailView(LoginRequiredMixin, DetailView):
         context['personal_info'] = le_info_list # Reusing template variable name for consistency
         context['personal_info_obj'] = le_info_obj
 
-        # 3. Prepare Related Tables Metadata
+        # 3. Prepare Company Information
+        company_obj = LE_Company.objects.filter(client_uuid=client.client_uuid).first()
+        company_info_list = []
+        if company_obj:
+            for field in company_obj._meta.fields:
+                if field.name in exclude: continue
+                value = getattr(company_obj, field.name)
+                if field.choices: value = dict(field.choices).get(value, value)
+                company_info_list.append({
+                    'label': field.verbose_name.title(),
+                    'value': value,
+                    'name': field.name
+                })
+        context['company_info'] = company_info_list
+        context['company_info_obj'] = company_obj
+
+        # 4. Prepare Related Tables Metadata
         tables_meta = {}
         registry = CrudRegistry.get_registered_models(section='le')
         for name, details in registry.items():
             # Only include LE related tables that are not the main ones
-            if name not in ['le_bankingrelationship', 'le_information']:
+            if name not in ['le_bankingrelationship', 'le_personalinformation', 'le_company']:
                 model = details['model']
                 config = details['config']
                 

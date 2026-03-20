@@ -143,6 +143,7 @@ class AdditionalFormDE(ClientRelatedModel):
 class PersonalInformation(ClientRelatedModel):
     first_name = models.CharField(max_length=255, blank=True)
     last_name = models.CharField(max_length=255, blank=True)
+    first_and_last_name = models.CharField(max_length=255, blank=True)
     name_at_birth = models.CharField(max_length=255, blank=True)
     federal_state = models.CharField(max_length=255, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
@@ -204,6 +205,7 @@ class ClientAdvisor(ClientRelatedModel):
     ]
     first_name = models.CharField(max_length=255, blank=True)
     last_name = models.CharField(max_length=255, blank=True)
+    first_and_last_name = models.CharField(max_length=255, blank=True)
     email = models.EmailField(blank=True, null=True)
     desk = models.CharField(max_length=255, blank=True)
     branch = models.CharField(max_length=255, blank=True)

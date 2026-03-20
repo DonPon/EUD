@@ -1,5 +1,5 @@
 from apps.generic_crud.registry import CrudRegistry
-from .models import LE_TIN, LE_Account, LE_BankingRelationship, LE_ClientAdvisor, LE_EBanking, LE_Information, LE_Address, LE_Communication, LE_MeetingPreparation, LE_Nationality, LE_Product, LE_Relationship
+from .models import LE_TIN, LE_Account, LE_BankingRelationship, LE_ClientAdvisor, LE_Company, LE_EBanking, LE_Address, LE_Communication, LE_MeetingPreparation, LE_Nationality, LE_PersonalInformation, LE_Product, LE_Relationship
 
 def register_le_clients_models():
     """Register all Legal Entity models for generic CRUD."""
@@ -7,25 +7,51 @@ def register_le_clients_models():
     CrudRegistry.register(LE_BankingRelationship, {
         'section': 'le',
         'fields': [
-            'id', 'client_uuid', 'legal_name', 'banking_relationship', 
-            'technical_account', 'client_segment', 'code_ksc', 
-            'language', 'status', 'created_at'
+            'id', 'client_uuid', 'legal_name', 'banking_relationship',
+            'technical_account', 'additional_br', 'distribution_list',
+            'name_of_banking_relationship', 'type_of_account', 'type_of_signature',
+            'client_segment', 'code_ksc', 'recording_phone_calls', 'declaration_email',
+            'language', 'opened_in_ubs_premises', 'instructions',
+            'account_and_securities_statements', 'type_and_purpose', 'specify',
+            'reporting_obligation', 'earning_statement', 'fees', 'approval_of_branch_head',
+            'fiscal_identifier', 'agreement_distribution_fees', 'share_of_distribution',
+            'send_documents', 'cscatecosae', 'further_notes',
+            'level_of_professionalism', 'number_of_portfolios', 'status', 'created_at'
         ],
         'list_display': ['legal_name', 'banking_relationship', 'client_segment', 'status'],
-        'filter_fields': ['client_segment', 'code_ksc', 'language'],
-        'search_fields': ['legal_name', 'banking_relationship'],
+        'filter_fields': ['client_segment', 'code_ksc', 'language', 'type_and_purpose', 'reporting_obligation'],
+        'search_fields': ['legal_name', 'banking_relationship', 'name_of_banking_relationship'],
     })
 
-    CrudRegistry.register(LE_Information, {
+    CrudRegistry.register(LE_Company, {
+        'section': 'le',
+        'fields': [
+            'id', 'client_uuid', 'type_of_company', 'name_of_company', 'ivacf', 'iva',
+            'fiscal_code', 'lei_code', 'date_of_constitution', 'place_of_constitution',
+            'fiscal_residence', 'turnover_id', 'cciaa_type', 'cciaa_number',
+            'released_by', 'date_of_issue', 'form_of_legal_entity',
+            'professional_client_fiduciary_uhnw', 'created_at'
+        ],
+        'list_display': ['name_of_company', 'type_of_company', 'lei_code', 'fiscal_residence'],
+        'filter_fields': ['type_of_company', 'fiscal_residence', 'form_of_legal_entity'],
+        'search_fields': ['name_of_company', 'lei_code', 'fiscal_code'],
+    })
+
+    CrudRegistry.register(LE_PersonalInformation, {
         'section': 'le',
         'fields': [
             'id', 'client_uuid', 'legal_name', 'legal_form', 'registration_number',
-            'country_of_registration', 'date_of_registration', 'tax_id', 
-            'lei_code', 'industry_sector', 'website'
+            'country_of_registration', 'date_of_registration', 'tax_id',
+            'lei_code', 'industry_sector', 'website',
+            # Personal Information Fields
+            'first_name', 'last_name', 'first_and_last_name', 'name_at_birth',
+            'federal_state', 'date_of_birth', 'place_of_birth', 'country_of_birth',
+            'marital_status', 'occupation_sector', 'fiscal_identifier', 'indication_tin',
+            'sensitive_client', 'executor', 'beneficial_owner', 'tef'
         ],
-        'list_display': ['legal_name', 'legal_form', 'registration_number', 'lei_code'],
-        'filter_fields': ['legal_form', 'country_of_registration'],
-        'search_fields': ['legal_name', 'registration_number', 'tax_id'],
+        'list_display': ['legal_name', 'legal_form', 'first_and_last_name', 'lei_code'],
+        'filter_fields': ['legal_form', 'country_of_registration', 'sensitive_client', 'executor', 'beneficial_owner'],
+        'search_fields': ['legal_name', 'registration_number', 'tax_id', 'first_name', 'last_name'],
     })
 
     CrudRegistry.register(LE_Nationality, {
@@ -124,7 +150,7 @@ def register_le_clients_models():
 
     CrudRegistry.register(LE_ClientAdvisor, {
         'section': 'le',
-        'fields': ['id', 'client_uuid', 'first_name', 'last_name', 'email', 'desk', 'branch', 'role'],
+        'fields': ['id', 'client_uuid', 'first_name', 'last_name', 'first_and_last_name', 'email', 'desk', 'branch', 'role'],
         'list_display': ['last_name', 'first_name', 'role', 'branch'],
         'filter_fields': ['role', 'branch'],
     })

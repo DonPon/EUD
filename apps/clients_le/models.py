@@ -18,14 +18,53 @@ class LE_BankingRelationship(ClientRelatedModel):
         ('completed', 'Completed'),
     ]
 
+    LANGUAGE_CHOICES = [
+        ('German', 'German'),
+        ('English', 'English'),
+        ('Spanish', 'Spanish'),
+    ]
+
+    TYPE_AND_PURPOSE_CHOICES = [
+        ('Other', 'Other'),
+    ]
+
+    REPORTING_OBLIGATION_CHOICES = [
+        ('Reported by UBS', 'Reported by UBS'),
+        ('Reported by the client', 'Reported by the client'),
+    ]
+
     legal_name = models.CharField(max_length=255, blank=True)
     banking_relationship = models.CharField(max_length=255, blank=True)
-    technical_account = models.BooleanField(default=False)
+    technical_account = models.CharField(max_length=255, blank=True)
+    additional_br = models.CharField(max_length=255, blank=True)
+    distribution_list = models.CharField(max_length=255, blank=True)
+    name_of_banking_relationship = models.CharField(max_length=255, blank=True)
+    type_of_account = models.CharField(max_length=255, blank=True)
+    type_of_signature = models.CharField(max_length=255, blank=True)
     client_segment = models.CharField(max_length=50, blank=True)
     code_ksc = models.CharField(max_length=50, blank=True)
-    language = models.CharField(max_length=50, blank=True)
+    recording_phone_calls = models.BooleanField(default=False)
+    declaration_email = models.BooleanField(default=False)
+    language = models.CharField(max_length=50, choices=LANGUAGE_CHOICES, blank=True)
+    opened_in_ubs_premises = models.BooleanField(default=False)
+    instructions = models.TextField(blank=True)
+    account_and_securities_statements = models.BooleanField(default=False)
+    type_and_purpose = models.CharField(max_length=255, choices=TYPE_AND_PURPOSE_CHOICES, blank=True)
+    specify = models.CharField(max_length=255, blank=True)
+    reporting_obligation = models.CharField(max_length=100, choices=REPORTING_OBLIGATION_CHOICES, blank=True)
+    earning_statement = models.BooleanField(default=False)
+    fees = models.BooleanField(default=False)
+    approval_of_branch_head = models.BooleanField(default=False)
+    fiscal_identifier = models.CharField(max_length=255, blank=True)
+    agreement_distribution_fees = models.BooleanField(default=False)
+    share_of_distribution = models.CharField(max_length=255, blank=True)
+    send_documents = models.BooleanField(default=False)
+    cscatecosae = models.CharField(max_length=255, blank=True)
+    further_notes = models.TextField(blank=True)
+    level_of_professionalism = models.IntegerField(null=True, blank=True)
+    number_of_portfolios = models.IntegerField(null=True, blank=True)
     status = models.JSONField(default=list, blank=True)
-    
+
     def save(self, *args, **kwargs):
         if not self.client_uuid:
             self.client_uuid = self.id
@@ -38,7 +77,7 @@ class LE_BankingRelationship(ClientRelatedModel):
         verbose_name = "LE Banking Relationship"
         verbose_name_plural = "LE Banking Relationships"
 
-class LE_Information(ClientRelatedModel):
+class LE_PersonalInformation(ClientRelatedModel):
     """Detailed information for Legal Entities."""
     LEGAL_FORM_CHOICES = [
         ('AG', 'Aktiengesellschaft (AG)'),
@@ -47,7 +86,7 @@ class LE_Information(ClientRelatedModel):
         ('Trust', 'Trust'),
         ('Other', 'Other'),
     ]
-    
+
     legal_name = models.CharField(max_length=255, blank=True)
     legal_form = models.CharField(max_length=100, choices=LEGAL_FORM_CHOICES, blank=True)
     registration_number = models.CharField(max_length=100, blank=True)
@@ -58,9 +97,27 @@ class LE_Information(ClientRelatedModel):
     industry_sector = models.CharField(max_length=255, blank=True)
     website = models.URLField(blank=True, null=True)
 
+    # Personal Information Fields
+    first_name = models.CharField(max_length=255, blank=True)
+    last_name = models.CharField(max_length=255, blank=True)
+    first_and_last_name = models.CharField(max_length=255, blank=True)
+    name_at_birth = models.CharField(max_length=255, blank=True)
+    federal_state = models.CharField(max_length=255, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    place_of_birth = models.CharField(max_length=255, blank=True)
+    country_of_birth = models.CharField(max_length=255, blank=True)
+    marital_status = models.CharField(max_length=100, blank=True)
+    occupation_sector = models.CharField(max_length=255, blank=True)
+    fiscal_identifier = models.CharField(max_length=255, blank=True)
+    indication_tin = models.CharField(max_length=255, blank=True)
+    sensitive_client = models.BooleanField(default=False)
+    executor = models.BooleanField(default=False)
+    beneficial_owner = models.BooleanField(default=False)
+    tef = models.BooleanField(default=False)
+
     class Meta:
-        verbose_name = "LE Information"
-        verbose_name_plural = "LE Information"
+        verbose_name = "LE Personal Information"
+        verbose_name_plural = "LE Personal Information"
 
 class LE_Address(ClientRelatedModel):
     TYPE_CHOICES = [
@@ -117,6 +174,7 @@ class LE_ClientAdvisor(ClientRelatedModel):
     ]
     first_name = models.CharField(max_length=255, blank=True)
     last_name = models.CharField(max_length=255, blank=True)
+    first_and_last_name = models.CharField(max_length=255, blank=True)
     email = models.EmailField(blank=True, null=True)
     desk = models.CharField(max_length=255, blank=True)
     branch = models.CharField(max_length=255, blank=True)
@@ -326,7 +384,31 @@ class LE_Account(ClientRelatedModel):
             return f"{p.portfolio_name} ({p.portfolio_id})"
         except:
             return "N/A"
-    
+
     class Meta:
         verbose_name = "Account"
         verbose_name_plural = "Accounts"
+
+
+class LE_Company(ClientRelatedModel):
+    """Company information for Legal Entity Clients."""
+    type_of_company = models.CharField(max_length=255, blank=True)
+    name_of_company = models.CharField(max_length=255, blank=True)
+    ivacf = models.CharField(max_length=255, blank=True)
+    iva = models.CharField(max_length=255, blank=True)
+    fiscal_code = models.CharField(max_length=255, blank=True)
+    lei_code = models.CharField(max_length=255, blank=True)
+    date_of_constitution = models.DateField(null=True, blank=True)
+    place_of_constitution = models.CharField(max_length=255, blank=True)
+    fiscal_residence = models.CharField(max_length=255, blank=True)
+    turnover_id = models.CharField(max_length=255, blank=True)
+    cciaa_type = models.CharField(max_length=255, blank=True)
+    cciaa_number = models.CharField(max_length=255, blank=True)
+    released_by = models.CharField(max_length=255, blank=True)
+    date_of_issue = models.DateField(null=True, blank=True)
+    form_of_legal_entity = models.CharField(max_length=255, blank=True)
+    professional_client_fiduciary_uhnw = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = "Company"
+        verbose_name_plural = "Companies"
