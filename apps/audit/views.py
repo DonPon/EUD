@@ -100,13 +100,16 @@ class HistoryListView(TemplateView):
         context = super().get_context_data(**kwargs)
         table_name = self.kwargs.get('table_name', '').lower()
         client_uuid = self.request.GET.get('client_uuid')
-        
+
         config = CrudRegistry.get_config(table_name)
+        # Always set section, default to 'np' if config not found
+        section = config['config'].get('section', 'np') if config else 'np'
+        context['section'] = section
+
         if config:
             model = config['model']
             context['verbose_name'] = model._meta.verbose_name.title()
             context['verbose_name_plural'] = model._meta.verbose_name_plural.title()
-            context['section'] = config.get('section', 'np')
         
         context['table_name'] = table_name
         context['client_uuid'] = client_uuid

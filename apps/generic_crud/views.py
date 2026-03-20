@@ -113,10 +113,14 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
         table_name = self.kwargs.get('table_name', '').lower()
         record_id = self.kwargs.get('pk')
         config = CrudRegistry.get_config(table_name)
-        
+
+        # Always set section, default to 'np' if config not found
+        section = config['config'].get('section', 'np') if config else 'np'
+        context['section'] = section
+
         if not config:
             return context
-            
+
         model = config['model']
         exclude = self._get_exclude_fields(model, table_name)
         
@@ -167,20 +171,20 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
             'is_edit': bool(record_id),
             'client_uuid': client_uuid or (instance.client_uuid if instance and hasattr(instance, 'client_uuid') else None),
             'user_role': self.request.user.role,
-            'section': config.get('section', 'np')
+            'section': section
         })
         return context
 
     def post(self, request, *args, **kwargs):
         if request.user.role == 'VIEWER':
             return redirect(reverse('clients:list'))
-            
+
         table_name = self.kwargs.get('table_name', '').lower()
         record_id = self.kwargs.get('pk')
         config = CrudRegistry.get_config(table_name)
         model = config['model']
-        section = config.get('section', 'np')
-        
+        section = config['config'].get('section', 'np')
+
         exclude = self._get_exclude_fields(model, table_name)
         instance = model.objects.get(id=record_id) if record_id else None
         
