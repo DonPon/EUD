@@ -1,0 +1,30 @@
+# EUD Django Application Configuration
+# Copy this file and modify the values as needed
+
+# Database configuration
+DATABASE_TYPE:
+    - 'postgres'  # Options: 'postgres' or 'sqlite'
+
+DATABASE_NAME:
+    - 'eud'
+
+DATABASE_USER:
+    - 'postgres'
+
+DATABASE_PASSWORD:
+    - 'your_password_here'
+
+DATABASE_HOST:
+    - 'localhost'
+
+DATABASE_PORT:
+    - 5432
+
+DATABASE_SCHEMA:
+    - 'public'
+
+# Alternative SQLite configuration (set DATABASE_TYPE to 'sqlite')
+# DATABASE_TYPE:
+#     - 'sqlite'
+# DATABASE_NAME:
+#     - 'db.sqlite3'

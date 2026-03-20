@@ -10,10 +10,39 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+def _load_yaml_config():
+    """Load configuration from YAML file if specified, otherwise return defaults."""
+    config_file = os.environ.get("EUD_CONFIG_FILE", "")
+    
+    if not config_file:
+        return None
+    
+    try:
+        import yaml
+        with open(config_file, 'r') as f:
+            config = yaml.safe_load(f)
+            # Convert list values to single values (take first element)
+            if config:
+                for key, value in config.items():
+                    if isinstance(value, list) and len(value) > 0:
+                        config[key] = value[0]
+            return config
+    except FileNotFoundError:
+        print(f"Warning: Config file '{config_file}' not found. Using defaults.")
+        return None
+    except ImportError:
+        print("Warning: PyYAML not installed. Using defaults.")
+        return None
+    except Exception as e:
+        print(f"Warning: Error loading config file: {e}. Using defaults.")
+        return None
 
 
 # Quick-start development settings - unsuitable for production
@@ -108,12 +137,29 @@ WSGI_APPLICATION = 'eud_gui.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+_config = _load_yaml_config()
+
+if _config and _config.get("DATABASE_TYPE") == "postgres":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": _config.get("DATABASE_NAME", "eud"),
+            "USER": _config.get("DATABASE_USER", "postgres"),
+            "PASSWORD": _config.get("DATABASE_PASSWORD", ""),
+            "HOST": _config.get("DATABASE_HOST", "localhost"),
+            "PORT": _config.get("DATABASE_PORT", 5432),
+            "OPTIONS": {
+                "options": f"-c search_path={_config.get('DATABASE_SCHEMA', 'public')}"
+            } if _config.get("DATABASE_SCHEMA") else {},
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 
 # Password validation
