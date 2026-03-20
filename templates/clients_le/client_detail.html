@@ -65,20 +65,56 @@
     </div>
 </div>
 
-<!-- Legal Entity Information Table -->
+<!-- Legal Entity Company Table -->
 <div class="row mb-4">
     <div class="col-12">
         <div class="card">
             <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Legal Entity Detailed Information</h5>
+                <h5 class="mb-0">Company Information</h5>
                 <div>
-                    {% if personal_info_obj %}
-                        <a href="{% url 'audit-list' table_name='le_information' %}?client_uuid={{ client.client_uuid }}&record_id={{ personal_info_obj.id }}" class="btn btn-sm btn-outline-secondary me-2">History</a>
+                    {% if company_info_obj %}
+                        <a href="{% url 'audit-list' table_name='le_company' %}?client_uuid={{ client.client_uuid }}&record_id={{ company_info_obj.id }}" class="btn btn-sm btn-outline-secondary me-2">History</a>
                         {% if user.role != 'VIEWER' %}
-                            <a href="{% url 'generic-edit' table_name='le_information' pk=personal_info_obj.id %}?client_uuid={{ client.client_uuid }}" class="btn btn-ubs btn-sm">Edit LE Info</a>
+                            <a href="{% url 'generic-edit' table_name='le_company' pk=company_info_obj.id %}?client_uuid={{ client.client_uuid }}" class="btn btn-ubs btn-sm">Edit Company Info</a>
                         {% endif %}
                     {% elif user.role != 'VIEWER' %}
-                        <a href="{% url 'generic-add' table_name='le_information' %}?client_uuid={{ client.client_uuid }}" class="btn btn-ubs btn-sm">+ Add LE Info</a>
+                        <a href="{% url 'generic-add' table_name='le_company' %}?client_uuid={{ client.client_uuid }}" class="btn btn-ubs btn-sm">+ Add Company Info</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body p-0">
+                {% if company_info %}
+                <table class="table table-bordered mb-0">
+                    <tbody class="row g-0">
+                        {% for item in company_info %}
+                            <tr class="col-md-6 d-flex border-bottom-0">
+                                <th class="bg-light p-2" style="width: 40%; border-right: 1px solid #dee2e6;">{{ item.label }}</th>
+                                <td class="p-2 flex-grow-1">{{ item.value|default:"-" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <div class="p-3 text-muted">No company information found.</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Legal Entity Personal Information Table -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Personal Information</h5>
+                <div>
+                    {% if personal_info_obj %}
+                        <a href="{% url 'audit-list' table_name='le_personalinformation' %}?client_uuid={{ client.client_uuid }}&record_id={{ personal_info_obj.id }}" class="btn btn-sm btn-outline-secondary me-2">History</a>
+                        {% if user.role != 'VIEWER' %}
+                            <a href="{% url 'generic-edit' table_name='le_personalinformation' pk=personal_info_obj.id %}?client_uuid={{ client.client_uuid }}" class="btn btn-ubs btn-sm">Edit Personal Info</a>
+                        {% endif %}
+                    {% elif user.role != 'VIEWER' %}
+                        <a href="{% url 'generic-add' table_name='le_personalinformation' %}?client_uuid={{ client.client_uuid }}" class="btn btn-ubs btn-sm">+ Add Personal Info</a>
                     {% endif %}
                 </div>
             </div>
@@ -95,13 +131,12 @@
                     </tbody>
                 </table>
                 {% else %}
-                <div class="p-3 text-muted">No legal entity information found.</div>
+                <div class="p-3 text-muted">No personal information found.</div>
                 {% endif %}
             </div>
         </div>
     </div>
 </div>
-
 <div id="dynamic-tables-container">
     <!-- Dynamic tables will be injected here -->
 </div>

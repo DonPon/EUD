@@ -27,13 +27,13 @@ def register_clients_models():
     CrudRegistry.register(PersonalInformation, {
         'section': 'np',
         'fields': [
-            'id', 'client_uuid', 'first_name', 'last_name', 'date_of_birth',
+            'id', 'client_uuid', 'first_name', 'last_name', 'first_and_last_name', 'date_of_birth',
             'place_of_birth', 'country_of_birth', 'marital_status', 'occupation_sector',
             'fiscal_identifier', 'indication_tin', 'sensitive_client'
         ],
-        'list_display': ['first_name', 'last_name', 'date_of_birth', 'marital_status'],
+        'list_display': ['first_name', 'last_name', 'first_and_last_name', 'date_of_birth', 'marital_status'],
         'filter_fields': ['marital_status', 'sensitive_client'],
-        'search_fields': ['first_name', 'last_name', 'fiscal_identifier'],
+        'search_fields': ['first_name', 'last_name', 'first_and_last_name', 'fiscal_identifier'],
     })
 
     CrudRegistry.register(Nationality, {
@@ -132,7 +132,7 @@ def register_clients_models():
 
     CrudRegistry.register(ClientAdvisor, {
         'section': 'np',
-        'fields': ['id', 'client_uuid', 'first_name', 'last_name', 'email', 'desk', 'branch', 'role'],
+        'fields': ['id', 'client_uuid', 'first_name', 'last_name', 'first_and_last_name', 'email', 'desk', 'branch', 'role'],
         'list_display': ['last_name', 'first_name', 'role', 'branch'],
         'filter_fields': ['role', 'branch'],
     })
