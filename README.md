@@ -1,5 +1,5 @@
-# Bank EUD System - Developer Guide
-
+# Europe Domestic GUI
+GUI to control the execution of bots and visualize and edit client data.
 ---
 
 ## Quick Start: Deploying to ADT

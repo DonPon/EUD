@@ -1,0 +1,14 @@
+# EUD Django Application Configuration
+
+# Database configuration
+DATABASE_TYPE:
+    - 'postgres'  # Options: 'postgres' or 'sqlite'
+
+# PostgreSQL cluster configuration (used by Database_Config)
+certs_path:
+    - '/path/to/certs'  # Path to the FOLDER to SSL certificates
+db_env:
+    - 'te2'  # Environment: 'te2', 'prod'
+schema:
+    - 'public'  # Database schema
+

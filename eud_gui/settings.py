@@ -140,17 +140,29 @@ WSGI_APPLICATION = 'eud_gui.wsgi.application'
 _config = _load_yaml_config()
 
 if _config and _config.get("DATABASE_TYPE") == "postgres":
+    certs_path = _config.get("certs_path")
+    db_env = _config.get("db_env")
+    schema = _config.get("schema")
+
+    from europe_domestic_utils.src.database_wrapper import Database_Config
+
+    db_config = Database_Config(certs_path=certs_path, db_env=db_env)
+    conn_data = db_config.get_connection_data()
+
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
-            "NAME": _config.get("DATABASE_NAME", "eud"),
-            "USER": _config.get("DATABASE_USER", "postgres"),
-            "PASSWORD": _config.get("DATABASE_PASSWORD", ""),
-            "HOST": _config.get("DATABASE_HOST", "localhost"),
-            "PORT": _config.get("DATABASE_PORT", 5432),
+            "NAME": conn_data.get("database"),
+            "USER": conn_data.get("user"),
+            "PASSWORD": conn_data.get("password"),
+            "HOST": conn_data.get("host"),
+            "PORT": conn_data.get("port", 5432),
             "OPTIONS": {
-                "options": f"-c search_path={_config.get('DATABASE_SCHEMA', 'public')}"
-            } if _config.get("DATABASE_SCHEMA") else {},
+                "options": f"-c search_path={schema}",
+                "sslcert": conn_data.get("sslcert"),
+                "sslkey": conn_data.get("sslkey"),
+                "sslrootcert": conn_data.get("sslrootcert"),
+            } if any(conn_data.get(k) for k in ("sslcert", "sslkey", "sslrootcert")) else {},
         }
     }
 else:
