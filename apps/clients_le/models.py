@@ -67,7 +67,7 @@ class LE_BankingRelationship(ClientRelatedModel):
 
     def save(self, *args, **kwargs):
         if not self.client_uuid:
-            self.client_uuid = self.id
+            self.client_uuid = uuid.uuid4()
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -252,6 +252,47 @@ class LE_Relationship(ClientRelatedModel):
 
     def __str__(self):
         return f"Relation: {self.client_uuid} -> {self.child_unique_id}"
+
+    @property
+    def related_banking_relationship(self):
+        """Get the banking relationship number of the related client."""
+        try:
+            related = LE_BankingRelationship.objects.get(client_uuid=self.child_unique_id)
+            return related.banking_relationship
+        except LE_BankingRelationship.DoesNotExist:
+            return "N/A"
+
+    @property
+    def related_name_of_banking_relationship(self):
+        """Get the name of banking relationship of the related client."""
+        try:
+            related = LE_BankingRelationship.objects.get(client_uuid=self.child_unique_id)
+            return related.legal_name or related.name_of_banking_relationship
+        except LE_BankingRelationship.DoesNotExist:
+            return "N/A"
+
+    @property
+    def related_first_name(self):
+        """Get the first name of the related client from LE_PersonalInformation."""
+        try:
+            personal = LE_PersonalInformation.objects.get(client_uuid=self.child_unique_id)
+            return personal.first_name or "N/A"
+        except LE_PersonalInformation.DoesNotExist:
+            return "N/A"
+
+    @property
+    def related_last_name(self):
+        """Get the last name of the related client from LE_PersonalInformation."""
+        try:
+            personal = LE_PersonalInformation.objects.get(client_uuid=self.child_unique_id)
+            return personal.last_name or "N/A"
+        except LE_PersonalInformation.DoesNotExist:
+            return "N/A"
+
+    @property
+    def related_client_link(self):
+        """Return the URL to the related client detail page."""
+        return f"/clients-le/detail/{self.child_unique_id}/"
 
     class Meta:
         verbose_name = "Relationship"
