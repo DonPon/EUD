@@ -103,7 +103,14 @@ def register_le_clients_models():
             'id', 'client_uuid', 'child_unique_id', 'type_of_relationship',
             'type_of_access', 'level_of_access', 'relation_with_owner'
         ],
-        'list_display': ['client_uuid', 'child_unique_id', 'type_of_relationship', 'relation_with_owner'],
+        'list_display': [
+            'related_banking_relationship',
+            'related_name_of_banking_relationship',
+            'related_first_name',
+            'related_last_name',
+            'type_of_relationship',
+            'relation_with_owner'
+        ],
         'filter_fields': ['type_of_relationship'],
     })
 

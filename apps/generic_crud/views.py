@@ -89,7 +89,7 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
         return exclude
 
     def _apply_dynamic_choices(self, form, model, client_uuid):
-        """Inject dynamic choices for fields like product_uuid."""
+        """Inject dynamic choices for fields like product_uuid and child_unique_id."""
         if 'product_uuid' in form.fields and client_uuid:
             try:
                 from apps.clients.models import Product
@@ -99,7 +99,7 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
                 ]
                 # Replace the field with a choice field
                 form.fields['product_uuid'] = ChoiceField(
-                    choices=choices, 
+                    choices=choices,
                     label="Product",
                     required=True
                 )
@@ -107,6 +107,52 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
                 form.fields['product_uuid'].widget.attrs.update({'class': 'form-select'})
             except Exception as e:
                 print(f"DEBUG: Failed to load product choices: {e}")
+
+        # Handle child_unique_id field for Relationship models
+        if 'child_unique_id' in form.fields:
+            try:
+                # Determine if this is an LE relationship
+                is_le = model.__name__ == 'LE_Relationship'
+                
+                if is_le:
+                    from apps.clients_le.models import LE_BankingRelationship, LE_PersonalInformation
+                    # Get all LE clients for the dropdown
+                    all_clients = LE_BankingRelationship.objects.all().order_by('legal_name')
+                else:
+                    from apps.clients.models import BankingRelationship, PersonalInformation
+                    # Get all NP clients for the dropdown
+                    all_clients = BankingRelationship.objects.all().order_by('name_of_banking_relationship')
+                
+                choices = [('', '--- Select Client ---')]
+                for client in all_clients:
+                    if is_le:
+                        # For LE clients
+                        personal = LE_PersonalInformation.objects.filter(client_uuid=client.client_uuid).first()
+                        first_name = personal.first_name if personal else ''
+                        last_name = personal.last_name if personal else ''
+                        display_name = f"{client.banking_relationship} | {client.legal_name or client.name_of_banking_relationship} | {first_name} {last_name}".strip()
+                    else:
+                        # For NP clients
+                        personal = PersonalInformation.objects.filter(client_uuid=client.client_uuid).first()
+                        first_name = personal.first_name if personal else ''
+                        last_name = personal.last_name if personal else ''
+                        display_name = f"{client.banking_relationship} | {client.name_of_banking_relationship} | {first_name} {last_name}".strip()
+                    
+                    choices.append((str(client.client_uuid), display_name))
+                
+                # Replace the field with a choice field
+                form.fields['child_unique_id'] = ChoiceField(
+                    choices=choices,
+                    label="Related Client (Banking Relationship | Name | First Last)",
+                    required=True
+                )
+                # Apply Bootstrap class and Select2-friendly attributes
+                form.fields['child_unique_id'].widget.attrs.update({
+                    'class': 'form-select select2-dropdown',
+                    'data-placeholder': 'Search and select a client...'
+                })
+            except Exception as e:
+                print(f"DEBUG: Failed to load client choices for child_unique_id: {e}")
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
