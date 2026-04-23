@@ -6,8 +6,99 @@
 <div class="container-fluid mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Bot Dashboard</h1>
+        <div class="btn-group" role="group" aria-label="Time period">
+            <a href="?days=1" class="btn btn-outline-secondary {% if summary.days == 1 %}active{% endif %}">Last 24h</a>
+            <a href="?days=7" class="btn btn-outline-secondary {% if summary.days == 7 %}active{% endif %}">Last 7 Days</a>
+            <a href="?days=30" class="btn btn-outline-secondary {% if summary.days == 30 %}active{% endif %}">Last Month</a>
+        </div>
     </div>
 
+    <!-- Executive Summary Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header" role="button" data-bs-toggle="collapse" data-bs-target="#executiveSummaryContent" aria-expanded="true" style="cursor: pointer;">
+                    <h5 class="mb-0">
+                        Executive Summary (Last {{ summary.days }} days)
+                        <i class="bi bi-chevron-down ms-2 small text-muted"></i>
+                    </h5>
+                </div>
+                <div id="executiveSummaryContent" class="collapse show">
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Stats Cards -->
+                            <div class="col-md-4">
+                                <div class="row g-3">
+                                    <div class="col-12">
+                                        <div class="p-3 border rounded bg-light">
+                                            <div class="text-muted small">Total Cases Run</div>
+                                            <div class="h3 mb-0">{{ summary.total_cases }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="p-3 border rounded bg-success bg-opacity-10">
+                                            <div class="text-success small">Successful Cases</div>
+                                            <div class="h3 mb-0 text-success">{{ summary.success_cases }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="p-3 border rounded bg-danger bg-opacity-10">
+                                            <div class="text-danger small">Error Cases</div>
+                                            <div class="h3 mb-0 text-danger">{{ summary.error_cases }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Charts -->
+                            <div class="col-md-4">
+                                <canvas id="statusChart" style="max-height: 250px;"></canvas>
+                            </div>
+                            <div class="col-md-4">
+                                <canvas id="botChart" style="max-height: 250px;"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Bot Breakdown Table -->
+                        <div class="table-responsive mt-4">
+                            <table class="table table-sm table-hover border">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Bot Name</th>
+                                        <th class="text-center">Total Runs</th>
+                                        <th class="text-center">Success</th>
+                                        <th class="text-center">Errors</th>
+                                        <th class="text-center">Success Rate</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for stat in summary.bot_stats %}
+                                    <tr>
+                                        <td><strong>{{ stat.bot_name }}</strong></td>
+                                        <td class="text-center">{{ stat.total }}</td>
+                                        <td class="text-center text-success">{{ stat.success }}</td>
+                                        <td class="text-center text-danger">{{ stat.error }}</td>
+                                        <td class="text-center">
+                                            {% widthratio stat.success stat.total 100 %}%
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <tr>
+                                        <td colspan="5" class="text-center text-muted">No data available for this period</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Live Bot Status</h3>
+    </div>
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4" id="bot-list-container">
         {% include 'dashboard_bots/_bot_list.html' %}
     </div>
@@ -15,8 +106,64 @@
 {% endblock %}
 
 {% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     $(document).ready(function() {
+        // Status Chart (Pie)
+        const statusCtx = document.getElementById('statusChart').getContext('2d');
+        new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Success', 'Errors', 'Other'],
+                datasets: [{
+                    data: [{{ summary.success_cases }}, {{ summary.error_cases }}, {{ summary.other_cases }}],
+                    backgroundColor: ['#198754', '#dc3545', '#ffc107'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    title: { display: true, text: 'Overall Status Distribution' }
+                }
+            }
+        });
+
+        // Bot Performance Chart (Bar)
+        const botCtx = document.getElementById('botChart').getContext('2d');
+        new Chart(botCtx, {
+            type: 'bar',
+            data: {
+                labels: [{% for stat in summary.bot_stats %}'{{ stat.bot_name }}',{% endfor %}],
+                datasets: [
+                    {
+                        label: 'Success',
+                        data: [{% for stat in summary.bot_stats %}{{ stat.success }},{% endfor %}],
+                        backgroundColor: '#198754'
+                    },
+                    {
+                        label: 'Errors',
+                        data: [{% for stat in summary.bot_stats %}{{ stat.error }},{% endfor %}],
+                        backgroundColor: '#dc3545'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                indexAxis: 'y',
+                scales: {
+                    x: { stacked: true },
+                    y: { stacked: true }
+                },
+                plugins: {
+                    legend: { position: 'bottom' },
+                    title: { display: true, text: 'Cases per Bot' }
+                }
+            }
+        });
+
+        // Live status polling
         setInterval(function() {
             $.ajax({
                 url: "{% url 'dashboard:bots_partial' %}",

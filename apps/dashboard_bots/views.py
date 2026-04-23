@@ -1,5 +1,8 @@
 from django.views.generic import ListView, TemplateView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.utils import timezone
+from datetime import timedelta
+from django.db.models import Count, Q
 from .models import Bot, BotStatus, BotRecord
 
 class BotListMixin:
@@ -20,12 +23,40 @@ class BotListMixin:
             })
         return bot_list
 
-class DashboardView(LoginRequiredMixin, BotListMixin, TemplateView):
+class ExecutiveSummaryMixin:
+    def get_summary_data(self, days=7):
+        since = timezone.now() - timedelta(days=days)
+        records = BotRecord.objects.filter(created__gte=since)
+        
+        total_cases = records.count()
+        success_cases = records.filter(status__iexact='Success').count()
+        error_cases = records.filter(Q(status__iexact='Error') | Q(status__iexact='Failed')).count()
+        other_cases = total_cases - success_cases - error_cases
+        
+        # Stats per bot
+        bot_stats = records.values('bot_name').annotate(
+            total=Count('id'),
+            success=Count('id', filter=Q(status__iexact='Success')),
+            error=Count('id', filter=Q(status__iexact='Error') | Q(status__iexact='Failed'))
+        ).order_by('-total')
+        
+        return {
+            'total_cases': total_cases,
+            'success_cases': success_cases,
+            'error_cases': error_cases,
+            'other_cases': other_cases,
+            'bot_stats': list(bot_stats),
+            'days': days
+        }
+
+class DashboardView(LoginRequiredMixin, BotListMixin, ExecutiveSummaryMixin, TemplateView):
     template_name = 'dashboard_bots/dashboard.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        days = int(self.request.GET.get('days', 7))
         context['bots'] = self.get_bot_list()
+        context['summary'] = self.get_summary_data(days=days)
         return context
 
 class DashboardBotsPartialView(LoginRequiredMixin, BotListMixin, TemplateView):
