@@ -6,11 +6,6 @@
 <div class="container-fluid mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1>Bot Dashboard</h1>
-        <div class="btn-group" role="group" aria-label="Time period">
-            <a href="?days=1" class="btn btn-outline-secondary {% if summary.days == 1 %}active{% endif %}">Last 24h</a>
-            <a href="?days=7" class="btn btn-outline-secondary {% if summary.days == 7 %}active{% endif %}">Last 7 Days</a>
-            <a href="?days=30" class="btn btn-outline-secondary {% if summary.days == 30 %}active{% endif %}">Last Month</a>
-        </div>
     </div>
 
     <!-- Executive Summary Section -->
@@ -19,12 +14,20 @@
             <div class="card">
                 <div class="card-header" role="button" data-bs-toggle="collapse" data-bs-target="#executiveSummaryContent" aria-expanded="true" style="cursor: pointer;">
                     <h5 class="mb-0">
-                        Executive Summary (Last {{ summary.days }} days)
+                        Executive Summary
                         <i class="bi bi-chevron-down ms-2 small text-muted"></i>
                     </h5>
                 </div>
                 <div id="executiveSummaryContent" class="collapse show">
                     <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <span class="text-muted small">Showing data for the <strong>last {{ summary.days }} days</strong></span>
+                            <div class="btn-group btn-group-sm" role="group" aria-label="Time period">
+                                <a href="?days=1" class="btn btn-outline-secondary {% if summary.days == 1 %}active{% endif %}">Last 24h</a>
+                                <a href="?days=7" class="btn btn-outline-secondary {% if summary.days == 7 %}active{% endif %}">Last 7 Days</a>
+                                <a href="?days=30" class="btn btn-outline-secondary {% if summary.days == 30 %}active{% endif %}">Last Month</a>
+                            </div>
+                        </div>
                         <div class="row">
                             <!-- Stats Cards -->
                             <div class="col-md-4">
