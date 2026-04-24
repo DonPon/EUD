@@ -53,48 +53,52 @@ def bulk_seed(num_clients=20, num_le_clients=10):
         br = BankingRelationship.objects.create(
             client_uuid=client_uuid,
             banking_relationship=f"BR-{random.randint(100000, 999999)}",
-            technical_account=random.choice([True, False]),
             additional_br=f"ADD-{random.randint(1000, 9999)}",
-            distribution_list=fake.word(),
             name_of_banking_relationship=fake.company(),
-            type_of_account=random.choice(['120', '131', '132']),
-            type_of_signature=random.choice(['Joint', 'Disjoint']),
+            type_of_account=random.choice(['Individual', 'Joint']),
+            type_of_signature=random.choice(['Single', 'Joint']),
+            segment_type=random.choice([120, 131, 132]),
             client_segment=random.choice(['CORA', 'HNWI']),
             code_ksc=random.choice(['541', '543', '546', '548', '561', '563', '566', '568']),
-            recording_phone_calls=random.choice([True, False]),
-            declaration_email=fake.email(),
             language=random.choice(['German', 'English', 'Spanish']),
-            opened_in_ubs_premises=random.choice([True, False]),
-            instructions=fake.paragraph(),
+            opened_in_ubs_premises=random.choice(['Inside premises', 'Outside premises']),
             status=random.sample(status_options, k=random.randint(0, 3)),
-            account_and_securities_statements=random.sample(['Monthly', 'Collective settlement', 'Additional on a daily basis'], k=random.randint(1, 2)),
-            type_and_purpose=random.sample(['Payment transactions', 'Asset/Cash investment', 'Credit Business', 'Other'], k=random.randint(1, 2)),
-            agreement_distribution_fees=random.choice(['Normal case', 'Complete payout', 'Partial payout']),
-            send_documents=random.sample(['To client', 'To CA', 'Digitally'], k=random.randint(1, 2)),
-            csc=fake.bothify(text='CSC-####'),
+            account_and_securities_statements=random.choice(['Monthly', 'Daily']),
+            type_and_purpose=random.choice(['Payment', 'Investment']),
+            agreement_distribution_fees=random.choice(['Normal', 'Complete', 'Partial']),
+            send_documents=random.choice(['To client', 'To CA', 'Digitally']),
             ateco=fake.bothify(text='ATECO-####'),
             sae=fake.bothify(text='SAE-####'),
-            level_of_professionalism=random.randint(1, 5),
-            number_of_portfolios=random.randint(1, 10)
+            level_of_professionalism=random.choice(['Yes', 'No']),
+            number_of_portfolios=random.randint(1, 4)
         )
 
         # 2. Create AdditionalFormDE
         AdditionalFormDE.objects.create(
             client_uuid=client_uuid,
-            request_to_become_professional=random.choice([True, False]),
-            forward_trading_transactions=random.choice([True, False]),
-            exemption_order=random.choice([True, False]),
+            forward_trading_transactions=random.choice(['Yes', 'No']),
+            exemption_order=random.choice(['Yes', 'No']),
             last_name=fake.last_name(),
             first_name=fake.first_name(),
-            identification_number=fake.ssn(),
+            name_at_birth=fake.last_name(),
+            street=fake.street_name(),
+            no=fake.building_number(),
+            postal_code=random.randint(10000, 99999),
+            city=fake.city(),
+            country=fake.country(),
+            identification_number=random.randint(10000000, 99999999),
             date_of_birth=fake.date_of_birth(minimum_age=18, maximum_age=90),
             amount=random.choice(['Up to an amount of (EUR)', 'Up to the total savers allowance', 'Over EUR 0']),
             timeline=random.choice(['Until 31 December', 'This order is valid as of', 'Or from the start of the business relationship']),
+            standing_order_form=random.choice(['Yes', 'No']),
             execution=random.choice(['Weekly', 'Monthly', 'Annually']),
-            day_of_execution=random.randint(1, 28),
-            until_canceled=random.choice([True, False]),
-            limited_power_of_attorney=random.choice([True, False]),
-            ubs_digital_banking_authorization=random.choice([True, False])
+            day_of_execution=str(random.randint(1, 28)),
+            first_time_execution=random.choice(['Yes', 'No']),
+            month=random.randint(1, 12),
+            year=random.randint(2020, 2030),
+            validity=random.choice(['valid until', 'until canceled']),
+            tax_at_source_canada=random.choice(['Yes', 'No']),
+            transfer_another_bank=random.choice(['Yes', 'No'])
         )
 
         # 3. Create PersonalInformation
@@ -108,23 +112,23 @@ def bulk_seed(num_clients=20, num_le_clients=10):
             marital_status=random.choice(['Single', 'Married', 'Divorced']),
             occupation_sector=fake.job(),
             fiscal_identifier=fake.bothify(text='FISCAL-#######'),
-            sensitive_client=random.choice([True, False])
+            sensitive_client=random.choice(['Yes', 'No'])
         )
 
         # 4. Create Addresses
         for _ in range(random.randint(1, 3)):
             Address.objects.create(
                 client_uuid=client_uuid,
-                person_entity=fake.name(),
-                type_of_address=random.choice(['Domicile', 'Correspondence', 'Tax domicile']),
-                first_name=fake.first_name(),
-                last_name=fake.last_name(),
+                first_and_last_name=fake.name(),
+                type_of_address=random.choice(['Domicile', 'Correspondence']),
                 street=fake.street_address(),
                 no=fake.building_number(),
                 postal_code=fake.zipcode(),
                 city=fake.city(),
                 country=fake.country(),
-                documents_sent=random.choice([True, False])
+                annual_tax_cert=random.choice(['Yes', 'No']),
+                receive_copies_of_original=random.choice(['Yes', 'No']),
+                third_party_copies=random.choice(['Yes', 'No'])
             )
 
         # 5. Create Communications
@@ -132,11 +136,11 @@ def bulk_seed(num_clients=20, num_le_clients=10):
             Communication.objects.create(
                 client_uuid=client_uuid,
                 first_and_last_name=fake.name(),
-                phone=random.choice(['Work', 'Private']),
-                phone_number=fake.phone_number(),
-                email=random.choice(['Work', 'Private']),
-                email_address=fake.email(),
-                fax_address=fake.phone_number() if random.choice([True, False]) else ""
+                type_of_communication=random.choice(['Telephone', 'Mobile', 'Email', 'Pec address', 'Fax']),
+                communication_context=random.choice(['work', 'private']),
+                prefix=random.randint(1, 99),
+                number=random.randint(100000000, 999999999),
+                address=fake.address()
             )
 
         # 6. Create ClientAdvisor
@@ -144,9 +148,11 @@ def bulk_seed(num_clients=20, num_le_clients=10):
             client_uuid=client_uuid,
             first_name=fake.first_name(),
             last_name=fake.last_name(),
+            first_and_last_name=fake.name(),
             email=fake.company_email(),
             branch=fake.city(),
-            role=random.choice(['Client Advisor', 'Deputy Client Advisor'])
+            role_client_advisor=random.choice(['Client Advisor', 'Deputy Client Advisor']),
+            distribution_list=fake.word() + "@distribution.ubs.com"
         )
 
         # 7. Create Nationalities
@@ -155,14 +161,25 @@ def bulk_seed(num_clients=20, num_le_clients=10):
                 client_uuid=client_uuid,
                 is_main_nationality=(_ == 0),
                 nationality=fake.country(),
+                nci=fake.bothify(text='NCI-########'),
                 id_type=random.choice(['Passport', 'ID Card', 'Driver License']),
-                expiry_date=fake.future_date(end_date="+5y")
+                fiscal_code=fake.bothify(text='FC-########'),
+                release_authority=fake.word(),
+                release_location=fake.city(),
+                release_date=fake.past_date(start_date='-5y'),
+                expiry_date=fake.future_date(end_date="+5y"),
+                is_id_document_provided=random.choice([True, False])
             )
 
         # 8. Create TIN, EBanking
         TIN.objects.create(client_uuid=client_uuid, aei_tin=fake.bothify(text='TIN-#########'))
-        EBanking.objects.create(client_uuid=client_uuid, has_ebanking=random.choice([True, False]), contract_number=fake.bothify(text='EB-########'))
-        
+        EBanking.objects.create(
+            client_uuid=client_uuid,
+            first_name=fake.first_name(),
+            last_name=fake.last_name(),
+            access_type=random.choice(['Full Access', 'Read Only', 'Transactional']),
+            contract_number=fake.bothify(text='EB-########')
+        )        
         # 9. Create Products and Accounts
         for _ in range(random.randint(1, 5)):
             product_obj = Product.objects.create(
@@ -171,10 +188,9 @@ def bulk_seed(num_clients=20, num_le_clients=10):
                 portfolio_name=fake.company() + " Portfolio",
                 email_waiver=random.choice([True, False]),
                 reference_currency=random.choice(['USD', 'EUR', 'GBP', 'CHF']),
-                investment_service=random.choice(['Asset Management', 'Wealth Management', 'Advisory']),
-                a_s_authorization_path=f"/path/to/auth/{fake.word()}.pdf",
                 investment_strategy=random.choice(['Conservative', 'Balanced', 'Growth', 'Aggressive']),
                 ip_risk_tolerance=random.choice(['Low', 'Medium', 'High']),
+                investment_service=random.choice(['Asset Management', 'Wealth Management', 'Advisory']),
                 investment_amount=random.uniform(10000.0, 1000000.0),
                 selected_service=random.choice(['Basic', 'Premium', 'Elite']),
                 all_in=random.choice([True, False]),
@@ -184,35 +200,36 @@ def bulk_seed(num_clients=20, num_le_clients=10):
                 alternative_investment=random.choice([True, False]),
                 direct_instrument=random.choice([True, False]),
                 initial_amount=random.uniform(5000.0, 500000.0),
-                foreign_hedging=random.choice(['Discretion of UBS', 'None for share allocation']),
+                currency_hedging=random.choice(['Discretion of UBS', 'None for share allocation']),
                 transaction_confirmation=random.choice([True, False]),
-                empty_kyc_form_path=f"/path/to/kyc/{fake.word()}.pdf",
-                investor_profile_path=f"/path/to/profile/{fake.word()}.pdf",
-                myway_module_path=f"/path/to/myway/{fake.word()}.pdf",
+                white_KYC_provided=random.choice(['Yes', 'No']),
+                fiduciary_mandate_provided=random.choice(['Yes', 'No']),
+                fiscal_regime=random.choice(['Regime 1', 'Regime 2']),
                 ntac=random.choice(['Excluded', 'Permitted']),
                 reporting_loss=random.choice(['Monthly', 'Quarterly']),
                 share_focus=random.choice(['EMU: Predominantly...', 'Global equity...']),
-                date_of_alignment=fake.date_between(start_date='-1y', end_date='today'),
-                end_date_alignment=fake.date_between(start_date='today', end_date='+1y'),
+                hedging_foreign_currency=random.choice(['Discretion of UBS', 'None']),
+                date_of_alignment=random.choice(['Immediately', 'Next business day']),
+                end_date_alignment=fake.future_date(),
                 type_of_business_settlement=random.choice(['Monthly', 'Individual']),
                 special_conditions=fake.paragraph(),
                 discount_applied=random.choice([True, False]),
                 discount_amount_percent=random.uniform(0.0, 50.0),
                 flat_fee_applied=random.choice([True, False]),
-                flat_fee_percent=random.uniform(0.1, 2.0),
-                invested_assets=random.uniform(100000.0, 5000000.0),
+                flat_fee_percent=random.uniform(0.0, 5.0),
+                invested_assets=random.uniform(10000.0, 1000000.0),
                 income_pa=random.uniform(1000.0, 50000.0),
-                current_return_on_assets=random.uniform(0.01, 0.10),
-                target_roa=random.uniform(0.05, 0.15),
-                net_new_money_potential=random.uniform(0.0, 1000000.0),
-                business_case_communication=random.choice(['Option 1 (in person)', 'Option 2 (online)']),
-                fee_model='Advice plus transaction fee',
+                current_return_on_assets=random.uniform(0.0, 10.0),
+                target_roa=random.uniform(1.0, 12.0),
+                net_new_money_potential=random.uniform(0.0, 500000.0),
+                business_case_communication=random.choice(['Option 1', 'Option 2']),
+                fee_model=random.choice(['Advice plus transaction fee', 'Flat fee']),
                 mandate_fee=random.choice([True, False]),
-                service_and_execution=random.choice(['UBS Manage', 'UBS Advice']),
+                service_and_execution=random.choice(['Monthly', 'Individual']),
                 no_discount=random.choice([True, False]),
                 no_discount_amount_percent=random.uniform(0.0, 10.0),
                 no_flat_fee=random.choice([True, False]),
-                no_flat_fee_amount=random.uniform(100.0, 1000.0),
+                no_flat_fee_amount=random.uniform(0.0, 1000.0),
                 transaction_fee=random.uniform(10.0, 100.0),
                 standard_fee_discount=random.uniform(0.0, 20.0),
                 shares_fee=random.choice([True, False]),
@@ -254,8 +271,25 @@ def bulk_seed(num_clients=20, num_le_clients=10):
                 number_of_participants=random.randint(2, 5),
                 date_of_meeting=fake.future_date(),
                 time=fake.time(),
+                room_booking=random.choice(['Yes', 'No']),
                 hospitality=random.choice(['None', 'Breakfast', 'Lunch']),
-                performance_since_beginning=random.uniform(-0.1, 0.2)
+                technical_equipment_needed=random.choice(['Yes', 'No']),
+                parking_space_client=random.choice(['Yes', 'No']),
+                pool_car=random.choice(['Yes', 'No']),
+                from_date=fake.date_between(start_date='today', end_date='+30d'),
+                from_time=fake.time(),
+                to_date=fake.date_between(start_date='+31d', end_date='+60d'),
+                to_time=fake.time(),
+                planned_contact=random.choice(['Yes', 'No']),
+                contact_CST=random.choice(['Yes', 'No']),
+                stored_reporting_t2_ptf=random.choice(['Yes', 'No']),
+                performance_since_beginning=random.choice(['Yes', 'No']),
+                performance_before_tax=random.choice(['Yes', 'No']),
+                performance_since_start=random.choice(['Yes', 'No']),
+                health_check=random.choice(['Yes', 'No']),
+                remarks_documents=fake.sentence(),
+                investor_profile_link=random.choice(['Yes', 'No']),
+                email_waiver=random.choice(['Yes', 'No'])
             )
 
         if (i + 1) % 10 == 0:
@@ -540,14 +574,10 @@ def bulk_seed(num_clients=20, num_le_clients=10):
                 Relationship.objects.create(
                     client_uuid=client_uuid,
                     child_unique_id=target_uuid,
-                    type_of_relationship=random.choice(['POA', 'Joint Owner', 'Family Member', 'Beneficiary']),
-                    type_of_access=random.choice(['Full', 'Read-only', 'Limited']),
-                    level_of_access=random.sample([
-                        'Limited Power of attorney',
-                        'Power of attorney for all accounts',
-                        'Power of attorney in the event of death'
-                    ], k=random.randint(1, 2)),
-                    relation_with_owner=random.choice(['Spouse', 'Child', 'Business Partner', 'Legal Rep'])
+                    first_and_last_name=fake.name(),
+                    tax_domicile=random.choice(['work', 'private']),
+                    technical_account=fake.bothify(text='TECH-####'),
+                    type_of_relationship=random.choice(['Owner', 'Co-owner', 'POA (for all accounts)', 'Beneficial Owner'])
                 )
     
     # LE Relationships
