@@ -11,29 +11,37 @@ def register_clients_models():
     CrudRegistry.register(BankingRelationship, {
         'section': 'np',
         'fields': [
-            'id', 'client_uuid', 'banking_relationship', 'technical_account', 'additional_br',
-            'distribution_list', 'name_of_banking_relationship', 'type_of_account',
-            'type_of_signature', 'client_segment', 'code_ksc', 'recording_phone_calls',
-            'declaration_email', 'language', 'opened_in_ubs_premises', 'instructions',
-            'status', 'account_and_securities_statements', 'type_and_purpose',
-            'agreement_distribution_fees', 'send_documents', 'csc', 'ateco', 'sae',
-            'level_of_professionalism', 'number_of_portfolios', 'created_at'
+            'id', 'client_uuid', 'name_of_banking_relationship', 'banking_relationship',
+            'additional_br', 'partner_id', 'type_of_account', 'type_of_signature',
+            'segment_type', 'client_segment', 'code_ksc', 'communication_br',
+            'third_postal_address', 'beneficial_owner', 'id_doc_provided', 'language',
+            'opened_in_ubs_premises', 'account_and_securities_statements',
+            'type_and_purpose', 'type_and_purpose_specify', 'reporting_obligation',
+            'br_client_type', 'earning_statements', 'earning_statements_fees',
+            'fiscal_identifier', 'agreement_distribution_fees', 'agreement_percentage',
+            'number_of_portfolios', 'delivery_date', 'time', 'document_format',
+            'distance_mode', 'ateco', 'sae', 'level_of_professionalism',
+            'send_documents', 'further_notes', 'status', 'created_at'
         ],
         'list_display': ['name_of_banking_relationship', 'banking_relationship', 'type_of_account', 'client_segment', 'status'],
-        'filter_fields': ['type_of_account', 'client_segment', 'code_ksc', 'language'],
-        'search_fields': ['name_of_banking_relationship', 'banking_relationship'],
+        'filter_fields': ['type_of_account', 'client_segment', 'code_ksc', 'language', 'br_client_type'],
+        'search_fields': ['name_of_banking_relationship', 'banking_relationship', 'partner_id'],
     })
 
     CrudRegistry.register(PersonalInformation, {
         'section': 'np',
         'fields': [
-            'id', 'client_uuid', 'first_name', 'last_name', 'first_and_last_name', 'date_of_birth',
-            'place_of_birth', 'country_of_birth', 'marital_status', 'occupation_sector',
-            'fiscal_identifier', 'indication_tin', 'sensitive_client'
+            'id', 'client_uuid', 'technical_account', 'type_of_relationship',
+            'first_and_last_name', 'first_name', 'last_name', 'name_at_birth',
+            'type_id_NCI', 'fiscal_it_number', 'type_id_document', 'release_authority',
+            'release_place', 'release_date', 'expiry_date', 'copy_id_provided',
+            'place_of_birth', 'date_of_birth', 'country_of_birth', 'marital_status',
+            'occupation_sector', 'fiscal_identifier', 'fiscal_residence',
+            'has_ebanking', 'sensitive_client'
         ],
-        'list_display': ['first_name', 'last_name', 'first_and_last_name', 'date_of_birth', 'marital_status'],
-        'filter_fields': ['marital_status', 'sensitive_client'],
-        'search_fields': ['first_name', 'last_name', 'first_and_last_name', 'fiscal_identifier'],
+        'list_display': ['first_name', 'last_name', 'type_of_relationship', 'date_of_birth', 'marital_status'],
+        'filter_fields': ['type_of_relationship', 'marital_status', 'sensitive_client'],
+        'search_fields': ['first_name', 'last_name', 'first_and_last_name', 'fiscal_identifier', 'fiscal_it_number'],
     })
 
     CrudRegistry.register(Nationality, {
@@ -49,12 +57,13 @@ def register_clients_models():
     CrudRegistry.register(Address, {
         'section': 'np',
         'fields': [
-            'id', 'client_uuid', 'person_entity', 'type_of_address', 'first_name', 'last_name',
-            'street', 'no', 'postal_code', 'city', 'province', 'country', 'documents_sent'
+            'id', 'client_uuid', 'first_and_last_name', 'type_of_address', 'c_o',
+            'street', 'no', 'postal_code', 'city', 'province', 'country',
+            'annual_tax_cert', 'receive_copies_of_original', 'third_party_copies'
         ],
-        'list_display': ['type_of_address', 'city', 'country', 'documents_sent'],
-        'filter_fields': ['type_of_address', 'country'],
-        'search_fields': ['city', 'street', 'last_name'],
+        'list_display': ['type_of_address', 'city', 'country', 'first_and_last_name'],
+        'filter_fields': ['type_of_address', 'country', 'annual_tax_cert'],
+        'search_fields': ['city', 'street', 'first_and_last_name'],
     })
 
     CrudRegistry.register(TIN, {
@@ -66,47 +75,48 @@ def register_clients_models():
     CrudRegistry.register(Communication, {
         'section': 'np',
         'fields': [
-            'id', 'client_uuid', 'first_and_last_name', 'landline', 'phone', 'phone_number',
-            'mobile_number', 'email_address', 'fax_address', 'pec_address'
+            'id', 'client_uuid', 'first_and_last_name', 'type_of_communication',
+            'communication_context', 'prefix', 'number', 'address'
         ],
-        'list_display': ['first_and_last_name', 'phone_number', 'email_address'],
-        'search_fields': ['first_and_last_name', 'email_address'],
+        'list_display': ['first_and_last_name', 'type_of_communication', 'number'],
+        'search_fields': ['first_and_last_name', 'number'],
     })
 
     CrudRegistry.register(EBanking, {
         'section': 'np',
-        'fields': ['id', 'client_uuid', 'has_ebanking', 'contract_number'],
-        'list_display': ['has_ebanking', 'contract_number'],
+        'fields': ['id', 'client_uuid', 'first_name', 'last_name', 'access_type', 'contract_number'],
+        'list_display': ['first_name', 'last_name', 'contract_number'],
     })
 
     CrudRegistry.register(Relationship, {
         'section': 'np',
         'fields': [
-            'id', 'client_uuid', 'child_unique_id', 'type_of_relationship',
-            'type_of_access', 'level_of_access', 'relation_with_owner'
+            'id', 'client_uuid', 'child_unique_id', #'first_and_last_name',
+            'tax_domicile', 'technical_account', 'type_of_relationship', 'full_name'
         ],
         'list_display': [
             'related_banking_relationship',
-            'related_name_of_banking_relationship',
-            'related_first_name',
-            'related_last_name',
+            #'related_name_of_banking_relationship',
+            #'related_first_name',
+            #'related_last_name',
+            'full_name',
             'type_of_relationship',
-            'relation_with_owner'
+            'related_client_link'
         ],
-        'filter_fields': ['type_of_relationship'],
+        'filter_fields': ['type_of_relationship', 'tax_domicile'],
     })
 
     CrudRegistry.register(Product, {
         'section': 'np',
         'fields': [
             'id', 'client_uuid', 'portfolio_id', 'portfolio_name', 'email_waiver',
-            'reference_currency', 'investment_service', 'a_s_authorization_path',
-            'investment_strategy', 'ip_risk_tolerance', 'investment_amount',
-            'selected_service', 'all_in', 'sustainable_investing',
-            'sustainability_preference', 'focus_equity', 'alternative_investment',
-            'direct_instrument', 'initial_amount', 'foreign_hedging',
-            'transaction_confirmation', 'empty_kyc_form_path', 'investor_profile_path',
-            'myway_module_path', 'ntac', 'reporting_loss', 'share_focus',
+            'reference_currency', 'investment_strategy', 'ip_risk_tolerance',
+            'investment_service', 'investment_amount', 'selected_service',
+            'all_in', 'sustainable_investing', 'sustainability_preference',
+            'focus_equity', 'alternative_investment', 'direct_instrument',
+            'initial_amount', 'currency_hedging', 'transaction_confirmation',
+            'white_KYC_provided', 'fiduciary_mandate_provided', 'fiscal_regime',
+            'ntac', 'reporting_loss', 'share_focus', 'hedging_foreign_currency',
             'date_of_alignment', 'end_date_alignment', 'type_of_business_settlement',
             'special_conditions', 'discount_applied', 'discount_amount_percent',
             'flat_fee_applied', 'flat_fee_percent', 'invested_assets', 'income_pa',
@@ -139,16 +149,25 @@ def register_clients_models():
 
     CrudRegistry.register(ClientAdvisor, {
         'section': 'np',
-        'fields': ['id', 'client_uuid', 'first_name', 'last_name', 'first_and_last_name', 'email', 'desk', 'branch', 'role'],
-        'list_display': ['last_name', 'first_name', 'role', 'branch'],
-        'filter_fields': ['role', 'branch'],
+        'fields': [
+            'id', 'client_uuid', 'role_client_advisor', 'first_and_last_name',
+            'first_name', 'last_name', 'email', 'branch', 'distribution_list'
+        ],
+        'list_display': ['role_client_advisor', 'first_and_last_name', 'branch'],
+        'filter_fields': ['role_client_advisor', 'branch'],
     })
 
     CrudRegistry.register(MeetingPreparation, {
         'section': 'np',
         'fields': [
             'id', 'client_uuid', 'place', 'date_of_meeting', 'time',
-            'hospitality', 'performance_since_beginning'
+            'number_of_participants', 'room_booking', 'hospitality',
+            'technical_equipment_needed', 'parking_space_client', 'pool_car',
+            'from_date', 'from_time', 'to_date', 'to_time',
+            'planned_contact', 'contact_CST', 'stored_reporting_t2_ptf',
+            'performance_since_beginning', 'performance_before_tax',
+            'performance_since_start', 'health_check', 'remarks_documents',
+            'investor_profile_link', 'email_waiver'
         ],
         'list_display': ['date_of_meeting', 'time', 'place', 'hospitality'],
     })
@@ -156,11 +175,13 @@ def register_clients_models():
     CrudRegistry.register(AdditionalFormDE, {
         'section': 'np',
         'fields': [
-            'id', 'client_uuid', 'request_to_become_professional', 'forward_trading_transactions',
-            'exemption_order', 'last_name', 'first_name', 'identification_number',
-            'date_of_birth', 'amount', 'timeline', 'execution', 'until_canceled',
-            'limited_power_of_attorney', 'poa_all_accounts', 'poa_in_case_of_death',
-            'tax_at_source_canada', 'ubs_digital_banking_authorization'
+            'id', 'client_uuid', 'forward_trading_transactions', 'exemption_order',
+            'last_name', 'first_name', 'name_at_birth', 'street', 'no',
+            'postal_code', 'city', 'country', 'identification_number',
+            'date_of_birth', 'amount', 'timeline', 'date_until', 'valid_as_of',
+            'standing_order_form', 'execution', 'day_of_execution',
+            'first_time_execution', 'month', 'year', 'validity',
+            'valid_until_date', 'tax_at_source_canada', 'transfer_another_bank'
         ],
         'list_display': ['last_name', 'first_name', 'identification_number', 'amount'],
         'filter_fields': ['amount', 'execution'],
