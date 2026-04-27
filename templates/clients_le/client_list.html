@@ -20,7 +20,7 @@
                     <thead>
                         <tr>
                             <th style="width: 30px;"><input type="checkbox" id="select-all"></th>
-                            <th>Legal Name</th>
+                            <th>Name</th>
                             <th>BR Number</th>
                             <th>Client Segment</th>
                             <th>Status</th>
@@ -85,7 +85,7 @@
                 }
             },
             { 
-                data: 'legal_name',
+                data: 'name_of_banking_relationship',
                 render: function(data) {
                     return `<strong>${data || 'N/A'}</strong>`;
                 }
