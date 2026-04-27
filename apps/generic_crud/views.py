@@ -117,7 +117,7 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
                 if is_le:
                     from apps.clients_le.models import LE_BankingRelationship, LE_PersonalInformation
                     # Get all LE clients for the dropdown
-                    all_clients = LE_BankingRelationship.objects.all().order_by('legal_name')
+                    all_clients = LE_BankingRelationship.objects.all().order_by('name_of_banking_relationship')
                 else:
                     from apps.clients.models import BankingRelationship, PersonalInformation
                     # Get all NP clients for the dropdown
@@ -130,7 +130,7 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
                         personal = LE_PersonalInformation.objects.filter(client_uuid=client.client_uuid).first()
                         first_name = personal.first_name if personal else ''
                         last_name = personal.last_name if personal else ''
-                        display_name = f"{client.banking_relationship} | {client.legal_name or client.name_of_banking_relationship} | {first_name} {last_name}".strip()
+                        display_name = f"{client.banking_relationship} | {client.name_of_banking_relationship} | {first_name} {last_name}".strip()
                     else:
                         # For NP clients
                         personal = PersonalInformation.objects.filter(client_uuid=client.client_uuid).first()

@@ -33,7 +33,7 @@ from apps.clients.models import (
 from apps.clients_le.models import (
     LE_BankingRelationship, LE_PersonalInformation, LE_Company, LE_Address, LE_Communication,
     LE_ClientAdvisor, LE_Nationality, LE_TIN, LE_EBanking, LE_MeetingPreparation,
-    LE_Product, LE_Account, LE_Relationship
+    LE_Product, LE_Account, LE_Relationship, LE_AdditionalFormDE
 )
 
 fake = Faker()
@@ -58,7 +58,7 @@ def bulk_seed(num_clients=20, num_le_clients=10):
             partner_id=fake.bothify(text='PART-######'),
             type_of_account=random.choice(['Individual', 'Joint']),
             type_of_signature=random.choice(['Single', 'Joint']),
-            segment_type=random.choice([120, 131, 132]),
+            segment_type=random.choice(['120', '131', '132']),
             client_segment=random.choice(['CORA', 'HNWI']),
             code_ksc=random.choice(['541', '543', '546', '548', '561', '563', '566', '568']),
             communication_br=random.choice(['Phone', 'Email']),
@@ -333,58 +333,100 @@ def bulk_seed(num_clients=20, num_le_clients=10):
         # 1. LE Hub (Banking Relationship)
         LE_BankingRelationship.objects.create(
             client_uuid=le_client_uuid,
-            legal_name=legal_name,
+            name_of_banking_relationship=legal_name,
             banking_relationship=f"LE-BR-{random.randint(100000, 999999)}",
-            technical_account=random.choice([True, False]),
             additional_br=f"ADD-{random.randint(1000, 9999)}",
-            distribution_list=fake.word(),
-            name_of_banking_relationship=fake.company(),
-            type_of_account=random.choice(['120', '131', '132']),
-            type_of_signature=random.choice(['Joint', 'Disjoint']),
+            partner_id=fake.bothify(text='PART-######'),
+            type_of_account=random.choice(['Individual', 'Joint']),
+            type_of_signature=random.choice(['Single', 'Joint']),
+            segment_type=random.choice(['120', '131', '132']),
             client_segment=random.choice(['Institutional', 'SME', 'Multinational']),
-            code_ksc=random.choice(['541', '543', '546', '548', '561', '563', '566', '568']),
-            recording_phone_calls=random.choice([True, False]),
-            declaration_email=random.choice([True, False]),
-            language=random.choice(['German', 'English', 'Spanish']),
-            opened_in_ubs_premises=random.choice([True, False]),
-            instructions=fake.paragraph(),
-            account_and_securities_statements=random.choice([True, False]),
-            type_and_purpose=random.choice(['Other',]),
-            specify=fake.word(),
-            reporting_obligation=random.choice(['Reported by UBS', 'Reported by the client']),
-            earning_statement=random.choice([True, False]),
-            fees=random.choice([True, False]),
-            approval_of_branch_head=random.choice([True, False]),
+            code_csc=fake.bothify(text='CSC-####'),
+            communication_br=random.choice(['Phone', 'Email']),
+            third_postal_address=random.choice(['Yes', 'No']),
+            beneficial_owner=random.choice(['Same as owner', 'Third party']),
+            id_doc_provided=random.choice(['Provided', 'Not provided']),
+            language=random.choice(['German', 'English', 'Italian', 'Spanish']),
+            opened_in_ubs_premises=random.choice(['Inside premises', 'Outside premises']),
+            account_and_securities_statements=random.choice(['Monthly', 'Daily']),
+            type_and_purpose=random.choice(['Payment', 'Investment']),
+            type_and_purpose_specify=fake.word(),
+            reporting_obligation=random.choice(['Reported by UBS', 'Reported by Client']),
+            br_client_type=random.choice(['Private', 'Business']),
+            earning_statements=random.choice(['Yes', 'No']),
+            earning_statements_fees=random.choice(['Yes', 'No']),
             fiscal_identifier=fake.bothify(text='FISCAL-#######'),
-            agreement_distribution_fees=random.choice([True, False]),
-            share_of_distribution=fake.word(),
-            send_documents=random.choice([True, False]),
-            cscatecosae=fake.bothify(text='CSCATECO-####'),
+            agreement_distribution_fees=random.choice(['Normal', 'Complete', 'Partial']),
+            agreement_percentage=f"{random.randint(0, 100)}%",
+            number_of_portfolios=random.randint(1, 4),
+            delivery_date=fake.date_this_year(),
+            time=fake.time(),
+            document_format=random.choice(['PDF', 'Paper']),
+            distance_mode=random.choice(['Digital', 'In person']),
+            ateco=fake.bothify(text='ATECO-####'),
+            sae=fake.bothify(text='SAE-####'),
+            level_of_professionalism=random.choice(['Yes', 'No']),
+            send_documents=random.choice(['To client', 'To CA', 'Digitally']),
             further_notes=fake.paragraph(),
-            level_of_professionalism=random.randint(1, 5),
-            number_of_portfolios=random.randint(1, 10),
             status=random.sample(status_options, k=random.randint(0, 3))
         )
 
-        # 2. LE Company Information
+        # 2. LE AdditionalFormDE
+        LE_AdditionalFormDE.objects.create(
+            client_uuid=le_client_uuid,
+            forward_trading_transactions=random.choice(['Yes', 'No']),
+            exemption_order=random.choice(['Yes', 'No']),
+            last_name=fake.last_name(),
+            first_name=fake.first_name(),
+            name_at_birth=fake.last_name(),
+            street=fake.street_name(),
+            no=fake.building_number(),
+            postal_code=random.randint(10000, 99999),
+            city=fake.city(),
+            country=fake.country(),
+            identification_number=random.randint(10000000, 99999999),
+            date_of_birth=fake.date_of_birth(minimum_age=18, maximum_age=90),
+            amount=random.choice(['Up to an amount of (EUR)', 'Up to the total savers allowance', 'Over EUR 0']),
+            timeline=random.choice(['Until 31 December', 'This order is valid as of', 'Or from the start of the business relationship']),
+            standing_order_form=random.choice(['Yes', 'No']),
+            execution=random.choice(['Weekly', 'Monthly', 'Annually']),
+            day_of_execution=str(random.randint(1, 28)),
+            first_time_execution=random.choice(['Yes', 'No']),
+            month=random.randint(1, 12),
+            year=random.randint(2020, 2030),
+            validity=random.choice(['valid until', 'until canceled']),
+            tax_at_source_canada=random.choice(['Yes', 'No']),
+            transfer_another_bank=random.choice(['Yes', 'No'])
+        )
+
+        # 3. LE Company Information
         LE_Company.objects.create(
             client_uuid=le_client_uuid,
             type_of_company=random.choice(['Corporation', 'Partnership', 'Sole Proprietorship', 'LLC']),
             name_of_company=legal_name,
-            ivacf=random.choice([True, False]),
-            iva=random.choice([True, False]),
-            fiscal_code=fake.bothify(text='FC-##########'),
+            ivacf=fake.bothify(text='CF-##########'),
+            iva=fake.bothify(text='IVA-##########'),
             lei_code=fake.bothify(text='LEI-####################'),
             date_of_constitution=fake.past_date(start_date='-10y'),
             place_of_constitution=fake.city(),
+            country_of_constitution=fake.country(),
             fiscal_residence=fake.country(),
-            turnover_id=fake.bothify(text='TO-########'),
             cciaa_type=random.choice(['Type A', 'Type B', 'Type C']),
             cciaa_number=fake.bothify(text='CCIAA-#######'),
             released_by=fake.name(),
             date_of_issue=fake.past_date(start_date='-5y'),
             form_of_legal_entity=random.choice(['AG', 'GmbH', 'Foundation', 'Trust', 'Other']),
-            professional_client_fiduciary_uhnw=random.choice([True, False])
+            level_of_professionalism=random.choice(['Yes', 'No']),
+            ateco=fake.bothify(text='ATECO-####'),
+            sae=fake.bothify(text='SAE-####'),
+            id_third_account_owner=random.choice(['For own account', 'For account of a third party']),
+            last_name_tao=fake.last_name(),
+            first_name_tao=fake.first_name(),
+            street_tao=fake.street_name(),
+            no_tao=fake.building_number(),
+            postal_code_tao=fake.zipcode(),
+            city_tao=fake.city(),
+            country_tao=fake.country()
         )
 
         # 3. LE Personal Information
@@ -422,10 +464,8 @@ def bulk_seed(num_clients=20, num_le_clients=10):
         for _ in range(random.randint(1, 3)):
             LE_Address.objects.create(
                 client_uuid=le_client_uuid,
-                person_entity=fake.name(),
-                type_of_address=random.choice(['Domicile', 'Correspondence', 'Third party', 'Tax domicile', 'Fiscal residence']),
-                first_name=fake.first_name(),
-                last_name=fake.last_name(),
+                first_and_last_name=fake.name(),
+                type_of_address=random.choice(['Correspondence', 'Domicile', 'Legal Address']),
                 c_o=fake.word(),
                 street=fake.street_address(),
                 no=fake.building_number(),
@@ -433,7 +473,9 @@ def bulk_seed(num_clients=20, num_le_clients=10):
                 city=fake.city(),
                 province=fake.state(),
                 country=fake.country(),
-                documents_sent=random.choice([True, False])
+                annual_tax_cert=random.choice(['Yes', 'No']),
+                receive_copies_of_original=random.choice(['Yes', 'No']),
+                third_party_copies=random.choice(['Yes', 'No'])
             )
 
         # 5. LE Communications
@@ -441,28 +483,23 @@ def bulk_seed(num_clients=20, num_le_clients=10):
             LE_Communication.objects.create(
                 client_uuid=le_client_uuid,
                 first_and_last_name=fake.name(),
-                landline=fake.phone_number(),
-                phone=random.choice(['Work', 'Private']),
-                phone_number=fake.phone_number(),
-                mobile_work=random.choice(['Work', 'Private']),
-                mobile_number=fake.phone_number(),
-                email=random.choice(['Work', 'Private']),
-                email_address=fake.email(),
-                fax=random.choice(['Work', 'Private']),
-                fax_address=fake.phone_number(),
-                pec_address=fake.email()
+                type_of_comunication=random.choice(['Telephone', 'Mobile', 'Email', 'Pec address', 'Fax']),
+                comunication_Context=random.choice(['work', 'private']),
+                prefix=random.randint(1, 99),
+                number=random.randint(100000000, 999999999),
+                address=fake.address()
             )
 
         # 6. LE Client Advisor
         LE_ClientAdvisor.objects.create(
             client_uuid=le_client_uuid,
+            role_client_advisor=random.choice(['Requestor', 'Client Advisor', 'Deputy Client Advisor']),
+            first_and_last_name=fake.name(),
             first_name=fake.first_name(),
             last_name=fake.last_name(),
-            first_and_last_name=fake.name(),
             email=fake.company_email(),
-            desk=fake.word(),
             branch=fake.city(),
-            role=random.choice(['Requestor', 'Client Advisor', 'Deputy Client Advisor'])
+            distribution_list=fake.word() + "@distribution.ubs.com"
         )
 
         # 7. LE Nationalities
@@ -485,9 +522,15 @@ def bulk_seed(num_clients=20, num_le_clients=10):
 
         # 8. LE TIN, EBanking
         LE_TIN.objects.create(client_uuid=le_client_uuid, aei_tin=fake.bothify(text='TIN-#########'))
-        LE_EBanking.objects.create(client_uuid=le_client_uuid, has_ebanking=random.choice([True, False]), contract_number=fake.bothify(text='EB-########'))
+        LE_EBanking.objects.create(
+            client_uuid=le_client_uuid,
+            first_name=fake.first_name(),
+            last_name=fake.last_name(),
+            access_type=random.choice(['Full Access', 'Read Only', 'Transactional']),
+            contract_number=random.randint(10000000, 99999999)
+        )
 
-        # 9. LE Products and Accounts
+        # 10. LE Products and Accounts
         for _ in range(random.randint(1, 3)):
             product_obj = LE_Product.objects.create(
                 client_uuid=le_client_uuid,
@@ -495,10 +538,9 @@ def bulk_seed(num_clients=20, num_le_clients=10):
                 portfolio_name=fake.company() + " Portfolio",
                 email_waiver=random.choice([True, False]),
                 reference_currency=random.choice(['USD', 'EUR', 'GBP', 'CHF']),
-                investment_service=random.choice(['Asset Management', 'Wealth Management', 'Advisory']),
-                a_s_authorization_path=f"/path/to/auth/{fake.word()}.pdf",
                 investment_strategy=random.choice(['Conservative', 'Balanced', 'Growth', 'Aggressive']),
                 ip_risk_tolerance=random.choice(['Low', 'Medium', 'High']),
+                investment_service=random.choice(['Asset Management', 'Wealth Management', 'Advisory']),
                 investment_amount=random.uniform(10000.0, 1000000.0),
                 selected_service=random.choice(['Basic', 'Premium', 'Elite']),
                 all_in=random.choice([True, False]),
@@ -508,15 +550,16 @@ def bulk_seed(num_clients=20, num_le_clients=10):
                 alternative_investment=random.choice([True, False]),
                 direct_instrument=random.choice([True, False]),
                 initial_amount=random.uniform(5000.0, 500000.0),
-                foreign_hedging=random.choice(['Discretion of UBS', 'None for share allocation']),
+                currency_hedging=random.choice(['Discretion of UBS', 'None for share allocation']),
                 transaction_confirmation=random.choice([True, False]),
-                empty_kyc_form_path=f"/path/to/kyc/{fake.word()}.pdf",
-                investor_profile_path=f"/path/to/profile/{fake.word()}.pdf",
-                myway_module_path=f"/path/to/myway/{fake.word()}.pdf",
+                white_KYC_provided=random.choice(['Yes', 'No']),
+                fiduciary_mandate_provided=random.choice(['Yes', 'No']),
+                fiscal_regime=random.choice(['Regime 1', 'Regime 2']),
                 ntac=random.choice(['Excluded', 'Permitted']),
                 reporting_loss=random.choice(['Monthly', 'Quarterly']),
                 share_focus=random.choice(['EMU: Predominantly...', 'Global equity...']),
-                date_of_alignment=fake.date_between(start_date='-1y', end_date='today'),
+                hedging_foreign_currency=random.choice(['Discretion of UBS', 'None']),
+                date_of_alignment=str(fake.date_between(start_date='-1y', end_date='today')),
                 end_date_alignment=fake.date_between(start_date='today', end_date='+1y'),
                 type_of_business_settlement=random.choice(['Monthly', 'Individual']),
                 special_conditions=fake.paragraph(),
@@ -529,7 +572,7 @@ def bulk_seed(num_clients=20, num_le_clients=10):
                 current_return_on_assets=random.uniform(0.01, 0.10),
                 target_roa=random.uniform(0.05, 0.15),
                 net_new_money_potential=random.uniform(0.0, 1000000.0),
-                business_case_communication=random.choice(['Option 1 (in person)', 'Option 2 (online)']),
+                business_case_communication=fake.paragraph(),
                 fee_model='Advice plus transaction fee',
                 mandate_fee=random.choice([True, False]),
                 service_and_execution=random.choice(['UBS Manage', 'UBS Advice']),
@@ -570,7 +613,7 @@ def bulk_seed(num_clients=20, num_le_clients=10):
                     reference_currency=random.choice(['USD', 'EUR', 'GBP', 'CHF', 'JPY']),
                 )
 
-        # 10. LE Meeting Preparation
+        # 11. LE Meeting Preparation
         for _ in range(random.randint(0, 2)):
             LE_MeetingPreparation.objects.create(
                 client_uuid=le_client_uuid,
@@ -578,14 +621,25 @@ def bulk_seed(num_clients=20, num_le_clients=10):
                 number_of_participants=random.randint(2, 5),
                 date_of_meeting=fake.future_date(),
                 time=fake.time(),
-                room_booking=random.choice([True, False]),
+                room_booking=random.choice(['Yes', 'No']),
                 hospitality=random.choice(['None', 'Cold drinks, coffee or tea on request', 'Breakfast', 'Lunch']),
-                technical_equipment_needed=random.choice([True, False]),
-                performance_since_beginning=random.uniform(-0.1, 0.2),
-                performance_before_tax=random.uniform(-0.05, 0.15),
-                performance_since_start=random.uniform(-0.08, 0.18),
-                investor_profile_link=fake.url(),
-                email_waiver=random.choice([True, False])
+                technical_equipment_needed=random.choice(['Yes', 'No']),
+                parking_space_client=random.choice(['Yes', 'No']),
+                pool_car=random.choice(['Yes', 'No']),
+                from_date=fake.date_between(start_date='today', end_date='+30d'),
+                from_time=fake.time(),
+                to_date=fake.date_between(start_date='+31d', end_date='+60d'),
+                to_time=fake.time(),
+                planned_contact=random.choice(['Yes', 'No']),
+                contact_CST=random.choice(['Yes', 'No']),
+                stored_reporting_t2_ptf=random.choice(['Yes', 'No']),
+                performance_since_beginning=random.choice(['Yes', 'No']),
+                performance_before_tax=random.choice(['Yes', 'No']),
+                performance_since_start=random.choice(['Yes', 'No']),
+                health_check=random.choice(['Yes', 'No']),
+                Remarks_documents=fake.sentence(),
+                investor_profile_link=random.choice(['Yes', 'No']),
+                email_waiver=random.choice(['Yes', 'No'])
             )
 
         if (i + 1) % 5 == 0:
@@ -620,14 +674,10 @@ def bulk_seed(num_clients=20, num_le_clients=10):
                 LE_Relationship.objects.create(
                     client_uuid=le_client_uuid,
                     child_unique_id=target_uuid,
-                    type_of_relationship=random.choice(['Shareholder', 'Board Member', 'Signatory', 'Beneficiary']),
-                    type_of_access=random.choice(['Full', 'Read-only', 'Limited']),
-                    level_of_access=random.sample([
-                        'Signatory rights',
-                        'Board representation',
-                        'Voting rights'
-                    ], k=random.randint(1, 2)),
-                    relation_with_owner=random.choice(['Director', 'Shareholder', 'Legal Representative', 'Authorized Signatory'])
+                    first_and_last_name=fake.name(),
+                    tax_domicile=random.choice(['work', 'private']),
+                    technical_account=fake.bothify(text='TECH-####'),
+                    type_of_relationship=random.choice(['Owner', 'Co-owner', 'POA (for all accounts)', 'Beneficial Owner'])
                 )
 
     print(f"Successfully seeded {num_clients} NP and {num_le_clients} LE banking relationships with thousands of related records.")

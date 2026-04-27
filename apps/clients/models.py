@@ -13,9 +13,9 @@ class BankingRelationship(ClientRelatedModel):
         ('Joint', 'Joint'),
     ]
     SEGMENT_TYPE_CHOICES = [
-        (120, '120'),
-        (132, '132'),
-        (131, '131'),
+        ('120', '120'),
+        ('132', '132'),
+        ('131', '131'),
     ]
     COMMUNICATION_BR_CHOICES = [
         ('Phone', 'Phone'),
@@ -36,6 +36,7 @@ class BankingRelationship(ClientRelatedModel):
     LANGUAGE_CHOICES = [
         ('German', 'German'),
         ('English', 'English'),
+        ('Italian', 'Italian'),
         ('Spanish', 'Spanish'),
     ]
     OPENED_IN_UBS_PREMISES_CHOICES = [
@@ -96,7 +97,7 @@ class BankingRelationship(ClientRelatedModel):
     partner_id = models.CharField(max_length=255, blank=True, null=True, verbose_name="Partner ID")
     type_of_account = models.CharField(max_length=50, choices=TYPE_OF_ACCOUNT_CHOICES, blank=True, null=True, verbose_name="Type of Account")
     type_of_signature = models.CharField(max_length=50, choices=SIGNATURE_CHOICES, blank=True, null=True, verbose_name="Type of Signature")
-    segment_type = models.IntegerField(choices=SEGMENT_TYPE_CHOICES, null=True, blank=True)
+    segment_type = models.CharField(max_length=10, choices=SEGMENT_TYPE_CHOICES, null=True, blank=True)
     client_segment = models.CharField(max_length=50, blank=True, null=True, verbose_name="Client Segment")
     code_ksc = models.CharField(max_length=50, blank=True, null=True, verbose_name="Client Segment Code (CSC)")
     communication_br = models.CharField(max_length=50, choices=COMMUNICATION_BR_CHOICES, blank=True, null=True, verbose_name="Communication mode")
@@ -273,10 +274,10 @@ class Communication(ClientRelatedModel):
     ]
 
     first_and_last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="full name")
-    type_of_communication = models.CharField(max_length=50, choices=TYPE_CHOICES, blank=True, null=True, verbose_name="type")
-    communication_context = models.CharField(max_length=50, choices=CONTEXT_CHOICES, blank=True, null=True, verbose_name="context")
-    prefix = models.IntegerField(blank=True, null=True, verbose_name="prefix")
-    number = models.BigIntegerField(blank=True, null=True, verbose_name="number")
+    type_of_communication = models.CharField(max_length=255, choices=TYPE_CHOICES, blank=True, null=True, verbose_name="type")
+    communication_context = models.CharField(max_length=255, choices=CONTEXT_CHOICES, blank=True, null=True, verbose_name="context")
+    prefix = models.CharField(max_length=20, blank=True, null=True, verbose_name="prefix")
+    number = models.CharField(max_length=255, blank=True, null=True, verbose_name="number")
     address = models.CharField(max_length=255, blank=True, null=True, verbose_name="address")
 
 class ClientAdvisor(ClientRelatedModel):
