@@ -9,7 +9,8 @@ __pycache__/
 *$py.class
 *.pyc
 *.cpython-*.pyc
-
+*.cpython-*
+*pyc
 # C extensions
 *.so
 

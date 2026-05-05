@@ -150,29 +150,29 @@ class LE_PersonalInformation(ClientRelatedModel):
         ('Other', 'Other'),
     ]
 
-    legal_name = models.CharField(max_length=255, blank=True)
-    legal_form = models.CharField(max_length=100, choices=LEGAL_FORM_CHOICES, blank=True)
-    registration_number = models.CharField(max_length=100, blank=True)
-    country_of_registration = models.CharField(max_length=100, blank=True)
+    legal_name = models.CharField(max_length=255, blank=True, null=True)
+    legal_form = models.CharField(max_length=100, choices=LEGAL_FORM_CHOICES, blank=True, null=True)
+    registration_number = models.CharField(max_length=100, blank=True, null=True)
+    country_of_registration = models.CharField(max_length=100, blank=True, null=True)
     date_of_registration = models.DateField(null=True, blank=True)
-    tax_id = models.CharField(max_length=100, blank=True, verbose_name="Tax ID / VAT")
-    lei_code = models.CharField(max_length=100, blank=True, verbose_name="LEI Code")
-    industry_sector = models.CharField(max_length=255, blank=True)
+    tax_id = models.CharField(max_length=100, blank=True, null=True, verbose_name="Tax ID / VAT")
+    lei_code = models.CharField(max_length=100, blank=True, null=True, verbose_name="LEI Code")
+    industry_sector = models.CharField(max_length=255, blank=True, null=True)
     website = models.URLField(blank=True, null=True)
 
     # Personal Information Fields
-    first_name = models.CharField(max_length=255, blank=True)
-    last_name = models.CharField(max_length=255, blank=True)
-    first_and_last_name = models.CharField(max_length=255, blank=True)
-    name_at_birth = models.CharField(max_length=255, blank=True)
-    federal_state = models.CharField(max_length=255, blank=True)
+    first_name = models.CharField(max_length=255, blank=True, null=True)
+    last_name = models.CharField(max_length=255, blank=True, null=True)
+    first_and_last_name = models.CharField(max_length=255, blank=True, null=True)
+    name_at_birth = models.CharField(max_length=255, blank=True, null=True)
+    federal_state = models.CharField(max_length=255, blank=True, null=True)
     date_of_birth = models.DateField(null=True, blank=True)
-    place_of_birth = models.CharField(max_length=255, blank=True)
-    country_of_birth = models.CharField(max_length=255, blank=True)
-    marital_status = models.CharField(max_length=100, blank=True)
-    occupation_sector = models.CharField(max_length=255, blank=True)
-    fiscal_identifier = models.CharField(max_length=255, blank=True)
-    indication_tin = models.CharField(max_length=255, blank=True)
+    place_of_birth = models.CharField(max_length=255, blank=True, null=True)
+    country_of_birth = models.CharField(max_length=255, blank=True, null=True)
+    marital_status = models.CharField(max_length=100, blank=True, null=True)
+    occupation_sector = models.CharField(max_length=255, blank=True, null=True)
+    fiscal_identifier = models.CharField(max_length=255, blank=True, null=True)
+    indication_tin = models.CharField(max_length=255, blank=True, null=True)
     sensitive_client = models.BooleanField(default=False)
     executor = models.BooleanField(default=False)
     beneficial_owner = models.BooleanField(default=False)
@@ -248,25 +248,25 @@ class LE_ClientAdvisor(ClientRelatedModel):
         verbose_name_plural = "Client Advisors"
 
 class LE_Nationality(ClientRelatedModel):
-    is_main_nationality = models.BooleanField(default=False)
-    nationality = models.CharField(max_length=255, blank=True)
-    nci = models.CharField(max_length=255, blank=True)
-    id_type = models.CharField(max_length=255, blank=True)
-    fiscal_code = models.CharField(max_length=255, blank=True)
-    fiscal_code_path = models.CharField(max_length=255, blank=True)
-    release_authority = models.CharField(max_length=255, blank=True)
-    release_location = models.CharField(max_length=255, blank=True)
+    is_main_nationality = models.BooleanField(default=False, blank=True, null=True)
+    nationality = models.CharField(max_length=255, blank=True, null=True)
+    nci = models.CharField(max_length=255, blank=True, null=True)
+    id_type = models.CharField(max_length=255, blank=True, null=True)
+    fiscal_code = models.CharField(max_length=255, blank=True, null=True)
+    fiscal_code_path = models.CharField(max_length=255, blank=True, null=True)
+    release_authority = models.CharField(max_length=255, blank=True, null=True)
+    release_location = models.CharField(max_length=255, blank=True, null=True)
     release_date = models.DateField(null=True, blank=True)
     expiry_date = models.DateField(null=True, blank=True)
-    is_id_document_provided = models.BooleanField(default=False)
-    id_document_path = models.CharField(max_length=255, blank=True)
+    is_id_document_provided = models.BooleanField(default=False, blank=True, null=True)
+    id_document_path = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         verbose_name = "Nationality"
         verbose_name_plural = "Nationalities"
 
 class LE_TIN(ClientRelatedModel):
-    aei_tin = models.CharField(max_length=255, blank=True, verbose_name="AEI/TIN")
+    aei_tin = models.CharField(max_length=255, blank=True, null=True, verbose_name="AEI/TIN")
 
     class Meta:
         verbose_name = "TIN"
@@ -424,7 +424,7 @@ class LE_Product(ClientRelatedModel):
     investment_strategy = models.CharField(max_length=255, blank=True, null=True, verbose_name="Strategy")
     ip_risk_tolerance = models.CharField(max_length=255, blank=True, null=True, verbose_name="Risk tolerance")
     investment_service = models.CharField(max_length=255, blank=True, null=True, verbose_name="Investment Service")
-    investment_amount = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True, verbose_name="Investment Amount")
+    investment_amount = models.CharField(max_length=30, blank=True, null=True,  verbose_name="Investment Amount")
     selected_service = models.CharField(max_length=255, blank=True, null=True, verbose_name="Selected Service")
     all_in = models.BooleanField(default=False, null=True, blank=True, verbose_name="All In")
     sustainable_investing = models.BooleanField(default=False, null=True, blank=True, verbose_name="Sustainable Investing")
