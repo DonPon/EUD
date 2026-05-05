@@ -383,6 +383,7 @@ class Relationship(ClientRelatedModel):
     tax_domicile = models.CharField(max_length=50, choices=TAX_DOMICILE_CHOICES, blank=True, null=True, verbose_name="tax domicile")
     technical_account = models.CharField(max_length=255, blank=True, null=True, verbose_name="technical account")
     type_of_relationship = models.CharField(max_length=100, choices=RELATIONSHIP_CHOICES, blank=True, null=True, verbose_name="relationship")
+    relationship_with_owner = models.CharField(max_length=255, blank=True, null=True, verbose_name="relationship with owner")
 
     def __str__(self):
         return f"Relation: {self.client_uuid} -> {self.child_unique_id}"

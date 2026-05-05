@@ -105,7 +105,7 @@ def register_le_clients_models():
         'section': 'le',
         'fields': [
             'id', 'client_uuid', 'child_unique_id', #'first_and_last_name',
-            'tax_domicile', 'technical_account', 'type_of_relationship', 'full_name'
+            'tax_domicile', 'technical_account', 'type_of_relationship', 'full_name', 'relationship_with_owner'
         ],
         'list_display': [
             'related_banking_relationship',
@@ -114,6 +114,7 @@ def register_le_clients_models():
             #'related_last_name',
             'full_name',
             'type_of_relationship',
+            'relationship_with_owner',
             'related_client_link'
         ],
         'filter_fields': ['type_of_relationship', 'tax_domicile'],
