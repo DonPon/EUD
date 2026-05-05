@@ -295,24 +295,24 @@ class ClientAdvisor(ClientRelatedModel):
     distribution_list = models.CharField(max_length=255, blank=True, null=True, verbose_name="distribution")
 
 class Nationality(ClientRelatedModel):
-    is_main_nationality = models.BooleanField(default=False)
-    nationality = models.CharField(max_length=255, blank=True)
-    nci = models.CharField(max_length=255, blank=True)
-    id_type = models.CharField(max_length=255, blank=True)
-    fiscal_code = models.CharField(max_length=255, blank=True)
-    fiscal_code_path = models.CharField(max_length=255, blank=True)
-    release_authority = models.CharField(max_length=255, blank=True)
-    release_location = models.CharField(max_length=255, blank=True)
+    is_main_nationality = models.BooleanField(default=False, blank=True, null=True)
+    nationality = models.CharField(max_length=255, blank=True, null=True)
+    nci = models.CharField(max_length=255, blank=True, null=True)
+    id_type = models.CharField(max_length=255, blank=True, null=True)
+    fiscal_code = models.CharField(max_length=255, blank=True, null=True)
+    fiscal_code_path = models.CharField(max_length=255, blank=True, null=True)
+    release_authority = models.CharField(max_length=255, blank=True, null=True)
+    release_location = models.CharField(max_length=255, blank=True, null=True)
     release_date = models.DateField(null=True, blank=True)
     expiry_date = models.DateField(null=True, blank=True)
-    is_id_document_provided = models.BooleanField(default=False)
-    id_document_path = models.CharField(max_length=255, blank=True)
+    is_id_document_provided = models.BooleanField(default=False, blank=True, null=True)
+    id_document_path = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = "Nationalities"
 
 class TIN(ClientRelatedModel):
-    aei_tin = models.CharField(max_length=255, blank=True, verbose_name="AEI/TIN")
+    aei_tin = models.CharField(max_length=255, blank=True, null=True, verbose_name="AEI/TIN")
 
     class Meta:
         verbose_name = "TIN"
@@ -465,7 +465,7 @@ class Product(ClientRelatedModel):
     investment_strategy = models.CharField(max_length=255, blank=True, null=True, verbose_name="Strategy")
     ip_risk_tolerance = models.CharField(max_length=255, blank=True, null=True, verbose_name="Risk tolerance")
     investment_service = models.CharField(max_length=255, blank=True, null=True, verbose_name="Investment Service")
-    investment_amount = models.DecimalField(max_digits=20, decimal_places=2, null=True, blank=True, verbose_name="Investment Amount")
+    investment_amount = models.CharField(max_length=255, blank=True, null=True,  verbose_name="Investment Amount")
     selected_service = models.CharField(max_length=255, blank=True, null=True, verbose_name="Selected Service")
     all_in = models.BooleanField(default=False, null=True, blank=True, verbose_name="All In")
     sustainable_investing = models.BooleanField(default=False, null=True, blank=True, verbose_name="Sustainable Investing")
