@@ -128,22 +128,24 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
                     if is_le:
                         # For LE clients
                         personal = LE_PersonalInformation.objects.filter(client_uuid=client.client_uuid).first()
+                        full_name = personal.first_and_last_name if personal else ''
                         first_name = personal.first_name if personal else ''
                         last_name = personal.last_name if personal else ''
-                        display_name = f"{client.banking_relationship} | {client.name_of_banking_relationship} | {first_name} {last_name}".strip()
+                        display_name = f"{full_name}".strip()
                     else:
                         # For NP clients
                         personal = PersonalInformation.objects.filter(client_uuid=client.client_uuid).first()
+                        full_name = personal.first_and_last_name if personal else ''
                         first_name = personal.first_name if personal else ''
                         last_name = personal.last_name if personal else ''
-                        display_name = f"{client.banking_relationship} | {client.name_of_banking_relationship} | {first_name} {last_name}".strip()
+                        display_name = f"{full_name}".strip()
                     
                     choices.append((str(client.client_uuid), display_name))
                 
                 # Replace the field with a choice field
                 form.fields['child_unique_id'] = ChoiceField(
                     choices=choices,
-                    label="Related Client (Banking Relationship | Name | First Last)",
+                    label="Related Client (First and Last Name)",
                     required=True
                 )
                 # Apply Bootstrap class and Select2-friendly attributes

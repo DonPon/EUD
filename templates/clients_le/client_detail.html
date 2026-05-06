@@ -206,7 +206,9 @@
             let detailsHtml = '<table class="table table-sm table-striped">';
             Object.keys(data).forEach(key => {
                 let value = data[key];
-                if (typeof value === 'object' && value !== null) {
+                if (value === null || value === undefined) {
+                    value = '';
+                } else if (typeof value === 'object') {
                     value = JSON.stringify(value, null, 2);
                 }
                 detailsHtml += `
