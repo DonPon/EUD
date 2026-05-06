@@ -241,6 +241,7 @@ class LE_ClientAdvisor(ClientRelatedModel):
     last_name = models.CharField(max_length=255, null=True, blank=True, verbose_name="last name")
     email = models.EmailField(null=True, blank=True, verbose_name="email")
     branch = models.CharField(max_length=255, null=True, blank=True, verbose_name="branch")
+    desk = models.CharField(max_length=255, null=True, blank=True, verbose_name="desk")
     distribution_list = models.CharField(max_length=255, null=True, blank=True, verbose_name="distribution")
 
     class Meta:
@@ -273,6 +274,11 @@ class LE_TIN(ClientRelatedModel):
         verbose_name_plural = "TINs"
 
 class LE_EBanking(ClientRelatedModel):
+    YES_NO_CHOICES = [
+        ('Yes', 'Yes'),
+        ('No', 'No'),
+    ]
+    has_ebanking = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="has ebanking")
     first_name = models.CharField(max_length=255, null=True, blank=True, verbose_name="first name")
     last_name = models.CharField(max_length=255, null=True, blank=True, verbose_name="last name")
     access_type = models.CharField(max_length=255, null=True, blank=True, verbose_name="access type")
@@ -332,6 +338,7 @@ class LE_Relationship(ClientRelatedModel):
         ('POA (limited)', 'POA (limited)'),
         ('POA (in case of death)', 'POA (in case of death)'),
         ('Beneficial Owner', 'Beneficial Owner'),
+        ('Legal Representative', 'Legal Representative'),
     ]
 
     child_unique_id = models.CharField(max_length=255, blank=True, null=True, verbose_name="child id")
@@ -340,6 +347,11 @@ class LE_Relationship(ClientRelatedModel):
     technical_account = models.CharField(max_length=255, blank=True, null=True, verbose_name="technical account")
     type_of_relationship = models.CharField(max_length=100, choices=RELATIONSHIP_CHOICES, blank=True, null=True, verbose_name="relationship")
     relationship_with_owner = models.CharField(max_length=255, blank=True, null=True, verbose_name="relationship with owner")
+    role = models.CharField(max_length=255, blank=True, null=True, verbose_name="role")
+    lr_executor = models.CharField(max_length=255, blank=True, null=True, verbose_name="executor")
+    lr_beneficial_owner = models.CharField(max_length=255, blank=True, null=True, verbose_name="beneficial owner")
+    lr_bo_role = models.CharField(max_length=255, blank=True, null=True, verbose_name="beneficial owner role")
+    
 
     def __str__(self):
         return f"Relation: {self.client_uuid} -> {self.child_unique_id}"
@@ -420,22 +432,22 @@ class LE_Product(ClientRelatedModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     portfolio_id = models.CharField(max_length=255, blank=True, null=True, verbose_name="Portfolio ID")
     portfolio_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="Portfolio Name")
-    email_waiver = models.BooleanField(default=False, null=True, blank=True, verbose_name="Email waiver")
+    email_waiver = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Email waiver")
     reference_currency = models.CharField(max_length=10, blank=True, null=True, verbose_name="Currency")
     investment_strategy = models.CharField(max_length=255, blank=True, null=True, verbose_name="Strategy")
     ip_risk_tolerance = models.CharField(max_length=255, blank=True, null=True, verbose_name="Risk tolerance")
     investment_service = models.CharField(max_length=255, blank=True, null=True, verbose_name="Investment Service")
     investment_amount = models.CharField(max_length=30, blank=True, null=True,  verbose_name="Investment Amount")
     selected_service = models.CharField(max_length=255, blank=True, null=True, verbose_name="Selected Service")
-    all_in = models.BooleanField(default=False, null=True, blank=True, verbose_name="All In")
-    sustainable_investing = models.BooleanField(default=False, null=True, blank=True, verbose_name="Sustainable Investing")
+    all_in = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="All In")
+    sustainable_investing = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Sustainable Investing")
     sustainability_preference = models.CharField(max_length=255, blank=True, null=True, verbose_name="Sustainability preference")
-    focus_equity = models.BooleanField(default=False, null=True, blank=True, verbose_name="Focus")
-    alternative_investment = models.BooleanField(default=False, null=True, blank=True, verbose_name="alternative investment")
-    direct_instrument = models.BooleanField(default=False, null=True, blank=True, verbose_name="direct instrument")
+    focus_equity = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Focus")
+    alternative_investment = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="alternative investment")
+    direct_instrument = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="direct instrument")
     initial_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="initial amount")
     currency_hedging = models.CharField(max_length=100, blank=True, null=True, verbose_name="hedging")
-    transaction_confirmation = models.BooleanField(default=False, null=True, blank=True, verbose_name="transaction confirmation")
+    transaction_confirmation = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="transaction confirmation")
     white_KYC_provided = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="white KYC provided")
     fiduciary_mandate_provided = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="fiduciary mandate provided")
     fiscal_regime = models.CharField(max_length=255, blank=True, null=True, verbose_name="fiscal regime")
@@ -447,9 +459,9 @@ class LE_Product(ClientRelatedModel):
     end_date_alignment = models.DateField(null=True, blank=True, verbose_name="end date")
     type_of_business_settlement = models.CharField(max_length=50, choices=TYPE_OF_BUSINESS_SETTLEMENT_CHOICES, blank=True, null=True, verbose_name="settlement")
     special_conditions = models.TextField(blank=True, null=True, verbose_name="conditions")
-    discount_applied = models.BooleanField(default=False, null=True, blank=True, verbose_name="discount")
+    discount_applied = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="discount")
     discount_amount_percent = models.CharField(max_length=255, null=True, blank=True, verbose_name="discount percent")
-    flat_fee_applied = models.BooleanField(default=False, null=True, blank=True, verbose_name="flat fee")
+    flat_fee_applied = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="flat fee")
     flat_fee_percent = models.CharField(max_length=255, null=True, blank=True, verbose_name="flat percent")
     invested_assets = models.CharField(max_length=255, null=True, blank=True, verbose_name="invested")
     income_pa = models.CharField(max_length=255, null=True, blank=True, verbose_name="income")
@@ -458,33 +470,33 @@ class LE_Product(ClientRelatedModel):
     net_new_money_potential = models.CharField(max_length=255, null=True, blank=True, verbose_name="net new")
     business_case_communication = models.TextField(blank=True, null=True, verbose_name="business")
     fee_model = models.CharField(max_length=255, blank=True, null=True, verbose_name="fee model")
-    mandate_fee = models.BooleanField(default=False, null=True, blank=True, verbose_name="mandate")
+    mandate_fee = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="mandate")
     service_and_execution = models.CharField(max_length=255, blank=True, null=True, verbose_name="execution")
-    no_discount = models.BooleanField(default=False, null=True, blank=True, verbose_name="no discount")
+    no_discount = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="no discount")
     no_discount_amount_percent = models.CharField(max_length=255, null=True, blank=True, verbose_name="no discount percent")
-    no_flat_fee = models.BooleanField(default=False, null=True, blank=True, verbose_name="no flat")
+    no_flat_fee = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="no flat")
     no_flat_fee_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="no flat amount")
     transaction_fee = models.CharField(max_length=255, null=True, blank=True, verbose_name="transaction fee")
     standard_fee_discount = models.CharField(max_length=255, null=True, blank=True, verbose_name="standard discount")
-    shares_fee = models.BooleanField(default=False, null=True, blank=True, verbose_name="shares fee")
+    shares_fee = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="shares fee")
     shares_fee_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="shares fee amount")
-    shares_discount = models.BooleanField(default=False, null=True, blank=True, verbose_name="shares discount")
+    shares_discount = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="shares discount")
     shares_discount_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="shares discount amount")
-    investment_funds_fee = models.BooleanField(default=False, null=True, blank=True, verbose_name="funds fee")
+    investment_funds_fee = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="funds fee")
     investment_fund_fee_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="funds fee amount")
-    investment_fund_discount = models.BooleanField(default=False, null=True, blank=True, verbose_name="funds discount")
+    investment_fund_discount = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="funds discount")
     investment_fund_discount_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="funds discount amount")
-    fixed_income_fee = models.BooleanField(default=False, null=True, blank=True, verbose_name="fixed fee")
+    fixed_income_fee = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="fixed fee")
     fixed_income_fee_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="fixed fee amount")
-    fixed_income_discount = models.BooleanField(default=False, null=True, blank=True, verbose_name="fixed discount")
+    fixed_income_discount = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="fixed discount")
     fixed_income_discount_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="fixed discount amount")
-    fixed_income_investment_funds_fee = models.BooleanField(default=False, null=True, blank=True, verbose_name="fixed funds fee")
+    fixed_income_investment_funds_fee = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="fixed funds fee")
     fixed_income_investment_funds_fee_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="fixed funds fee amount")
-    fixed_income_investment_funds_discount = models.BooleanField(default=False, null=True, blank=True, verbose_name="fixed funds discount")
+    fixed_income_investment_funds_discount = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="fixed funds discount")
     fixed_income_investment_funds_discount_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="fixed funds discount amount")
-    shares_investment_funds_fee = models.BooleanField(default=False, null=True, blank=True, verbose_name="shares funds fee")
+    shares_investment_funds_fee = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="shares funds fee")
     shares_investment_funds_fee_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="shares funds fee amount")
-    shares_investment_funds_discount = models.BooleanField(default=False, null=True, blank=True, verbose_name="shares funds discount")
+    shares_investment_funds_discount = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="shares funds discount")
     shares_investment_funds_discount_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="shares funds discount amount")
     status = models.CharField(max_length=100, blank=True, null=True, verbose_name="status")
 

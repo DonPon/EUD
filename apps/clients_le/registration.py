@@ -97,18 +97,19 @@ def register_le_clients_models():
 
     CrudRegistry.register(LE_EBanking, {
         'section': 'le',
-        'fields': ['id', 'client_uuid', 'first_name', 'last_name', 'access_type', 'contract_number'],
-        'list_display': ['first_name', 'last_name', 'contract_number'],
+        'fields': ['id', 'client_uuid', 'has_ebanking', 'first_name', 'last_name', 'access_type', 'contract_number'],
+        'list_display': ['has_ebanking', 'first_name', 'last_name', 'contract_number'],
     })
 
     CrudRegistry.register(LE_Relationship, {
         'section': 'le',
         'fields': [
             'id', 'client_uuid', 'child_unique_id', #'first_and_last_name',
-            'tax_domicile', 'technical_account', 'type_of_relationship', 'full_name', 'relationship_with_owner'
+            'tax_domicile', 'technical_account', 'type_of_relationship', 'full_name', 'relationship_with_owner', 
+            'role', 'lr_executor', 'lr_beneficial_owner', 'lr_bo_role'
         ],
         'list_display': [
-            'related_banking_relationship',
+            #'related_banking_relationship',
             #'related_name_of_banking_relationship',
             #'related_first_name',
             #'related_last_name',
@@ -163,8 +164,8 @@ def register_le_clients_models():
 
     CrudRegistry.register(LE_ClientAdvisor, {
         'section': 'le',
-        'fields': ['id', 'client_uuid', 'role_client_advisor', 'first_and_last_name', 'first_name', 'last_name', 'email', 'branch', 'distribution_list'],
-        'list_display': ['last_name', 'first_name', 'role_client_advisor', 'branch'],
+        'fields': ['id', 'client_uuid', 'role_client_advisor', 'first_and_last_name', 'first_name', 'last_name', 'email', 'branch', 'desk', 'distribution_list'],
+        'list_display': ['last_name', 'first_name', 'role_client_advisor', 'branch', 'desk'],
         'filter_fields': ['role_client_advisor', 'branch'],
     })
 

@@ -37,7 +37,7 @@ def register_clients_models():
             'release_place', 'release_date', 'expiry_date', 'copy_id_provided',
             'place_of_birth', 'date_of_birth', 'country_of_birth', 'marital_status',
             'occupation_sector', 'fiscal_identifier', 'fiscal_residence',
-            'has_ebanking', 'sensitive_client'
+            'sensitive_client'
         ],
         'list_display': ['first_name', 'last_name', 'type_of_relationship', 'date_of_birth', 'marital_status'],
         'filter_fields': ['type_of_relationship', 'marital_status', 'sensitive_client'],
@@ -84,8 +84,8 @@ def register_clients_models():
 
     CrudRegistry.register(EBanking, {
         'section': 'np',
-        'fields': ['id', 'client_uuid', 'first_name', 'last_name', 'access_type', 'contract_number'],
-        'list_display': ['first_name', 'last_name', 'contract_number'],
+        'fields': ['id', 'client_uuid', 'has_ebanking', 'first_name', 'last_name', 'access_type', 'contract_number'],
+        'list_display': ['has_ebanking', 'first_name', 'last_name', 'contract_number'],
     })
 
     CrudRegistry.register(Relationship, {
@@ -95,7 +95,7 @@ def register_clients_models():
             'tax_domicile', 'technical_account', 'type_of_relationship', 'full_name', 'relationship_with_owner'
         ],
         'list_display': [
-            'related_banking_relationship',
+            #'related_banking_relationship',
             #'related_name_of_banking_relationship',
             #'related_first_name',
             #'related_last_name',
@@ -153,9 +153,9 @@ def register_clients_models():
         'section': 'np',
         'fields': [
             'id', 'client_uuid', 'role_client_advisor', 'first_and_last_name',
-            'first_name', 'last_name', 'email', 'branch', 'distribution_list'
+            'first_name', 'last_name', 'email', 'branch', 'desk', 'distribution_list'
         ],
-        'list_display': ['role_client_advisor', 'first_and_last_name', 'branch'],
+        'list_display': ['role_client_advisor', 'first_and_last_name', 'branch', 'desk'],
         'filter_fields': ['role_client_advisor', 'branch'],
     })
 
