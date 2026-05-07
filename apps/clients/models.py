@@ -395,21 +395,36 @@ class Relationship(ClientRelatedModel):
     @property
     def full_name(self):
         """Get the full name of the related client from PersonalInformation."""
+        # Try NP first
         try:
             from .models import BankingRelationship
             personal = BankingRelationship.objects.get(client_uuid=self.child_unique_id)
             return personal.name_of_banking_relationship or "N/A"
         except (BankingRelationship.DoesNotExist, ValueError):
-            return "N/A"
-    @property
+            # Try LE
+            try:
+                from apps.clients_le.models import LE_BankingRelationship
+                personal = LE_BankingRelationship.objects.get(client_uuid=self.child_unique_id)
+                return personal.name_of_banking_relationship or "N/A"
+            except (LE_BankingRelationship.DoesNotExist, ImportError, ValueError):
+                return "N/A"
 
+    @property
     def related_banking_relationship(self):
         """Get the banking relationship number of the related client."""
+        # Try NP first
         try:
+            from .models import BankingRelationship
             related = BankingRelationship.objects.get(client_uuid=self.child_unique_id)
             return related.banking_relationship
         except (BankingRelationship.DoesNotExist, ValueError):
-            return "N/A"
+            # Try LE
+            try:
+                from apps.clients_le.models import LE_BankingRelationship
+                related = LE_BankingRelationship.objects.get(client_uuid=self.child_unique_id)
+                return related.banking_relationship
+            except (LE_BankingRelationship.DoesNotExist, ImportError, ValueError):
+                return "N/A"
 
     '''@property
     def related_name_of_banking_relationship(self):
@@ -444,7 +459,15 @@ class Relationship(ClientRelatedModel):
     def related_client_link(self):
         """Return a clickable link to the related client detail page."""
         from django.utils.safestring import mark_safe
-        url = f"/clients/{self.child_unique_id}/"
+        # Check if it's NP or LE
+        from .models import BankingRelationship
+        is_np = BankingRelationship.objects.filter(client_uuid=self.child_unique_id).exists()
+        
+        if is_np:
+            url = f"/clients/{self.child_unique_id}/"
+        else:
+            url = f"/le/{self.child_unique_id}/"
+            
         return mark_safe(f'<a href="{url}" class="btn btn-sm btn-outline-primary">click here</a>')
 
 class Product(ClientRelatedModel):
