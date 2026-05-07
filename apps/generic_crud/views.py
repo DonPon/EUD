@@ -111,36 +111,24 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
         # Handle child_unique_id field for Relationship models
         if 'child_unique_id' in form.fields:
             try:
-                # Determine if this is an LE relationship
-                is_le = model.__name__ == 'LE_Relationship'
-                
-                if is_le:
-                    from apps.clients_le.models import LE_BankingRelationship, LE_PersonalInformation
-                    # Get all LE clients for the dropdown
-                    all_clients = LE_BankingRelationship.objects.all().order_by('name_of_banking_relationship')
-                else:
-                    from apps.clients.models import BankingRelationship, PersonalInformation
-                    # Get all NP clients for the dropdown
-                    all_clients = BankingRelationship.objects.all().order_by('name_of_banking_relationship')
+                from apps.clients.models import BankingRelationship, PersonalInformation
+                from apps.clients_le.models import LE_BankingRelationship, LE_PersonalInformation
                 
                 choices = [('', '--- Select Client ---')]
-                for client in all_clients:
-                    if is_le:
-                        # For LE clients
-                        personal = LE_PersonalInformation.objects.filter(client_uuid=client.client_uuid).first()
-                        full_name = personal.first_and_last_name if personal else ''
-                        first_name = personal.first_name if personal else ''
-                        last_name = personal.last_name if personal else ''
-                        display_name = f"{full_name}".strip()
-                    else:
-                        # For NP clients
-                        personal = PersonalInformation.objects.filter(client_uuid=client.client_uuid).first()
-                        full_name = personal.first_and_last_name if personal else ''
-                        first_name = personal.first_name if personal else ''
-                        last_name = personal.last_name if personal else ''
-                        display_name = f"{full_name}".strip()
-                    
-                    choices.append((str(client.client_uuid), display_name))
+                
+                # Add NP clients
+                np_clients = BankingRelationship.objects.all().order_by('name_of_banking_relationship')
+                for client in np_clients:
+                    personal = PersonalInformation.objects.filter(client_uuid=client.client_uuid).first()
+                    display_name = f"[NP] {personal.first_and_last_name if personal else client.name_of_banking_relationship}"
+                    choices.append((str(client.client_uuid), display_name.strip()))
+                
+                # Add LE clients
+                le_clients = LE_BankingRelationship.objects.all().order_by('name_of_banking_relationship')
+                for client in le_clients:
+                    personal = LE_PersonalInformation.objects.filter(client_uuid=client.client_uuid).first()
+                    display_name = f"[LE] {personal.first_and_last_name if (personal and personal.first_and_last_name) else (personal.legal_name if personal else client.name_of_banking_relationship)}"
+                    choices.append((str(client.client_uuid), display_name.strip()))
                 
                 # Replace the field with a choice field
                 form.fields['child_unique_id'] = ChoiceField(
