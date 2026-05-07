@@ -283,6 +283,7 @@ class LE_EBanking(ClientRelatedModel):
         ('No', 'No'),
     ]
     has_ebanking = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="has ebanking")
+    first_and_last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="first and last name")
     first_name = models.CharField(max_length=255, null=True, blank=True, verbose_name="first name")
     last_name = models.CharField(max_length=255, null=True, blank=True, verbose_name="last name")
     access_type = models.CharField(max_length=255, null=True, blank=True, verbose_name="access type")

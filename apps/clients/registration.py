@@ -84,8 +84,8 @@ def register_clients_models():
 
     CrudRegistry.register(EBanking, {
         'section': 'np',
-        'fields': ['id', 'client_uuid', 'has_ebanking', 'first_name', 'last_name', 'access_type', 'contract_number'],
-        'list_display': ['has_ebanking', 'first_name', 'last_name', 'contract_number'],
+        'fields': ['id', 'client_uuid', 'has_ebanking', 'first_and_last_name', 'first_name', 'last_name', 'access_type', 'contract_number'],
+        'list_display': ['has_ebanking', 'first_and_last_name', 'first_name', 'last_name', 'contract_number'],
     })
 
     CrudRegistry.register(Relationship, {
