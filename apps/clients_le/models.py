@@ -173,10 +173,10 @@ class LE_PersonalInformation(ClientRelatedModel):
     occupation_sector = models.CharField(max_length=255, blank=True, null=True)
     fiscal_identifier = models.CharField(max_length=255, blank=True, null=True)
     indication_tin = models.CharField(max_length=255, blank=True, null=True)
-    sensitive_client = models.BooleanField(default=False)
-    executor = models.BooleanField(default=False)
-    beneficial_owner = models.BooleanField(default=False)
-    tef = models.BooleanField(default=False)
+    sensitive_client = models.CharField(max_length=255, blank=True, null=True)
+    executor = models.CharField(max_length=255, blank=True, null=True)
+    beneficial_owner = models.CharField(max_length=255, blank=True, null=True)
+    tef = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         verbose_name = "LE Personal Information"
@@ -249,17 +249,21 @@ class LE_ClientAdvisor(ClientRelatedModel):
         verbose_name_plural = "Client Advisors"
 
 class LE_Nationality(ClientRelatedModel):
-    is_main_nationality = models.BooleanField(default=False, blank=True, null=True)
+    YES_NO_CHOICES = [
+        ('Yes', 'Yes'),
+        ('No', 'No'),
+    ]
+    is_main_nationality = models.CharField(max_length=255, blank=True, null=True, choices=YES_NO_CHOICES)
     nationality = models.CharField(max_length=255, blank=True, null=True)
     nci = models.CharField(max_length=255, blank=True, null=True)
     id_type = models.CharField(max_length=255, blank=True, null=True)
     fiscal_code = models.CharField(max_length=255, blank=True, null=True)
     fiscal_code_path = models.CharField(max_length=255, blank=True, null=True)
     release_authority = models.CharField(max_length=255, blank=True, null=True)
-    release_location = models.CharField(max_length=255, blank=True, null=True)
+    release_location = models.CharField(max_length=255, blank=True, null=True) 
     release_date = models.DateField(null=True, blank=True)
     expiry_date = models.DateField(null=True, blank=True)
-    is_id_document_provided = models.BooleanField(default=False, blank=True, null=True)
+    is_id_document_provided = models.CharField(max_length=255, blank=True, null=True, choices=YES_NO_CHOICES)
     id_document_path = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
@@ -595,7 +599,7 @@ class LE_AdditionalFormDE(ClientRelatedModel):
     name_at_birth = models.CharField(max_length=255, blank=True, null=True, verbose_name="birth name")
     street = models.CharField(max_length=255, blank=True, null=True, verbose_name="street")
     no = models.CharField(max_length=50, blank=True, null=True, verbose_name="number")
-    postal_code = models.IntegerField(blank=True, null=True, verbose_name="postal code")
+    postal_code = models.CharField(max_length=50, blank=True, null=True, verbose_name="postal code")
     city = models.CharField(max_length=255, blank=True, null=True, verbose_name="city")
     country = models.CharField(max_length=255, blank=True, null=True, verbose_name="country")
     identification_number = models.BigIntegerField(blank=True, null=True, verbose_name="id number")
