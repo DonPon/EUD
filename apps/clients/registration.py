@@ -2,7 +2,7 @@ from apps.generic_crud.registry import CrudRegistry
 from .models import (
     BankingRelationship, AdditionalFormDE, PersonalInformation, Address,
     Communication, ClientAdvisor, Nationality, TIN, EBanking,
-    Product, MeetingPreparation, Relationship, Account
+    Product, MeetingPreparation, Relationship, Account, CDOKList
 )
 
 def register_clients_models():
@@ -31,16 +31,16 @@ def register_clients_models():
     CrudRegistry.register(PersonalInformation, {
         'section': 'np',
         'fields': [
-            'id', 'client_uuid', 'technical_account', 'type_of_relationship',
-            'first_and_last_name', 'first_name', 'last_name', 'name_at_birth',
-            'type_id_NCI', 'fiscal_it_number', 'type_id_document', 'release_authority',
-            'release_place', 'release_date', 'expiry_date', 'copy_id_provided',
-            'place_of_birth', 'date_of_birth', 'country_of_birth', 'marital_status',
-            'occupation_sector', 'fiscal_identifier', 'fiscal_residence',
-            'sensitive_client'
+            'id', 'client_uuid',
+            'first_and_last_name', 'first_name', 'last_name', 'additional_designation', 'name_at_birth',
+            'type_id_NCI', 'fiscal_it_number', 'identificationsnummer_de', 'type_id_document', 'country_of_issue_id',
+            'id_number', 'release_authority', 'release_place', 'release_country', 'release_date', 'expiry_date',
+            'copy_id_provided', 'place_of_birth', 'date_of_birth', 'form_of_address', 'title', 'country_of_birth',
+            'marital_status', 'occupation_sector', 'fiscal_identifier', 'fiscal_residence', 'sensitive_client',
+            'correspondence_language', 'sae_code', 'ao_number'
         ],
-        'list_display': ['first_name', 'last_name', 'type_of_relationship', 'date_of_birth', 'marital_status'],
-        'filter_fields': ['type_of_relationship', 'marital_status', 'sensitive_client'],
+        'list_display': ['first_name', 'last_name', 'date_of_birth', 'marital_status'],
+        'filter_fields': ['marital_status', 'sensitive_client'],
         'search_fields': ['first_name', 'last_name', 'first_and_last_name', 'fiscal_identifier', 'fiscal_it_number'],
     })
 
@@ -58,7 +58,7 @@ def register_clients_models():
         'section': 'np',
         'fields': [
             'id', 'client_uuid', 'first_and_last_name', 'type_of_address', 'c_o',
-            'street', 'no', 'postal_code', 'city', 'province', 'country',
+            'street', 'additional_address_1', 'additional_address_2', 'no', 'postal_code', 'city', 'canton_state', 'province', 'region', 'country',
             'annual_tax_cert', 'receive_copies_of_original', 'third_party_copies'
         ],
         'list_display': ['type_of_address', 'city', 'country', 'first_and_last_name'],
@@ -76,9 +76,9 @@ def register_clients_models():
         'section': 'np',
         'fields': [
             'id', 'client_uuid', 'first_and_last_name', 'type_of_communication',
-            'communication_context', 'prefix', 'number', 'address'
+            'communication_context', 'prefix', 'number', 'address', 'is_main_contact'
         ],
-        'list_display': ['first_and_last_name', 'type_of_communication', 'number'],
+        'list_display': ['first_and_last_name', 'type_of_communication', 'number', 'address', 'is_main_contact'],
         'search_fields': ['first_and_last_name', 'number'],
     })
 
@@ -92,7 +92,7 @@ def register_clients_models():
         'section': 'np',
         'fields': [
             'id', 'client_uuid', 'child_unique_id', #'first_and_last_name',
-            'tax_domicile', 'technical_account', 'type_of_relationship', 'full_name', 'relationship_with_owner'
+            'technical_account', 'type_of_relationship', 'full_name', 'relationship_with_owner'
         ],
         'list_display': [
             #'related_banking_relationship',
@@ -105,7 +105,7 @@ def register_clients_models():
             'related_client_link'
 
         ],
-        'filter_fields': ['type_of_relationship', 'tax_domicile'],
+        'filter_fields': ['type_of_relationship'],
     })
 
     CrudRegistry.register(Product, {
@@ -153,9 +153,9 @@ def register_clients_models():
         'section': 'np',
         'fields': [
             'id', 'client_uuid', 'role_client_advisor', 'first_and_last_name',
-            'first_name', 'last_name', 'email', 'branch', 'desk', 'distribution_list'
+            'first_name', 'last_name', 'email', 'branch', 'desk', 'distribution_list', 'gpn'
         ],
-        'list_display': ['role_client_advisor', 'first_and_last_name', 'branch', 'desk'],
+        'list_display': ['role_client_advisor', 'first_and_last_name', 'branch', 'desk', 'gpn'],
         'filter_fields': ['role_client_advisor', 'branch'],
     })
 
@@ -187,4 +187,14 @@ def register_clients_models():
         ],
         'list_display': ['last_name', 'first_name', 'identification_number', 'amount'],
         'filter_fields': ['amount', 'execution'],
+    })
+
+    CrudRegistry.register(CDOKList, {
+        'section': 'np',
+        'fields': [
+            'id', 'client_uuid', 'cdok', 'signed', 'valid_from', 'valid_until'
+        ],
+        'list_display': ['cdok', 'signed', 'valid_from', 'valid_until'],
+        'filter_fields': ['signed'],
+        'search_fields': ['cdok'],
     })

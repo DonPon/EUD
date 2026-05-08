@@ -2,6 +2,9 @@ import uuid
 from django.db import models
 from apps.core.models import ClientRelatedModel
 
+
+YES_NO_CHOICES = [('Yes', 'Yes'), ('No', 'No')]
+
 class LE_BankingRelationship(ClientRelatedModel):
     """The Hub for Legal Entity Clients (Star Schema)."""
     STATUS_CHOICES = [
@@ -95,8 +98,6 @@ class LE_BankingRelationship(ClientRelatedModel):
     banking_relationship = models.CharField(max_length=255, null=True, blank=True, verbose_name="Banking Relationship")
     additional_br = models.CharField(max_length=255, null=True, blank=True, verbose_name="Additional Banking Relationship")
     partner_id = models.CharField(max_length=255, null=True, blank=True, verbose_name="Partner ID")
-    type_of_account = models.CharField(max_length=50, choices=TYPE_OF_ACCOUNT_CHOICES, blank=True, null=True, verbose_name="Type of Account")
-    type_of_signature = models.CharField(max_length=50, choices=SIGNATURE_CHOICES, blank=True, null=True, verbose_name="Type of Signature")
     segment_type = models.CharField(max_length=10, choices=SEGMENT_TYPE_CHOICES, null=True, blank=True)
     client_segment = models.CharField(max_length=255, null=True, blank=True, verbose_name="Client Segment")
     code_csc = models.CharField(max_length=255, null=True, blank=True, verbose_name="Client Segment Code (CSC)")
@@ -249,10 +250,6 @@ class LE_ClientAdvisor(ClientRelatedModel):
         verbose_name_plural = "Client Advisors"
 
 class LE_Nationality(ClientRelatedModel):
-    YES_NO_CHOICES = [
-        ('Yes', 'Yes'),
-        ('No', 'No'),
-    ]
     is_main_nationality = models.CharField(max_length=255, blank=True, null=True, choices=YES_NO_CHOICES)
     nationality = models.CharField(max_length=255, blank=True, null=True)
     nci = models.CharField(max_length=255, blank=True, null=True)
@@ -278,16 +275,12 @@ class LE_TIN(ClientRelatedModel):
         verbose_name_plural = "TINs"
 
 class LE_EBanking(ClientRelatedModel):
-    YES_NO_CHOICES = [
-        ('Yes', 'Yes'),
-        ('No', 'No'),
-    ]
     has_ebanking = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="has ebanking")
     first_and_last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="first and last name")
     first_name = models.CharField(max_length=255, null=True, blank=True, verbose_name="first name")
     last_name = models.CharField(max_length=255, null=True, blank=True, verbose_name="last name")
     access_type = models.CharField(max_length=255, null=True, blank=True, verbose_name="access type")
-    contract_number = models.IntegerField(null=True, blank=True, verbose_name="contract")
+    contract_number = models.CharField(max_length=255, null=True, blank=True, verbose_name="contract")
 
     class Meta:
         verbose_name = "EBanking"
@@ -331,10 +324,6 @@ class LE_MeetingPreparation(ClientRelatedModel):
 
 class LE_Relationship(ClientRelatedModel):
     """The Edge Table / Graph."""
-    TAX_DOMICILE_CHOICES = [
-        ('work', 'work'),
-        ('private', 'private'),
-    ]
     RELATIONSHIP_CHOICES = [
         ('Owner', 'Owner'),
         ('Co-owner', 'Co-owner'),
@@ -348,7 +337,6 @@ class LE_Relationship(ClientRelatedModel):
 
     child_unique_id = models.CharField(max_length=255, blank=True, null=True, verbose_name="child id")
     first_and_last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="full name")
-    tax_domicile = models.CharField(max_length=50, choices=TAX_DOMICILE_CHOICES, blank=True, null=True, verbose_name="tax domicile")
     technical_account = models.CharField(max_length=255, blank=True, null=True, verbose_name="technical account")
     type_of_relationship = models.CharField(max_length=100, choices=RELATIONSHIP_CHOICES, blank=True, null=True, verbose_name="relationship")
     relationship_with_owner = models.CharField(max_length=255, blank=True, null=True, verbose_name="relationship with owner")
@@ -356,6 +344,7 @@ class LE_Relationship(ClientRelatedModel):
     lr_executor = models.CharField(max_length=255, blank=True, null=True, verbose_name="executor")
     lr_beneficial_owner = models.CharField(max_length=255, blank=True, null=True, verbose_name="beneficial owner")
     lr_bo_role = models.CharField(max_length=255, blank=True, null=True, verbose_name="beneficial owner role")
+    lr_bo_reason = models.CharField(max_length=255, blank=True, null=True, verbose_name="beneficial owner reason")
     
 
     def __str__(self):
@@ -457,7 +446,6 @@ class LE_Product(ClientRelatedModel):
         ('Monthly', 'Monthly'),
         ('Individual', 'Individual'),
     ]
-    YES_NO_CHOICES = [('Yes', 'Yes'), ('No', 'No')]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     portfolio_id = models.CharField(max_length=255, blank=True, null=True, verbose_name="Portfolio ID")
@@ -616,7 +604,6 @@ class LE_AdditionalFormDE(ClientRelatedModel):
         ('valid until', 'valid until'),
         ('until canceled', 'until canceled'),
     ]
-    YES_NO_CHOICES = [('Yes', 'Yes'), ('No', 'No')]
 
     forward_trading_transactions = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="forward trade")
     exemption_order = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="exemption")

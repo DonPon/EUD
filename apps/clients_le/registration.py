@@ -8,7 +8,7 @@ def register_le_clients_models():
         'section': 'le',
         'fields': [
             'id', 'client_uuid', 'name_of_banking_relationship', 'banking_relationship',
-            'additional_br', 'partner_id', 'type_of_account', 'type_of_signature',
+            'additional_br', 'partner_id',
             'segment_type', 'client_segment', 'code_csc', 'communication_br',
             'third_postal_address', 'beneficial_owner', 'id_doc_provided',
             'language', 'opened_in_ubs_premises', 'account_and_securities_statements',
@@ -105,8 +105,8 @@ def register_le_clients_models():
         'section': 'le',
         'fields': [
             'id', 'client_uuid', 'child_unique_id', #'first_and_last_name',
-            'tax_domicile', 'technical_account', 'type_of_relationship', 'full_name', 'relationship_with_owner', 
-            'role', 'lr_executor', 'lr_beneficial_owner', 'lr_bo_role'
+            'technical_account', 'type_of_relationship', 'full_name', 'relationship_with_owner', 
+            'role', 'lr_executor', 'lr_beneficial_owner', 'lr_bo_role', 'lr_bo_reason'
         ],
         'list_display': [
             #'related_banking_relationship',
@@ -118,7 +118,7 @@ def register_le_clients_models():
             'relationship_with_owner',
             'related_client_link'
         ],
-        'filter_fields': ['type_of_relationship', 'tax_domicile'],
+        'filter_fields': ['type_of_relationship'],
     })
 
     CrudRegistry.register(LE_Product, {
