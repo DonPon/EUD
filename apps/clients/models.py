@@ -2,6 +2,8 @@ import uuid
 from django.db import models
 from apps.core.models import ClientRelatedModel
 
+YES_NO_CHOICES = [('Yes', 'Yes'), ('No', 'No')]
+
 class BankingRelationship(ClientRelatedModel):
     """The Hub for the Star Schema architecture."""
     TYPE_OF_ACCOUNT_CHOICES = [
@@ -20,10 +22,6 @@ class BankingRelationship(ClientRelatedModel):
     COMMUNICATION_BR_CHOICES = [
         ('Phone', 'Phone'),
         ('Email', 'Email'),
-    ]
-    YES_NO_CHOICES = [
-        ('Yes', 'Yes'),
-        ('No', 'No'),
     ]
     BENEFICIAL_OWNER_CHOICES = [
         ('Same as owner', 'Same as owner'),
@@ -166,7 +164,7 @@ class AdditionalFormDE(ClientRelatedModel):
         ('valid until', 'valid until'),
         ('until canceled', 'until canceled'),
     ]
-    YES_NO_CHOICES = [('Yes', 'Yes'), ('No', 'No')]
+
 
     forward_trading_transactions = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="forward trade")
     exemption_order = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="exemption")
@@ -205,52 +203,59 @@ class PersonalInformation(ClientRelatedModel):
         ('POA (in case of death)', 'POA (in case of death)'),
         ('Beneficial Owner', 'Beneficial Owner'),
     ]
-    YES_NO_CHOICES = [
-        ('Yes', 'Yes'),
-        ('No', 'No'),
-    ]
 
-    technical_account = models.CharField(max_length=255, blank=True, null=True, verbose_name="type of legal entity")
-    type_of_relationship = models.CharField(max_length=100, choices=ROLE_CHOICES, blank=True, null=True, verbose_name="role in Banking Relationship")
+
+    # technical_account = models.CharField(max_length=255, blank=True, null=True, verbose_name="type of legal entity")
+    # type_of_relationship = models.CharField(max_length=100, choices=ROLE_CHOICES, blank=True, null=True, verbose_name="role in Banking Relationship")
     first_and_last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="First and last name")
     first_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="first name")
     last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="last name")
+    additional_designation = models.CharField(max_length=255, null=True, blank=True, verbose_name="Additional designation")
     name_at_birth = models.CharField(max_length=255, blank=True, null=True, verbose_name="name at birth")
     type_id_NCI = models.CharField(max_length=255, blank=True, null=True, verbose_name="type of identification (NCI)")
-    fiscal_it_number = models.CharField(max_length=255, blank=True, null=True, verbose_name="Fiscal code IT (number)")
+    fiscal_it_number = models.CharField(max_length=255, blank=True, null=True, verbose_name="Fiscal code (IT)")
+    identificationsnummer_de = models.CharField(max_length=255, null=True, blank=True, verbose_name="Identificationsnummer (DE)")
     type_id_document = models.CharField(max_length=255, blank=True, null=True, verbose_name="Type of ID Document")
+    country_of_issue_id = models.CharField(max_length=255, null=True, blank=True, verbose_name="Country of issue (ID)")
+    id_number = models.CharField(max_length=255, null=True, blank=True, verbose_name="ID number")
     release_authority = models.CharField(max_length=255, blank=True, null=True, verbose_name="release authority")
     release_place = models.CharField(max_length=255, blank=True, null=True, verbose_name="release place")
+    release_country = models.CharField(max_length=255, null=True, blank=True, verbose_name="release country")
     release_date = models.DateField(null=True, blank=True, verbose_name="release date")
     expiry_date = models.DateField(null=True, blank=True, verbose_name="expiry date")
     copy_id_provided = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="copy of ID provided")
     place_of_birth = models.CharField(max_length=255, blank=True, null=True, verbose_name="Place of birth")
     date_of_birth = models.DateField(null=True, blank=True, verbose_name="Date of birth")
+    form_of_address = models.CharField(max_length=255, null=True, blank=True, verbose_name="Form of address")
+    title = models.CharField(max_length=255, null=True, blank=True, verbose_name="Title")
     country_of_birth = models.CharField(max_length=255, blank=True, null=True, verbose_name="Country of birth")
     marital_status = models.CharField(max_length=100, blank=True, null=True, verbose_name="marital status")
     occupation_sector = models.CharField(max_length=255, blank=True, null=True, verbose_name="occupation")
     fiscal_identifier = models.CharField(max_length=255, blank=True, null=True, verbose_name="fiscal identifier")
     fiscal_residence = models.CharField(max_length=255, blank=True, null=True, verbose_name="fiscal residence")
     sensitive_client = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="sensitive client")
+    correspondence_language = models.CharField(max_length=255, null=True, blank=True, verbose_name="Correspondence language")
+    sae_code = models.CharField(max_length=255, null=True, blank=True, verbose_name="SAE code")
+    ao_number = models.CharField(max_length=255, null=True, blank=True, verbose_name="AO number")
 
 class Address(ClientRelatedModel):
     TYPE_CHOICES = [
         ('Correspondence', 'Correspondence'),
         ('Domicile', 'Domicile'),
     ]
-    YES_NO_CHOICES = [
-        ('Yes', 'Yes'),
-        ('No', 'No'),
-    ]
 
     first_and_last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="full name")
     type_of_address = models.CharField(max_length=100, choices=TYPE_CHOICES, blank=True, null=True, verbose_name="address type")
     c_o = models.CharField(max_length=255, blank=True, null=True, verbose_name="c/o")
     street = models.CharField(max_length=255, blank=True, null=True, verbose_name="street")
+    additional_address_1 = models.CharField(max_length=255, null=True, blank=True, verbose_name="additional address (1)")
+    additional_address_2 = models.CharField(max_length=255, null=True, blank=True, verbose_name="additional address (2)")
     no = models.CharField(max_length=50, blank=True, null=True, verbose_name="number")
     postal_code = models.CharField(max_length=50, blank=True, null=True, verbose_name="postal code")
     city = models.CharField(max_length=255, blank=True, null=True, verbose_name="city")
+    canton_state = models.CharField(max_length=255, null=True, blank=True, verbose_name="canton/state")
     province = models.CharField(max_length=255, blank=True, null=True, verbose_name="province")
+    region = models.CharField(max_length=255, null=True, blank=True, verbose_name="region")
     country = models.CharField(max_length=255, blank=True, null=True, verbose_name="country")
     annual_tax_cert = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="tax certificates")
     receive_copies_of_original = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="copy mail")
@@ -277,7 +282,8 @@ class Communication(ClientRelatedModel):
     communication_context = models.CharField(max_length=255, choices=CONTEXT_CHOICES, blank=True, null=True, verbose_name="context")
     prefix = models.CharField(max_length=20, blank=True, null=True, verbose_name="prefix")
     number = models.CharField(max_length=255, blank=True, null=True, verbose_name="number")
-    address = models.CharField(max_length=255, blank=True, null=True, verbose_name="address")
+    address = models.CharField(max_length=255, blank=True, null=True, verbose_name="address (email)")
+    is_main_contact = models.CharField(max_length=255, null=True, blank=True, choices=YES_NO_CHOICES)
 
 class ClientAdvisor(ClientRelatedModel):
     ROLE_CHOICES = [
@@ -293,9 +299,10 @@ class ClientAdvisor(ClientRelatedModel):
     branch = models.CharField(max_length=255, blank=True, null=True, verbose_name="branch")
     desk = models.CharField(max_length=255, blank=True, null=True, verbose_name="desk")
     distribution_list = models.CharField(max_length=255, blank=True, null=True, verbose_name="distribution")
+    gpn = models.CharField(max_length=255, null=True, blank=True, verbose_name="GPN")
 
 class Nationality(ClientRelatedModel):
-    is_main_nationality = models.BooleanField(default=False, blank=True, null=True)
+    is_main_nationality = models.CharField(max_length=255, blank=True, null=True, choices=YES_NO_CHOICES)
     nationality = models.CharField(max_length=255, blank=True, null=True)
     nci = models.CharField(max_length=255, blank=True, null=True)
     id_type = models.CharField(max_length=255, blank=True, null=True)
@@ -305,7 +312,7 @@ class Nationality(ClientRelatedModel):
     release_location = models.CharField(max_length=255, blank=True, null=True)
     release_date = models.DateField(null=True, blank=True)
     expiry_date = models.DateField(null=True, blank=True)
-    is_id_document_provided = models.BooleanField(default=False, blank=True, null=True)
+    is_id_document_provided = models.CharField(max_length=255, blank=True, null=True, choices=YES_NO_CHOICES)
     id_document_path = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
@@ -319,10 +326,6 @@ class TIN(ClientRelatedModel):
         verbose_name_plural = "TINs"
 
 class EBanking(ClientRelatedModel):
-    YES_NO_CHOICES = [
-        ('Yes', 'Yes'),
-        ('No', 'No'),
-    ]
     has_ebanking = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="has ebanking")
     first_and_last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="first and last name")
     first_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="first name")
@@ -342,7 +345,6 @@ class MeetingPreparation(ClientRelatedModel):
         ('Breakfast', 'Breakfast'),
         ('Lunch', 'Lunch'),
     ]
-    YES_NO_CHOICES = [('Yes', 'Yes'), ('No', 'No')]
 
     place = models.CharField(max_length=50, choices=PLACE_CHOICES, blank=True, null=True, verbose_name="place")
     date_of_meeting = models.DateField(null=True, blank=True, verbose_name="meeting date")
@@ -370,10 +372,6 @@ class MeetingPreparation(ClientRelatedModel):
 
 class Relationship(ClientRelatedModel):
     """The Edge Table / Graph."""
-    TAX_DOMICILE_CHOICES = [
-        ('work', 'work'),
-        ('private', 'private'),
-    ]
     RELATIONSHIP_CHOICES = [
         ('Owner', 'Owner'),
         ('Co-owner', 'Co-owner'),
@@ -386,10 +384,10 @@ class Relationship(ClientRelatedModel):
 
     child_unique_id = models.CharField(max_length=255, blank=True, null=True, verbose_name="child id")
     first_and_last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="full name")
-    tax_domicile = models.CharField(max_length=50, choices=TAX_DOMICILE_CHOICES, blank=True, null=True, verbose_name="tax domicile")
     technical_account = models.CharField(max_length=255, blank=True, null=True, verbose_name="technical account")
     type_of_relationship = models.CharField(max_length=100, choices=RELATIONSHIP_CHOICES, blank=True, null=True, verbose_name="relationship")
     relationship_with_owner = models.CharField(max_length=255, blank=True, null=True, verbose_name="relationship with owner")
+    signature_type = models.CharField(max_length=255, blank=True, null=True, verbose_name="signature type")
 
     def __str__(self):
         return f"Relation: {self.client_uuid} -> {self.child_unique_id}"
@@ -485,7 +483,6 @@ class Product(ClientRelatedModel):
         ('Monthly', 'Monthly'),
         ('Individual', 'Individual'),
     ]
-    YES_NO_CHOICES = [('Yes', 'Yes'), ('No', 'No')]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     portfolio_id = models.CharField(max_length=255, blank=True, null=True, verbose_name="Portfolio ID")
@@ -574,3 +571,8 @@ class Account(ClientRelatedModel):
             return f"{p.portfolio_name} ({p.portfolio_id})"
         except:
             return "N/A"
+class CDOKList(ClientRelatedModel):
+    cdok = models.CharField(max_length=255, null=True, blank=True)
+    signed = models.CharField(max_length=255, null=True, blank=True, choices=YES_NO_CHOICES) # (flag)
+    valid_from = models.CharField(max_length=255, null=True, blank=True)
+    valid_until = models.CharField(max_length=255, null=True, blank=True)
