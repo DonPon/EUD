@@ -53,10 +53,11 @@ class LE_ClientDetailView(LoginRequiredMixin, DetailView):
         choices_dict = dict(LE_BankingRelationship.STATUS_CHOICES)
         for s in (client.status or []):
             cls = 'bg-secondary'
-            if s == 'review_needed': cls = 'bg-warning text-dark'
+            if s == 'pending_review': cls = 'bg-warning text-dark'
             elif s == 'review_completed': cls = 'bg-success'
             elif 'ready_for_bot' in s: cls = 'bg-info text-dark'
             elif s == 'completed': cls = 'bg-success'
+            elif s == 'pending_docs': cls = 'bg-danger'
             
             status_badges.append({
                 'label': choices_dict.get(s, s.replace('_', ' ').upper()),

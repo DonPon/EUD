@@ -136,6 +136,11 @@ class BankingRelationship(ClientRelatedModel):
     def __str__(self):
         return self.name_of_banking_relationship or f"BR: {self.banking_relationship}"
 
+    @property
+    def first_and_last_name(self):
+        personal = PersonalInformation.objects.filter(client_uuid=self.client_uuid).first()
+        return personal.first_and_last_name if personal and personal.first_and_last_name else self.name_of_banking_relationship
+
 
 
 class AdditionalFormDE(ClientRelatedModel):
@@ -232,7 +237,6 @@ class PersonalInformation(ClientRelatedModel):
     marital_status = models.CharField(max_length=100, blank=True, null=True, verbose_name="marital status")
     occupation_sector = models.CharField(max_length=255, blank=True, null=True, verbose_name="occupation")
     fiscal_identifier = models.CharField(max_length=255, blank=True, null=True, verbose_name="fiscal identifier")
-    fiscal_residence = models.CharField(max_length=255, blank=True, null=True, verbose_name="fiscal residence")
     sensitive_client = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="sensitive client")
     correspondence_language = models.CharField(max_length=255, null=True, blank=True, verbose_name="Correspondence language")
     sae_code = models.CharField(max_length=255, null=True, blank=True, verbose_name="SAE code")
@@ -318,12 +322,16 @@ class Nationality(ClientRelatedModel):
     class Meta:
         verbose_name_plural = "Nationalities"
 
-class TIN(ClientRelatedModel):
+class TaxDomicile(ClientRelatedModel):
     aei_tin = models.CharField(max_length=255, blank=True, null=True, verbose_name="AEI/TIN")
+    fiscal_residence = models.CharField(max_length=255, blank=True, null=True, verbose_name="fiscal residence")
+    full_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="full name")
+    tin_number = models.CharField(max_length=255, blank=True, null=True, verbose_name="TIN number")
+    no_tin_reason = models.CharField(max_length=255, blank=True, null=True, verbose_name="no TIN reason")
 
     class Meta:
-        verbose_name = "TIN"
-        verbose_name_plural = "TINs"
+        verbose_name = "Tax Domicile"
+        verbose_name_plural = "Tax Domicile"
 
 class EBanking(ClientRelatedModel):
     has_ebanking = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="has ebanking")
@@ -383,7 +391,7 @@ class Relationship(ClientRelatedModel):
     ]
 
     child_unique_id = models.CharField(max_length=255, blank=True, null=True, verbose_name="child id")
-    first_and_last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="full name")
+    first_and_last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="first and last name")
     technical_account = models.CharField(max_length=255, blank=True, null=True, verbose_name="technical account")
     type_of_relationship = models.CharField(max_length=100, choices=RELATIONSHIP_CHOICES, blank=True, null=True, verbose_name="relationship")
     relationship_with_owner = models.CharField(max_length=255, blank=True, null=True, verbose_name="relationship with owner")
@@ -396,16 +404,16 @@ class Relationship(ClientRelatedModel):
         """Get the full name of the related client from PersonalInformation."""
         # Try NP first
         try:
-            from .models import BankingRelationship
-            personal = BankingRelationship.objects.get(client_uuid=self.child_unique_id)
-            return personal.name_of_banking_relationship or "N/A"
-        except (BankingRelationship.DoesNotExist, ValueError):
+            from .models import PersonalInformation
+            personal = PersonalInformation.objects.get(client_uuid=self.child_unique_id)
+            return personal.first_and_last_name or "N/A"
+        except (PersonalInformation.DoesNotExist, ValueError):
             # Try LE
             try:
-                from apps.clients_le.models import LE_BankingRelationship
-                personal = LE_BankingRelationship.objects.get(client_uuid=self.child_unique_id)
-                return personal.name_of_banking_relationship or "N/A"
-            except (LE_BankingRelationship.DoesNotExist, ImportError, ValueError):
+                from apps.clients_le.models import LE_PersonalInformation
+                personal = LE_PersonalInformation.objects.get(client_uuid=self.child_unique_id)
+                return personal.first_and_last_name or "N/A"
+            except (LE_PersonalInformation.DoesNotExist, ImportError, ValueError):
                 return "N/A"
 
     @property
