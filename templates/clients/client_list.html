@@ -20,7 +20,7 @@
                     <thead>
                         <tr>
                             <th style="width: 30px;"><input type="checkbox" id="select-all"></th>
-                            <th>Relationship Name</th>
+                            <th>Full Name</th>
                             <th>BR Number</th>
                             <th>Type of Account</th>
                             <th>Client Segment</th>
@@ -86,7 +86,7 @@
                     return `<input type="checkbox" class="client-checkbox" value="${data}">`;
                 }
             },
-            { data: 'name_of_banking_relationship' },
+            { data: 'first_and_last_name' },
             { data: 'banking_relationship' },
             { data: 'type_of_account' },
             { data: 'client_segment' },

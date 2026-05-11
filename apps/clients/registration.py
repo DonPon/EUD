@@ -1,7 +1,8 @@
 from apps.generic_crud.registry import CrudRegistry
 from .models import (
     BankingRelationship, AdditionalFormDE, PersonalInformation, Address,
-    Communication, ClientAdvisor, Nationality, TIN, EBanking,
+    Communication, ClientAdvisor, Nationality, 
+    TaxDomicile, EBanking,
     Product, MeetingPreparation, Relationship, Account, CDOKList
 )
 
@@ -21,7 +22,7 @@ def register_clients_models():
             'fiscal_identifier', 'agreement_distribution_fees', 'agreement_percentage',
             'number_of_portfolios', 'delivery_date', 'time', 'document_format',
             'distance_mode', 'ateco', 'sae', 'level_of_professionalism',
-            'send_documents', 'further_notes', 'status', 'created_at'
+            'send_documents', 'further_notes', 'status', 'created_at', 'first_and_last_name'
         ],
         'list_display': ['name_of_banking_relationship', 'banking_relationship', 'type_of_account', 'client_segment', 'status'],
         'filter_fields': ['type_of_account', 'client_segment', 'code_ksc', 'language', 'br_client_type'],
@@ -66,10 +67,10 @@ def register_clients_models():
         'search_fields': ['city', 'street', 'first_and_last_name'],
     })
 
-    CrudRegistry.register(TIN, {
+    CrudRegistry.register(TaxDomicile, {
         'section': 'np',
-        'fields': ['id', 'client_uuid', 'aei_tin'],
-        'list_display': ['aei_tin'],
+        'fields': ['id', 'client_uuid', 'aei_tin', 'fiscal_residence', 'full_name', 'tin_number', 'no_tin_reason'],
+        'list_display': ['aei_tin', 'fiscal_residence', 'full_name', 'tin_number'],
     })
 
     CrudRegistry.register(Communication, {

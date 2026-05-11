@@ -24,7 +24,7 @@
                     {% if 'pending_review' in client.status %}
                     <form action="{% url 'clients:complete-review' client_uuid=client.client_uuid %}" method="POST" class="d-inline">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-warning btn-sm fw-bold px-3">Review Completed</button>
+                        <button type="submit" class="btn btn-success btn-sm fw-bold px-3">Complete Review</button>
                     </form>
                     {% endif %}
                     <a href="{% url 'audit-list' table_name='bankingrelationship' %}?client_uuid={{ client.client_uuid }}&record_id={{ client.id }}"
