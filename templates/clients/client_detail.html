@@ -36,7 +36,7 @@
                         Relationship</a>
                     {% endif %}
                     <button class="btn btn-outline-secondary btn-sm" onclick="location.reload();">Refresh</button>
-                    <a href="/" class="btn btn-outline-dark btn-sm">Back</a>
+                    <a href="/" id="back-button" onclick="if(history.length > 1){ history.back(); return false; }" class="btn btn-outline-dark btn-sm">Back</a>
                 </div>
             </div>
         </div>
@@ -116,6 +116,31 @@
     const userRole = "{{ user.role }}";
 
     $(document).ready(function () {
+        // --- Smart Back Button Logic ---
+        const backBtn = document.getElementById('back-button');
+        if (backBtn) {
+            const currentUrl = window.location.href.split('?')[0].split('#')[0];
+            const referrer = document.referrer;
+            const storageKey = 'back_url_' + clientUuid;
+
+            // Only update the back URL if the referrer is NOT an intermediate action page
+            if (referrer && !referrer.includes(currentUrl) && 
+                !referrer.includes('/edit/') && 
+                !referrer.includes('/add/') && 
+                !referrer.includes('/audit/') && 
+                !referrer.includes('/complete-review/') &&
+                !referrer.includes('/complete_review/')) {
+                sessionStorage.setItem(storageKey, referrer);
+            }
+
+            const storedBackUrl = sessionStorage.getItem(storageKey);
+            if (storedBackUrl) {
+                backBtn.href = storedBackUrl;
+                backBtn.onclick = null; // Disable the simple history.back()
+            }
+        }
+        // -------------------------------
+
         const container = $('#dynamic-tables-container');
 
         // Loop through each registered table and create a section
