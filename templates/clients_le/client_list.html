@@ -10,6 +10,9 @@
                 <h5 class="mb-0">Legal Entity Banking Relationship</h5>
                 <div>
                     {% if user.role != 'VIEWER' %}
+                            {% if user.role == 'ADMIN' %}
+                            <button type="button" class="btn btn-danger btn-sm me-2" id="bulk-delete-btn" disabled>Delete Selected</button>
+                        {% endif %}
                         <button type="button" class="btn btn-warning btn-sm me-2" id="bulk-edit-btn" disabled data-bs-toggle="modal" data-bs-target="#bulkStatusModal">Bulk Edit Status</button>
                         <a href="{% url 'generic-add' table_name='le_bankingrelationship' %}" class="btn btn-ubs btn-sm">+ New Relationship</a>
                     {% endif %}
@@ -133,6 +136,7 @@
         function updateBulkBtn() {
             const count = $('.client-checkbox:checked').length;
             $('#bulk-edit-btn').prop('disabled', count === 0);
+            $('#bulk-delete-btn').prop('disabled', count === 0);
             $('#selected-count').text(count);
         }
 
@@ -156,6 +160,29 @@
                     alert('Error updating statuses');
                 }
             });
+        });
+
+        // Handle Bulk Delete
+        $('#bulk-delete-btn').on('click', function() {
+            const count = $('.client-checkbox:checked').length;
+            if (confirm(`Are you sure you want to delete ${count} selected records? This action cannot be undone.`)) {
+                const selectedIds = $('.client-checkbox:checked').map(function() { return this.value; }).get();
+                
+                $.ajax({
+                    url: "{% url 'clients_le:bulk-delete' %}",
+                    method: "POST",
+                    data: {
+                        'client_ids[]': selectedIds,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function() {
+                        location.reload();
+                    },
+                    error: function() {
+                        alert('Error deleting records');
+                    }
+                });
+            }
         });
     });
 </script>
