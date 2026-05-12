@@ -58,7 +58,10 @@
                 </ul>
                 <div class="d-flex align-items-center">
                     {% if user.is_authenticated %}
-                        <span class="navbar-text me-3 text-dark">Welcome, <strong>{{ user.username }}</strong> ({{ user.role }})</span>
+                        <span class="navbar-text me-3 text-dark">
+                            Welcome, <strong>{{ user.username }}</strong> ({{ user.role }})
+                            <span class="badge rounded-pill bg-light text-dark border ms-1" style="font-size: 0.75rem;">{{ env_name }}</span>
+                        </span>
                         <a href="/admin/logout/" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Logout</a>
                     {% else %}
                         <a href="/admin/login/" class="btn btn-ubs btn-sm rounded-pill px-3">Login</a>
