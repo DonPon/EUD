@@ -246,6 +246,10 @@ class Address(ClientRelatedModel):
     TYPE_CHOICES = [
         ('Correspondence', 'Correspondence'),
         ('Domicile', 'Domicile'),
+        ('Residence', 'Residence'),
+        ('Tax domicile', 'Tax domicile'),
+        ('Fiscal residence', 'Fiscal residence'),
+        ('Third party', 'Third party'),
     ]
 
     first_and_last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="full name")

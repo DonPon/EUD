@@ -32,6 +32,17 @@ class BulkStatusUpdateView(LoginRequiredMixin, View):
             
         return redirect('clients:list')
 
+class BulkDeleteView(LoginRequiredMixin, View):
+    def post(self, request):
+        if request.user.role != 'ADMIN':
+            return redirect('clients:list')
+            
+        client_ids = request.POST.getlist('client_ids[]')
+        if client_ids:
+            BankingRelationship.objects.filter(id__in=client_ids).delete()
+            
+        return redirect('clients:list')
+
 class ClientListView(LoginRequiredMixin, ListView):
     model = BankingRelationship
     template_name = 'clients/client_list.html'

@@ -193,6 +193,10 @@ class LE_Address(ClientRelatedModel):
         ('Correspondence', 'Correspondence'),
         ('Domicile', 'Domicile'),
         ('Legal Address', 'Legal Address'),
+        ('Residence', 'Residence'),
+        ('Tax domicile', 'Tax domicile'),
+        ('Fiscal residence', 'Fiscal residence'),
+        ('Third party', 'Third party'),
     ]
     first_and_last_name = models.CharField(max_length=255, null=True, blank=True, verbose_name="full name")
     type_of_address = models.CharField(max_length=100, choices=TYPE_CHOICES, null=True, blank=True, verbose_name="address type")
