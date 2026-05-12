@@ -39,7 +39,17 @@ class BulkDeleteLEView(LoginRequiredMixin, View):
             
         client_ids = request.POST.getlist('client_ids[]')
         if client_ids:
-            LE_BankingRelationship.objects.filter(id__in=client_ids).delete()
+            # Force evaluation of the QuerySet by converting to a list.
+            # Otherwise, deleting from LE_BankingRelationship first would make the QuerySet empty
+            # for subsequent models in the loop.
+            client_uuids = list(LE_BankingRelationship.objects.filter(id__in=client_ids).values_list('client_uuid', flat=True))
+            
+            if client_uuids:
+                from django.apps import apps
+                le_app = apps.get_app_config('clients_le')
+                for model in le_app.get_models():
+                    # Every model in this app inherits from ClientRelatedModel and has client_uuid
+                    model.objects.filter(client_uuid__in=client_uuids).delete()
             
         return redirect('clients_le:list')
 
