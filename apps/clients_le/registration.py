@@ -29,14 +29,14 @@ def register_le_clients_models():
         'fields': [
             'id', 'client_uuid', 'type_of_company', 'name_of_company', 'ivacf', 'iva',
             'lei_code', 'date_of_constitution', 'place_of_constitution',
-            'country_of_constitution', 'fiscal_residence', 'cciaa_type', 'cciaa_number',
+            'country_of_constitution', 'fiscal_code_it', 'cciaa_type', 'cciaa_number',
             'released_by', 'date_of_issue', 'form_of_legal_entity',
             'level_of_professionalism', 'ateco', 'sae', 'id_third_account_owner',
             'last_name_tao', 'first_name_tao', 'street_tao', 'no_tao',
             'postal_code_tao', 'city_tao', 'country_tao', 'created_at'
         ],
-        'list_display': ['name_of_company', 'type_of_company', 'lei_code', 'fiscal_residence'],
-        'filter_fields': ['type_of_company', 'fiscal_residence', 'form_of_legal_entity'],
+        'list_display': ['name_of_company', 'type_of_company', 'lei_code',],
+        'filter_fields': ['type_of_company', 'form_of_legal_entity'],
         'search_fields': ['name_of_company', 'lei_code'],
     })
 
@@ -49,7 +49,7 @@ def register_le_clients_models():
             # Personal Information Fields
             'first_name', 'last_name', 'first_and_last_name', 'name_at_birth',
             'federal_state', 'date_of_birth', 'place_of_birth', 'country_of_birth',
-            'marital_status', 'occupation_sector', 'fiscal_identifier', 'indication_tin',
+            'marital_status', 'occupation_sector', 'indication_tin',
             'sensitive_client', 'executor', 'beneficial_owner', 'tef'
         ],
         'list_display': ['legal_name', 'legal_form', 'first_and_last_name', 'lei_code'],
@@ -61,7 +61,7 @@ def register_le_clients_models():
         'section': 'le',
         'fields': [
             'id', 'client_uuid', 'is_main_nationality', 'nationality', 'nci', 'id_type',
-            'fiscal_code', 'release_authority', 'release_date', 'expiry_date'
+            'release_authority', 'release_date', 'expiry_date'
         ],
         'list_display': ['nationality', 'is_main_nationality', 'id_type', 'expiry_date'],
         'filter_fields': ['is_main_nationality', 'id_type'],
@@ -81,8 +81,8 @@ def register_le_clients_models():
 
     CrudRegistry.register(LE_TaxDomicile, {
         'section': 'le',
-        'fields': ['id', 'client_uuid', 'aei_tin', 'fiscal_residence', 'full_name', 'tin_number', 'no_tin_reason'],
-        'list_display': ['aei_tin', 'fiscal_residence', 'full_name', 'tin_number'],
+        'fields': ['id', 'client_uuid', 'aei_tin', 'tax_domicile', 'fiscal_identifier', 'full_name', 'tin_number', 'no_tin_reason'],
+        'list_display': ['aei_tin', 'tax_domicile', 'fiscal_identifier', 'full_name', 'tin_number'],
     })
 
     CrudRegistry.register(LE_Communication, {
