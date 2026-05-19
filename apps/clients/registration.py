@@ -34,22 +34,22 @@ def register_clients_models():
         'fields': [
             'id', 'client_uuid',
             'first_and_last_name', 'first_name', 'last_name', 'additional_designation', 'name_at_birth',
-            'type_id_NCI', 'fiscal_it_number', 'identificationsnummer_de', 'type_id_document', 'country_of_issue_id',
+            'fiscal_it_number', 'identificationsnummer_de', 'type_id_document', 'country_of_issue_id',
             'id_number', 'release_authority', 'release_place', 'release_country', 'release_date', 'expiry_date',
             'copy_id_provided', 'place_of_birth', 'date_of_birth', 'form_of_address', 'title', 'country_of_birth',
-            'marital_status', 'occupation_sector', 'fiscal_identifier', 'fiscal_residence', 'sensitive_client',
+            'marital_status', 'occupation_sector', 'fiscal_residence', 'sensitive_client',
             'correspondence_language', 'sae_code', 'ao_number'
         ],
         'list_display': ['first_name', 'last_name', 'date_of_birth', 'marital_status'],
         'filter_fields': ['marital_status', 'sensitive_client'],
-        'search_fields': ['first_name', 'last_name', 'first_and_last_name', 'fiscal_identifier', 'fiscal_it_number'],
+        'search_fields': ['first_name', 'last_name', 'first_and_last_name', 'fiscal_it_number'],
     })
 
     CrudRegistry.register(Nationality, {
         'section': 'np',
         'fields': [
             'id', 'client_uuid', 'is_main_nationality', 'nationality', 'nci', 'id_type',
-            'fiscal_code', 'release_authority', 'release_date', 'expiry_date'
+            'release_authority', 'release_date', 'expiry_date'
         ],
         'list_display': ['nationality', 'is_main_nationality', 'id_type', 'expiry_date'],
         'filter_fields': ['is_main_nationality', 'id_type'],
@@ -69,8 +69,8 @@ def register_clients_models():
 
     CrudRegistry.register(TaxDomicile, {
         'section': 'np',
-        'fields': ['id', 'client_uuid', 'aei_tin', 'fiscal_residence', 'full_name', 'tin_number', 'no_tin_reason'],
-        'list_display': ['aei_tin', 'fiscal_residence', 'full_name', 'tin_number'],
+        'fields': ['id', 'client_uuid', 'aei_tin', 'tax_domicile', 'fiscal_identifier','full_name', 'tin_number', 'no_tin_reason'],
+        'list_display': ['aei_tin', 'tax_domicile', 'fiscal_identifier','full_name', 'tin_number'],
     })
 
     CrudRegistry.register(Communication, {
