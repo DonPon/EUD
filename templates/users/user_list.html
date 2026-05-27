@@ -15,9 +15,10 @@
                     <thead>
                         <tr>
                             <th>T-Number</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
                             <th>Role</th>
                             <th>Status</th>
-                            <th>Staff</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -34,6 +35,8 @@
     $(document).ready(function() {
         const columns = [
             { data: 'username' },
+            { data: 'first_name' },
+            { data: 'last_name' },
             { 
                 data: 'role',
                 render: function(data) {
@@ -47,12 +50,6 @@
                 data: 'is_active',
                 render: function(data) {
                     return data ? '<span class="text-success">Active</span>' : '<span class="text-danger">Inactive</span>';
-                }
-            },
-            { 
-                data: 'is_staff',
-                render: function(data) {
-                    return data ? '<span class="text-primary">Staff</span>' : '<span class="text-muted">No</span>';
                 }
             },
             {

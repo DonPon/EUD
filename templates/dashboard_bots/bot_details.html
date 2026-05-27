@@ -116,7 +116,7 @@
             bot_name: botName
         };
 
-        const table = initDataTable('#bot-records-table', endpoint, columns, extraParams);
+        const table = initDataTable('#bot-records-table', endpoint, columns, extraParams, { buttons: ['csv'] });
 
         // Order by Created column desc initially (column index 10)
         table.order([10, 'desc']).draw();
