@@ -111,7 +111,6 @@ class BankingRelationship(ClientRelatedModel):
     br_client_type = models.CharField(max_length=50, choices=BR_CLIENT_TYPE_CHOICES, blank=True, null=True, verbose_name="Client Type")
     earning_statements = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Earnings Statements")
     earning_statements_fees = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Fees")
-    fiscal_identifier = models.CharField(max_length=255, blank=True, null=True, verbose_name="Fiscal Identifier")
     agreement_distribution_fees = models.CharField(max_length=100, choices=AGREEMENT_FEES_CHOICES, blank=True, null=True, verbose_name="Distribution Fees Agreement")
     agreement_percentage = models.CharField(max_length=255, blank=True, null=True, verbose_name="Percentage For The Client")
     number_of_portfolios = models.IntegerField(choices=NUMBER_OF_PORTFOLIOS_CHOICES, null=True, blank=True, verbose_name="Number of Portfolios")
@@ -324,7 +323,7 @@ class Nationality(ClientRelatedModel):
         verbose_name_plural = "Nationalities"
 
 class TaxDomicile(ClientRelatedModel):
-    aei_tin = models.CharField(max_length=255, blank=True, null=True, verbose_name="AEI/TIN")
+    #aei_tin = models.CharField(max_length=255, blank=True, null=True, verbose_name="AEI/TIN")
     tax_domicile = models.CharField(max_length=255, blank=True, null=True, verbose_name="tax domicile")
     fiscal_identifier = models.CharField(max_length=255, blank=True, null=True, verbose_name="fiscal identifier")
     full_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="full name")
@@ -390,6 +389,7 @@ class Relationship(ClientRelatedModel):
         ('POA (limited)', 'POA (limited)'),
         ('POA (in case of death)', 'POA (in case of death)'),
         ('Beneficial Owner', 'Beneficial Owner'),
+        ('Legal Representative + Beneficial Owner', 'Legal Representative + Beneficial Owner'),
     ]
 
     child_unique_id = models.CharField(max_length=255, blank=True, null=True, verbose_name="child id")

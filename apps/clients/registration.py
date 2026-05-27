@@ -19,14 +19,14 @@ def register_clients_models():
             'opened_in_ubs_premises', 'account_and_securities_statements',
             'type_and_purpose', 'type_and_purpose_specify', 'reporting_obligation',
             'br_client_type', 'earning_statements', 'earning_statements_fees',
-            'fiscal_identifier', 'agreement_distribution_fees', 'agreement_percentage',
+            'agreement_distribution_fees', 'agreement_percentage',
             'number_of_portfolios', 'delivery_date', 'time', 'document_format',
             'distance_mode', 'ateco', 'sae', 'level_of_professionalism',
             'send_documents', 'further_notes', 'status', 'created_at', 'first_and_last_name'
         ],
         'list_display': ['name_of_banking_relationship', 'banking_relationship', 'type_of_account', 'client_segment', 'status'],
         'filter_fields': ['type_of_account', 'client_segment', 'code_ksc', 'language', 'br_client_type'],
-        'search_fields': ['name_of_banking_relationship', 'banking_relationship', 'partner_id'],
+        'search_fields': ['status','name_of_banking_relationship', 'banking_relationship', 'type_of_account', 'partner_id'],
     })
 
     CrudRegistry.register(PersonalInformation, {
@@ -69,8 +69,8 @@ def register_clients_models():
 
     CrudRegistry.register(TaxDomicile, {
         'section': 'np',
-        'fields': ['id', 'client_uuid', 'aei_tin', 'tax_domicile', 'fiscal_identifier','full_name', 'tin_number', 'no_tin_reason'],
-        'list_display': ['aei_tin', 'tax_domicile', 'fiscal_identifier','full_name', 'tin_number'],
+        'fields': ['id', 'client_uuid', 'tax_domicile', 'fiscal_identifier','full_name', 'tin_number', 'no_tin_reason'],
+        'list_display': ['tax_domicile', 'fiscal_identifier','full_name', 'tin_number'],
     })
 
     CrudRegistry.register(Communication, {
