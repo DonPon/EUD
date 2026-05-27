@@ -8,7 +8,7 @@ def register_users_models():
     
     CrudRegistry.register(User, {
         'fields': ['id', 'username', 'first_name', 'last_name', 'role', 'is_active', 'is_staff', 'date_joined'],
-        'list_display': ['username', 'role', 'is_active', 'is_staff'],
+        'list_display': ['username', 'first_name', 'last_name', 'role', 'is_active'],
         'filter_fields': ['role', 'is_active', 'is_staff'],
         'search_fields': ['username', 'first_name', 'last_name'],
         'is_client_related': False
