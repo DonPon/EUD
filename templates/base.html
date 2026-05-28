@@ -9,6 +9,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Flag Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.11.0/css/flag-icons.min.css"/>
     <!-- DataTables CSS -->
     <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <link href="https://cdn.datatables.net/buttons/2.3.6/css/buttons.bootstrap5.min.css" rel="stylesheet">
@@ -62,9 +64,9 @@
                             Welcome, <strong>{{ user.username }}</strong> ({{ user.role }})
                             <span class="badge rounded-pill bg-light text-dark border ms-1" style="font-size: 0.75rem;">{{ env_name }}</span>
                             {% if env_country == 'ITA' %}
-                                <span class="badge rounded-circle bg-white border ms-1 p-0 d-inline-flex align-items-center justify-content-center" style="width: 1.5rem; height: 1.5rem; font-size: 1rem;" title="Italy">🇮🇹</span>
+                                <span class="fi fi-it rounded-circle border ms-1" style="width: 1.5rem; height: 1.5rem;" title="Italy"></span>
                             {% elif env_country == 'GER' %}
-                                <span class="badge rounded-circle bg-white border ms-1 p-0 d-inline-flex align-items-center justify-content-center" style="width: 1.5rem; height: 1.5rem; font-size: 1rem;" title="Germany">🇩🇪</span>
+                                <span class="fi fi-de rounded-circle border ms-1" style="width: 1.5rem; height: 1.5rem;" title="Germany"></span>
                             {% endif %}
                         </span>
                         <a href="/admin/logout/" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Logout</a>
