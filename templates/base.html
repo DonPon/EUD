@@ -61,6 +61,11 @@
                         <span class="navbar-text me-3 text-dark">
                             Welcome, <strong>{{ user.username }}</strong> ({{ user.role }})
                             <span class="badge rounded-pill bg-light text-dark border ms-1" style="font-size: 0.75rem;">{{ env_name }}</span>
+                            {% if env_country == 'ITA' %}
+                                <span class="badge rounded-circle bg-white border ms-1 p-0 d-inline-flex align-items-center justify-content-center" style="width: 1.5rem; height: 1.5rem; font-size: 1rem;" title="Italy">🇮🇹</span>
+                            {% elif env_country == 'GER' %}
+                                <span class="badge rounded-circle bg-white border ms-1 p-0 d-inline-flex align-items-center justify-content-center" style="width: 1.5rem; height: 1.5rem; font-size: 1rem;" title="Germany">🇩🇪</span>
+                            {% endif %}
                         </span>
                         <a href="/admin/logout/" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Logout</a>
                     {% else %}

@@ -2,7 +2,7 @@
 
 # Database configuration
 DATABASE_TYPE:
-    - 'postgres'  # Options: 'postgres' or 'sqlite'
+    - 'sqlite'  # Options: 'postgres' or 'sqlite'
 
 # PostgreSQL cluster configuration (used by Database_Config)
 certs_path:
@@ -12,3 +12,5 @@ db_env:
 schema:
     - 'public'  # Database schema
 
+sqlite_path:
+    - '/path/to/db.sqlite3'  # Path to the SQLite database file (used if DATABASE_TYPE is 'sqlite')
