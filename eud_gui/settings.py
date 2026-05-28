@@ -167,10 +167,15 @@ if _config and _config.get("DATABASE_TYPE") == "postgres":
         }
     }
 else:
+    if _config:
+        sqlite_path = _config.get("sqlite_path", BASE_DIR / "db.sqlite3")
+    else:
+        sqlite_path = BASE_DIR / "db.sqlite3"
+    print(f"Using SQLite database at: {sqlite_path}")
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+            "NAME": sqlite_path,
         }
     }
 
