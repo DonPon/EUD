@@ -26,7 +26,6 @@
                             <th>Full Name</th>
                             <th>BR Number</th>
                             <th>Type of Account</th>
-                            <th>Client Segment</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -89,10 +88,9 @@
                     return `<input type="checkbox" class="client-checkbox" value="${data}">`;
                 }
             },
-            { data: 'first_and_last_name' },
+            { data: 'name_of_banking_relationship' },
             { data: 'banking_relationship' },
             { data: 'type_of_account' },
-            { data: 'client_segment' },
             { 
                 data: 'status',
                 render: function(data) {

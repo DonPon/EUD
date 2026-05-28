@@ -25,7 +25,6 @@
                             <th style="width: 30px;"><input type="checkbox" id="select-all"></th>
                             <th>Name</th>
                             <th>BR Number</th>
-                            <th>Client Segment</th>
                             <th>Status</th>
                             <th>Actions</th>
                         </tr>
@@ -87,14 +86,8 @@
                     return `<input type="checkbox" class="client-checkbox" value="${data}">`;
                 }
             },
-            { 
-                data: 'first_and_last_name',
-                render: function(data) {
-                    return `<strong>${data || 'N/A'}</strong>`;
-                }
-            },
+            { data: 'name_of_banking_relationship'},
             { data: 'banking_relationship' },
-            { data: 'client_segment' },
             { 
                 data: 'status',
                 render: function(data) {
