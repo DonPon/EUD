@@ -30,9 +30,15 @@ class LE_BankingRelationship(ClientRelatedModel):
         ('Joint', 'Joint'),
     ]
     SEGMENT_TYPE_CHOICES = [
-        ('120', '120'),
-        ('132', '132'),
-        ('131', '131'),
+        ('241', '241'),
+        ('244', '244'),
+        ('243', '243'),
+        ('231', '231'),
+        ('220', '220'),
+        ('233', '233'),
+        ('232', '232'),
+        ('270', '270'),
+        ('266', '266'),
     ]
 
     COMMUNICATION_BR_CHOICES = [
@@ -47,10 +53,7 @@ class LE_BankingRelationship(ClientRelatedModel):
         ('Same as owner', 'Same as owner'),
         ('Third party', 'Third party'),
     ]
-    ID_DOC_PROVIDED_CHOICES = [
-        ('Provided', 'Provided'),
-        ('Not provided', 'Not provided'),
-    ]
+
     LANGUAGE_CHOICES = [
         ('German', 'German'),
         ('English', 'English'),
@@ -100,11 +103,10 @@ class LE_BankingRelationship(ClientRelatedModel):
     partner_id = models.CharField(max_length=255, null=True, blank=True, verbose_name="Partner ID")
     segment_type = models.CharField(max_length=10, choices=SEGMENT_TYPE_CHOICES, null=True, blank=True)
     client_segment = models.CharField(max_length=255, null=True, blank=True, verbose_name="Client Segment")
-    code_csc = models.CharField(max_length=255, null=True, blank=True, verbose_name="Client Segment Code (CSC)")
+    csc = models.CharField(max_length=255, null=True, blank=True, verbose_name="CSC")
     communication_br = models.CharField(max_length=50, choices=COMMUNICATION_BR_CHOICES, blank=True, null=True, verbose_name="Communication mode")
     third_postal_address = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Third Postal Address")
     beneficial_owner = models.CharField(max_length=50, choices=BENEFICIAL_OWNER_CHOICES, blank=True, null=True, verbose_name="Beneficial Owner")
-    id_doc_provided = models.CharField(max_length=50, choices=ID_DOC_PROVIDED_CHOICES, blank=True, null=True, verbose_name="ID copy provided")
     language = models.CharField(max_length=50, choices=LANGUAGE_CHOICES, blank=True, null=True, verbose_name="Language")
     opened_in_ubs_premises = models.CharField(max_length=50, choices=OPENED_IN_UBS_PREMISES_CHOICES, blank=True, null=True, verbose_name="Account Opening Location")
     account_and_securities_statements = models.CharField(max_length=100, choices=ACCOUNT_STATEMENTS_CHOICES, blank=True, null=True, verbose_name="transaction statements")
@@ -216,7 +218,7 @@ class LE_Address(ClientRelatedModel):
 
 class LE_Communication(ClientRelatedModel):
     TYPE_CHOICES = [
-        ('Telephone', 'Telephone'),
+        ('Fixed Number', 'Fixed Number'),
         ('Mobile', 'Mobile'),
         ('Email', 'Email'),
         ('Pec address', 'Pec address'),
@@ -232,7 +234,7 @@ class LE_Communication(ClientRelatedModel):
     comunication_Context = models.CharField(max_length=255, choices=CONTEXT_CHOICES, null=True, blank=True, verbose_name="context")
     prefix = models.CharField(max_length=20, null=True, blank=True, verbose_name="prefix")
     number = models.CharField(max_length=255, null=True, blank=True, verbose_name="number")
-    address = models.CharField(max_length=255, null=True, blank=True, verbose_name="address")
+    address = models.CharField(max_length=255, null=True, blank=True, verbose_name="Address (email)")
 
     class Meta:
         verbose_name = "Communication"
@@ -342,6 +344,7 @@ class LE_Relationship(ClientRelatedModel):
         ('POA (general)', 'POA (general)'),
         ('POA (limited)', 'POA (limited)'),
         ('POA (in case of death)', 'POA (in case of death)'),
+        ('POA (Information)', 'POA (Information)'),
         ('Beneficial Owner', 'Beneficial Owner'),
         ('Legal Representative', 'Legal Representative'),
         ('Legal Representative + Beneficial Owner', 'Legal Representative + Beneficial Owner'),
@@ -349,10 +352,11 @@ class LE_Relationship(ClientRelatedModel):
 
     child_unique_id = models.CharField(max_length=255, blank=True, null=True, verbose_name="child id")
     first_and_last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="first and last name")
-    technical_account = models.CharField(max_length=255, blank=True, null=True, verbose_name="technical account")
+    technical_account = models.CharField(max_length=255, blank=True, null=True, verbose_name="BR-Technical Account")
     type_of_relationship = models.CharField(max_length=100, choices=RELATIONSHIP_CHOICES, blank=True, null=True, verbose_name="relationship")
     relationship_with_owner = models.CharField(max_length=255, blank=True, null=True, verbose_name="relationship with owner")
     role = models.CharField(max_length=255, blank=True, null=True, verbose_name="role")
+    signature_type = models.CharField(max_length=255, null=True, blank=True, verbose_name="signature type")
     lr_executor = models.CharField(max_length=255, blank=True, null=True, verbose_name="executor")
     lr_beneficial_owner = models.CharField(max_length=255, blank=True, null=True, verbose_name="beneficial owner")
     lr_bo_role = models.CharField(max_length=255, blank=True, null=True, verbose_name="beneficial owner role")
@@ -473,17 +477,14 @@ class LE_Product(ClientRelatedModel):
     sustainable_investing = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Sustainable Investing")
     sustainability_preference = models.CharField(max_length=255, blank=True, null=True, verbose_name="Sustainability preference")
     focus_equity = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Focus")
-    alternative_investment = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="alternative investment")
     direct_instrument = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="direct instrument")
     initial_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="initial amount")
-    currency_hedging = models.CharField(max_length=100, blank=True, null=True, verbose_name="hedging")
     transaction_confirmation = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="transaction confirmation")
     white_KYC_provided = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="white KYC provided")
     fiduciary_mandate_provided = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="fiduciary mandate provided")
     fiscal_regime = models.CharField(max_length=255, blank=True, null=True, verbose_name="fiscal regime")
     ntac = models.CharField(max_length=50, choices=NTAC_CHOICES, blank=True, null=True, verbose_name="ntac")
     reporting_loss = models.CharField(max_length=50, choices=REPORTING_LOSS_CHOICES, blank=True, null=True, verbose_name="reporting")
-    share_focus = models.CharField(max_length=255, blank=True, null=True, verbose_name="share focus")
     hedging_foreign_currency = models.CharField(max_length=255, blank=True, null=True, verbose_name="hedging foreign currency")
     date_of_alignment = models.CharField(max_length=255, blank=True, null=True, verbose_name="align date")
     end_date_alignment = models.DateField(null=True, blank=True, verbose_name="end date")
@@ -575,6 +576,7 @@ class LE_Company(ClientRelatedModel):
     level_of_professionalism = models.CharField(max_length=255, null=True, blank=True, verbose_name="is professional client")
     ateco = models.CharField(max_length=255, null=True, blank=True, verbose_name="ATECO")
     sae = models.CharField(max_length=255, null=True, blank=True, verbose_name="SAE")
+    fiduciary_mandate = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Fiduciary mandate")
     id_third_account_owner = models.CharField(max_length=255, null=True, blank=True, verbose_name="account owner")
     last_name_tao = models.CharField(max_length=255, null=True, blank=True, verbose_name="last name")
     first_name_tao = models.CharField(max_length=255, null=True, blank=True, verbose_name="first name")

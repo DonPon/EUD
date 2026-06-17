@@ -9,8 +9,8 @@ def register_le_clients_models():
         'fields': [
             'id', 'client_uuid', 'name_of_banking_relationship', 'banking_relationship',
             'additional_br', 'partner_id',
-            'segment_type', 'client_segment', 'code_csc', 'communication_br',
-            'third_postal_address', 'beneficial_owner', 'id_doc_provided',
+            'segment_type', 'client_segment', 'csc', 'communication_br',
+            'third_postal_address', 'beneficial_owner',
             'language', 'opened_in_ubs_premises', 'account_and_securities_statements',
             'type_and_purpose', 'type_and_purpose_specify', 'reporting_obligation',
             'br_client_type', 'earning_statements', 'earning_statements_fees',
@@ -20,7 +20,7 @@ def register_le_clients_models():
             'send_documents', 'further_notes', 'status', 'created_at', 'first_and_last_name'
         ],
         'list_display': ['name_of_banking_relationship', 'banking_relationship', 'client_segment', 'status'],
-        'filter_fields': ['client_segment', 'code_csc', 'language', 'type_and_purpose', 'reporting_obligation'],
+        'filter_fields': ['client_segment', 'csc', 'language', 'type_and_purpose', 'reporting_obligation'],
         'search_fields': ['status', 'name_of_banking_relationship', 'client_segment', 'banking_relationship'],
     })
 
@@ -31,12 +31,12 @@ def register_le_clients_models():
             'lei_code', 'date_of_constitution', 'place_of_constitution',
             'country_of_constitution', 'fiscal_code_it', 'cciaa_type', 'cciaa_number',
             'released_by', 'date_of_issue', 'form_of_legal_entity',
-            'level_of_professionalism', 'ateco', 'sae', 'id_third_account_owner',
+            'level_of_professionalism', 'ateco', 'sae', 'fiduciary_mandate', 'id_third_account_owner',
             'last_name_tao', 'first_name_tao', 'street_tao', 'no_tao',
             'postal_code_tao', 'city_tao', 'country_tao', 'created_at'
         ],
         'list_display': ['name_of_company', 'type_of_company', 'lei_code',],
-        'filter_fields': ['type_of_company', 'form_of_legal_entity'],
+        'filter_fields': ['type_of_company', 'form_of_legal_entity', 'fiduciary_mandate'],
         'search_fields': ['name_of_company', 'lei_code'],
     })
 
@@ -106,7 +106,7 @@ def register_le_clients_models():
         'fields': [
             'id', 'client_uuid', 'child_unique_id', #'first_and_last_name',
             'technical_account', 'type_of_relationship', 'full_name', 'relationship_with_owner', 
-            'role', 'lr_executor', 'lr_beneficial_owner', 'lr_bo_role', 'lr_bo_reason'
+            'role', 'signature_type', 'lr_executor', 'lr_beneficial_owner', 'lr_bo_role', 'lr_bo_reason'
         ],
         'list_display': [
             #'related_banking_relationship',
@@ -128,10 +128,10 @@ def register_le_clients_models():
             'reference_currency', 'investment_strategy', 'ip_risk_tolerance',
             'investment_service', 'investment_amount', 'selected_service',
             'all_in', 'sustainable_investing', 'sustainability_preference',
-            'focus_equity', 'alternative_investment', 'direct_instrument',
-            'initial_amount', 'currency_hedging', 'transaction_confirmation',
+            'focus_equity', 'direct_instrument',
+            'initial_amount', 'transaction_confirmation',
             'white_KYC_provided', 'fiduciary_mandate_provided', 'fiscal_regime',
-            'ntac', 'reporting_loss', 'share_focus', 'hedging_foreign_currency',
+            'ntac', 'reporting_loss', 'hedging_foreign_currency',
             'date_of_alignment', 'end_date_alignment', 'type_of_business_settlement',
             'special_conditions', 'discount_applied', 'discount_amount_percent',
             'flat_fee_applied', 'flat_fee_percent', 'invested_assets', 'income_pa',
