@@ -14,7 +14,7 @@ def register_clients_models():
         'fields': [
             'id', 'client_uuid', 'name_of_banking_relationship', 'banking_relationship',
             'additional_br', 'partner_id', 'type_of_account', 'type_of_signature',
-            'segment_type', 'client_segment', 'code_ksc', 'communication_br',
+            'segment_type', 'client_segment', 'csc', 'communication_br',
             'third_postal_address', 'beneficial_owner', 'id_doc_provided', 'language',
             'opened_in_ubs_premises', 'account_and_securities_statements',
             'type_and_purpose', 'type_and_purpose_specify', 'reporting_obligation',
@@ -25,7 +25,7 @@ def register_clients_models():
             'send_documents', 'further_notes', 'status', 'created_at', 'first_and_last_name'
         ],
         'list_display': ['name_of_banking_relationship', 'banking_relationship', 'type_of_account', 'client_segment', 'status'],
-        'filter_fields': ['type_of_account', 'client_segment', 'code_ksc', 'language', 'br_client_type'],
+        'filter_fields': ['type_of_account', 'client_segment', 'csc', 'language', 'br_client_type'],
         'search_fields': ['status','name_of_banking_relationship', 'banking_relationship', 'type_of_account', 'partner_id'],
     })
 
@@ -34,9 +34,9 @@ def register_clients_models():
         'fields': [
             'id', 'client_uuid',
             'first_and_last_name', 'first_name', 'last_name', 'additional_designation', 'name_at_birth',
-            'fiscal_it_number', 'identificationsnummer_de', 'type_id_document', 'country_of_issue_id',
-            'id_number', 'release_authority', 'release_place', 'release_country', 'release_date', 'expiry_date',
-            'copy_id_provided', 'place_of_birth', 'date_of_birth', 'form_of_address', 'title', 'country_of_birth',
+            'fiscal_it_number', 'identificationsnummer_de', 'type_id_document',
+            'id_number', 'issuing_authority', 'place_of_issue_city', 'id_place_of_issue_city', 'place_of_issue_country', 'date_of_issue', 'expiry_date',
+            'copy_id_provided', 'place_of_birth', 'country_of_birth', 'date_of_birth', 'form_of_address', 'title',
             'marital_status', 'occupation_sector', 'fiscal_residence', 'sensitive_client',
             'correspondence_language', 'sae_code', 'ao_number'
         ],
@@ -77,9 +77,9 @@ def register_clients_models():
         'section': 'np',
         'fields': [
             'id', 'client_uuid', 'first_and_last_name', 'type_of_communication',
-            'communication_context', 'prefix', 'number', 'address', 'is_main_contact'
+            'communication_context', 'prefix', 'number', 'email_address', 'is_main_contact'
         ],
-        'list_display': ['first_and_last_name', 'type_of_communication', 'number', 'address', 'is_main_contact'],
+        'list_display': ['first_and_last_name', 'type_of_communication', 'number', 'email_address', 'is_main_contact'],
         'search_fields': ['first_and_last_name', 'number'],
     })
 
@@ -93,7 +93,7 @@ def register_clients_models():
         'section': 'np',
         'fields': [
             'id', 'client_uuid', 'child_unique_id', #'first_and_last_name',
-            'technical_account', 'type_of_relationship', 'full_name', 'relationship_with_owner'
+            'br_technical_account', 'type_of_relationship', 'full_name', 'relationship_with_owner', 'signature_type'
         ],
         'list_display': [
             #'related_banking_relationship',
