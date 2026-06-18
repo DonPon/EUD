@@ -21,12 +21,12 @@
                 <div class="col-md-5">
                     <div class="card h-100 border-0 shadow-lg selection-card p-4 text-center cursor-pointer" onclick="setAssociationMode('existing')">
                         <div class="card-body">
-                            <div class="mb-4 text-primary">
+                            <div class="mb-4 ubs-red-text">
                                 <i class="bi bi-search" style="font-size: 4rem;"></i>
                             </div>
                             <h3 class="fw-bold">Search Existing</h3>
                             <p class="text-muted">Associate an existing Natural Person or Legal Entity already in the system.</p>
-                            <button type="button" class="btn btn-primary mt-3 px-4 fw-bold">Select</button>
+                            <button type="button" class="btn btn-ubs mt-3 px-4 fw-bold">Select</button>
                         </div>
                     </div>
                 </div>
@@ -35,12 +35,12 @@
                 <div class="col-md-5">
                     <div class="card h-100 border-0 shadow-lg selection-card p-4 text-center cursor-pointer" onclick="setAssociationMode('create')">
                         <div class="card-body">
-                            <div class="mb-4 text-info">
+                            <div class="mb-4 ubs-red-text">
                                 <i class="bi bi-person-plus-fill" style="font-size: 4rem;"></i>
                             </div>
                             <h3 class="fw-bold">Create New</h3>
                             <p class="text-muted">The client doesn't exist yet? Create a minimal profile and link it immediately.</p>
-                            <button type="button" class="btn btn-info text-white mt-3 px-4 fw-bold">Select</button>
+                            <button type="button" class="btn btn-ubs mt-3 px-4 fw-bold">Select</button>
                         </div>
                     </div>
                 </div>
@@ -66,8 +66,8 @@
 
             <!-- STEP 1 CARD: THE LINK -->
             {% if is_relationship %}
-            <div class="card mb-4 shadow-sm border-info overflow-hidden" id="relationship-setup-container">
-                <div class="card-header bg-info text-white py-3 d-flex justify-content-between align-items-center">
+            <div class="card mb-4 shadow-sm border-primary overflow-hidden" id="relationship-setup-container">
+                <div class="card-header bg-primary text-white py-3 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="bi bi-link-45deg me-2"></i>Link Client</h5>
                     {% if not is_edit %}
                     <button type="button" class="btn btn-sm btn-light fw-bold" onclick="showSelectionScreen()">
@@ -189,6 +189,7 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <style>
+    .ubs-red-text { color: #e11a2d; }
     .cursor-pointer { cursor: pointer; }
     .selection-card { transition: transform 0.2s, box-shadow 0.2s; border-radius: 15px; }
     .selection-card:hover { transform: translateY(-5px); box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important; }
