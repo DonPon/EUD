@@ -198,6 +198,9 @@ class LE_Address(ClientRelatedModel):
         ('Tax domicile', 'Tax domicile'),
         ('Fiscal residence', 'Fiscal residence'),
         ('Third party', 'Third party'),
+        ('Domicile (residenza di pergamena)', 'Domicile (residenza di pergamena)'),
+        ('Correspondence (corrispondenza di pergamena)', 'Correspondence (corrispondenza di pergamena)'),
+        ('Permanent (non in pergamena ma inserito a mano)', 'Permanent (non in pergamena ma inserito a mano)'),
     ]
     first_and_last_name = models.CharField(max_length=255, null=True, blank=True, verbose_name="full name")
     type_of_address = models.CharField(max_length=100, choices=TYPE_CHOICES, null=True, blank=True, verbose_name="address type")
