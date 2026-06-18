@@ -6,68 +6,182 @@
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">{% if is_edit %}Edit{% else %}New{% endif %} {{ verbose_name }}</h5>
+    <div class="col-md-9">
+        
+        <!-- 1. INTERMEDIARY SELECTION SCREEN (Only for New Relationships) -->
+        {% if is_relationship and not is_edit %}
+        <div id="relationship-selector" class="mt-4">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Link a Client to this Relationship</h2>
+                <p class="text-muted fs-5">Would you like to search for an existing client or create a new one on the fly?</p>
             </div>
-            <div class="card-body">
-                <form method="post" novalidate>
-                    {% csrf_token %}
 
-                    {% if form.non_field_errors %}
-                        <div class="alert alert-danger">
-                            {{ form.non_field_errors|join:", " }}
+            <div class="row g-4 justify-content-center">
+                <!-- Option 1: Search Existing -->
+                <div class="col-md-5">
+                    <div class="card h-100 border-0 shadow-lg selection-card p-4 text-center cursor-pointer" onclick="setAssociationMode('existing')">
+                        <div class="card-body">
+                            <div class="mb-4 text-primary">
+                                <i class="bi bi-search" style="font-size: 4rem;"></i>
+                            </div>
+                            <h3 class="fw-bold">Search Existing</h3>
+                            <p class="text-muted">Associate an existing Natural Person or Legal Entity already in the system.</p>
+                            <button type="button" class="btn btn-primary mt-3 px-4 fw-bold">Select</button>
                         </div>
+                    </div>
+                </div>
+
+                <!-- Option 2: Create New -->
+                <div class="col-md-5">
+                    <div class="card h-100 border-0 shadow-lg selection-card p-4 text-center cursor-pointer" onclick="setAssociationMode('create')">
+                        <div class="card-body">
+                            <div class="mb-4 text-info">
+                                <i class="bi bi-person-plus-fill" style="font-size: 4rem;"></i>
+                            </div>
+                            <h3 class="fw-bold">Create New</h3>
+                            <p class="text-muted">The client doesn't exist yet? Create a minimal profile and link it immediately.</p>
+                            <button type="button" class="btn btn-info text-white mt-3 px-4 fw-bold">Select</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-5">
+                <a href="javascript:history.back()" class="text-secondary text-decoration-none">
+                    <i class="bi bi-arrow-left me-1"></i> Nevermind, go back
+                </a>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- 2. THE MAIN FORM CONTAINER -->
+        <form method="post" novalidate id="generic-crud-form" class="{% if is_relationship and not is_edit %}d-none{% endif %}">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="alert alert-danger mb-4">
+                    {{ form.non_field_errors|join:", " }}
+                </div>
+            {% endif %}
+
+            <!-- STEP 1 CARD: THE LINK -->
+            {% if is_relationship %}
+            <div class="card mb-4 shadow-sm border-info overflow-hidden" id="relationship-setup-container">
+                <div class="card-header bg-info text-white py-3 d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-link-45deg me-2"></i>Link Client</h5>
+                    {% if not is_edit %}
+                    <button type="button" class="btn btn-sm btn-light fw-bold" onclick="showSelectionScreen()">
+                        <i class="bi bi-arrow-left me-1"></i> Change Method
+                    </button>
                     {% endif %}
+                </div>
+                
+                <div class="card-body p-4 bg-white">
+                    <!-- Hidden input to store mode -->
+                    <div class="d-none">
+                        {{ form.association_mode }}
+                    </div>
 
-                    {% for field in form %}
-                        <div class="mb-3">
-                            {% if field.field.widget.input_type == 'checkbox' %}
-                                <div class="form-check">
-                                    {{ field }}
-                                    <label class="form-check-label" for="{{ field.id_for_label }}">
-                                        {{ field.label }}
-                                    </label>
-                                </div>
-                            {% else %}
-                                <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                                {{ field }}
-                            {% endif %}
-
-                            {% if field.help_text %}
-                                <div class="form-text">{{ field.help_text }}</div>
-                            {% endif %}
-
-                            {% if field.errors %}
-                                <div class="invalid-feedback d-block">
-                                    {{ field.errors|join:", " }}
-                                </div>
+                    <div class="row">
+                        <!-- Existing Client Search -->
+                        <div class="col-12 field-wrapper-child_unique_id mb-0">
+                            <label for="{{ form.child_unique_id.id_for_label }}" class="form-label fw-bold">{{ form.child_unique_id.label }}</label>
+                            <div class="p-3 border rounded bg-light shadow-sm">
+                                {{ form.child_unique_id }}
+                            </div>
+                            {% if form.child_unique_id.errors %}
+                                <div class="invalid-feedback d-block">{{ form.child_unique_id.errors|join:", " }}</div>
                             {% endif %}
                         </div>
-                    {% endfor %}
 
-                    <div class="d-flex justify-content-between mt-4">
+                        <!-- New Client Name -->
+                        <div class="col-md-8 field-wrapper-new_client_name mb-0">
+                            <label for="{{ form.new_client_name.id_for_label }}" class="form-label fw-bold">{{ form.new_client_name.label }}</label>
+                            {{ form.new_client_name }}
+                            {% if form.new_client_name.errors %}
+                                <div class="invalid-feedback d-block">{{ form.new_client_name.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- New Client Type -->
+                        <div class="col-md-4 field-wrapper-new_client_type mb-0">
+                            <label for="{{ form.new_client_type.id_for_label }}" class="form-label fw-bold">{{ form.new_client_type.label }}</label>
+                            {{ form.new_client_type }}
+                            {% if form.new_client_type.errors %}
+                                <div class="invalid-feedback d-block">{{ form.new_client_type.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- STEP 2 CARD: THE DETAILS -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="mb-0">
+                        {% if is_relationship %}
+                            <i class="bi bi-file-earmark-text-fill me-2"></i>Relationship Details
+                        {% else %}
+                            {% if is_edit %}Edit{% else %}New{% endif %} {{ verbose_name }}
+                        {% endif %}
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        {% for field in form %}
+                            <!-- Skip setup fields -->
+                            {% if is_relationship and field.name in association_fields %}
+                                {# Skip #}
+                            {% else %}
+                                <div class="col-md-6 mb-3 field-wrapper-{{ field.name }}">
+                                    {% if field.field.widget.input_type == 'checkbox' %}
+                                        <div class="form-check mt-4">
+                                            {{ field }}
+                                            <label class="form-check-label" for="{{ field.id_for_label }}">
+                                                {{ field.label }}
+                                            </label>
+                                        </div>
+                                    {% else %}
+                                        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                                        {{ field }}
+                                    {% endif %}
+
+                                    {% if field.help_text %}
+                                        <div class="form-text">{{ field.help_text }}</div>
+                                    {% endif %}
+
+                                    {% if field.errors %}
+                                        <div class="invalid-feedback d-block">
+                                            {{ field.errors|join:", " }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4 pt-3 border-top">
                         {% if client_uuid %}
                             {% if section == 'le' %}
-                                <a href="{% url 'clients_le:detail' client_uuid=client_uuid %}" class="btn btn-outline-secondary">Cancel</a>
+                                <a href="{% url 'clients_le:detail' client_uuid=client_uuid %}" class="btn btn-outline-secondary px-4">Cancel</a>
                             {% else %}
-                                <a href="{% url 'clients:detail' client_uuid=client_uuid %}" class="btn btn-outline-secondary">Cancel</a>
+                                <a href="{% url 'clients:detail' client_uuid=client_uuid %}" class="btn btn-outline-secondary px-4">Cancel</a>
                             {% endif %}
                         {% else %}
                             {% if section == 'le' %}
-                                <a href="{% url 'clients_le:list' %}" class="btn btn-outline-secondary">Cancel</a>
+                                <a href="{% url 'clients_le:list' %}" class="btn btn-outline-secondary px-4">Cancel</a>
                             {% else %}
-                                <a href="{% url 'clients:list' %}" class="btn btn-outline-secondary">Cancel</a>
+                                <a href="{% url 'clients:list' %}" class="btn btn-outline-secondary px-4">Cancel</a>
                             {% endif %}
                         {% endif %}
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary px-5 fw-bold">
                             {% if is_edit %}Save Changes{% else %}Create {{ verbose_name }}{% endif %}
                         </button>
                     </div>
-                </form>
+                </div>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 
@@ -75,93 +189,45 @@
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <style>
+    .cursor-pointer { cursor: pointer; }
+    .selection-card { transition: transform 0.2s, box-shadow 0.2s; border-radius: 15px; }
+    .selection-card:hover { transform: translateY(-5px); box-shadow: 0 1rem 3rem rgba(0,0,0,.175)!important; }
+
     /* Improved Bootstrap styling for dynamic forms */
-    input[type="text"],
-    input[type="email"],
-    input[type="number"],
-    input[type="date"],
-    input[type="password"],
-    input[type="url"],
-    input[type="tel"],
-    select,
-    textarea {
-        display: block;
-        width: 100%;
-        padding: 0.375rem 0.75rem;
-        font-size: 1rem;
-        font-weight: 400;
-        line-height: 1.5;
-        color: #212529;
-        background-color: #fff;
-        background-clip: padding-box;
-        border: 1px solid #ced4da;
-        appearance: none;
-        border-radius: 0.375rem;
-        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    input[type="text"], input[type="email"], input[type="number"], input[type="date"],
+    input[type="password"], input[type="url"], input[type="tel"], select, textarea {
+        display: block; width: 100%; padding: 0.375rem 0.75rem; font-size: 1rem;
+        font-weight: 400; line-height: 1.5; color: #212529; background-color: #fff;
+        background-clip: padding-box; border: 1px solid #ced4da; appearance: none;
+        border-radius: 0.375rem; transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
     }
 
     input[type="checkbox"] {
-        width: 1.2rem;
-        height: 1.2rem;
-        margin-top: 0.25rem;
-        vertical-align: top;
-        background-color: #fff;
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: contain;
-        border: 1px solid rgba(0,0,0,.25);
-        appearance: none;
-        print-color-adjust: exact;
-        border-radius: 0.25em;
+        width: 1.2rem; height: 1.2rem; margin-top: 0.25rem; vertical-align: top;
+        background-color: #fff; background-repeat: no-repeat; background-position: center;
+        background-size: contain; border: 1px solid rgba(0,0,0,.25); appearance: none;
+        print-color-adjust: exact; border-radius: 0.25em;
     }
 
     input[type="checkbox"]:checked {
-        background-color: #0d6efd;
-        border-color: #0d6efd;
+        background-color: #0d6efd; border-color: #0d6efd;
         background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='m6 10 3 3 6-6'/%3e%3c/svg%3e");
     }
 
     select {
-        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-        background-repeat: no-repeat;
-        background-position: right 0.75rem center;
-        background-size: 16px 12px;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/xml' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+        background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 16px 12px;
     }
 
     /* Select2 custom styling */
-    .select2-container {
-        width: 100% !important;
-    }
+    .select2-container { width: 100% !important; }
     .select2-container--default .select2-selection--single {
-        border: 1px solid #ced4da;
-        border-radius: 0.375rem;
-        padding: 0.375rem 0.75rem;
-        height: auto;
+        border: 1px solid #ced4da; border-radius: 0.375rem; padding: 0.375rem 0.75rem; height: auto;
     }
     .select2-container--default .select2-selection--single .select2-selection__rendered {
-        color: #212529;
-        padding-left: 0;
-        line-height: 1.5;
+        color: #212529; padding-left: 0; line-height: 1.5;
     }
-    .select2-container--default .select2-selection--single .select2-selection__arrow {
-        height: 100%;
-    }
-    .select2-dropdown {
-        border: 1px solid #ced4da;
-        border-radius: 0.375rem;
-    }
-    .select2-search__field {
-        width: 100% !important;
-        padding: 0.375rem 0.75rem;
-        border: 1px solid #ced4da;
-        border-radius: 0.375rem;
-    }
-    .select2-results__option {
-        padding: 6px 12px;
-    }
-    .select2-results__option--highlighted[aria-selected] {
-        background-color: #e11a2d;
-    }
+    .select2-container--default .select2-selection--single .select2-selection__arrow { height: 100%; }
 </style>
 {% endblock %}
 
@@ -169,6 +235,24 @@
 <!-- Select2 JS -->
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
+    function setAssociationMode(mode) {
+        // Set the hidden radio button
+        $(`input[name="association_mode"][value="${mode}"]`).prop('checked', true).trigger('change');
+        
+        // Hide selector, show form with animation
+        $('#relationship-selector').fadeOut(200, function() {
+            $('#generic-crud-form').removeClass('d-none').hide().fadeIn(300);
+            // Refresh Select2 if needed (sometimes hidden containers mess it up)
+            $('.select2-dropdown').trigger('change');
+        });
+    }
+
+    function showSelectionScreen() {
+        $('#generic-crud-form').fadeOut(200, function() {
+            $('#relationship-selector').fadeIn(300);
+        });
+    }
+
     $(document).ready(function() {
         // Initialize Select2 on dropdowns with the select2-dropdown class
         $('.select2-dropdown').each(function() {
@@ -179,6 +263,41 @@
                 dropdownParent: $(this).closest('form')
             });
         });
+
+        // Toggle logic for Relationship fields
+        const associationModeRadios = $('input[name="association_mode"]');
+        if (associationModeRadios.length) {
+            function toggleRelationshipFields() {
+                const mode = $('input[name="association_mode"]:checked').val();
+                const searchWrapper = $('.field-wrapper-child_unique_id');
+                const nameWrapper = $('.field-wrapper-new_client_name');
+                const typeWrapper = $('.field-wrapper-new_client_type');
+
+                if (mode === 'create') {
+                    searchWrapper.hide();
+                    nameWrapper.show();
+                    typeWrapper.show();
+                } else if (mode === 'existing') {
+                    searchWrapper.show();
+                    nameWrapper.hide();
+                    typeWrapper.hide();
+                } else {
+                    // Initial state or unexpected
+                    searchWrapper.hide();
+                    nameWrapper.hide();
+                    typeWrapper.hide();
+                }
+            }
+
+            associationModeRadios.on('change', toggleRelationshipFields);
+            toggleRelationshipFields(); // Run on load
+            
+            // If form has errors, we might want to stay on the form instead of selection screen
+            if ($('.alert-danger').length > 0 || $('.invalid-feedback').length > 0) {
+                 $('#relationship-selector').addClass('d-none');
+                 $('#generic-crud-form').removeClass('d-none');
+            }
+        }
     });
 </script>
 {% endblock %}
