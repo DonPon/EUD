@@ -69,7 +69,7 @@ class DynamicViewSetFactory:
         return type(viewset_name, (DynamicViewSet,), {})
 
 from django.views.generic import TemplateView
-from django.forms import modelform_factory, DateInput, Select, ChoiceField
+from django.forms import modelform_factory, DateInput, Select, ChoiceField, RadioSelect, CharField, TextInput
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -87,6 +87,35 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
         if 'client_uuid' in [f.name for f in model._meta.fields]:
             exclude.append('client_uuid')
         return exclude
+
+    def _create_minimal_client(self, name, client_type):
+        """Create a basic BankingRelationship and PersonalInformation record."""
+        import uuid
+        client_uuid = uuid.uuid4()
+        
+        if client_type == 'np':
+            from apps.clients.models import BankingRelationship, PersonalInformation
+            BankingRelationship.objects.create(
+                client_uuid=client_uuid,
+                name_of_banking_relationship=name,
+                status=['pending_review']
+            )
+            PersonalInformation.objects.create(
+                client_uuid=client_uuid,
+                first_and_last_name=name
+            )
+        else:
+            from apps.clients_le.models import LE_BankingRelationship, LE_PersonalInformation
+            LE_BankingRelationship.objects.create(
+                client_uuid=client_uuid,
+                name_of_banking_relationship=name,
+                status=['pending_review']
+            )
+            LE_PersonalInformation.objects.create(
+                client_uuid=client_uuid,
+                first_and_last_name=name
+            )
+        return client_uuid
 
     def _apply_dynamic_choices(self, form, model, client_uuid):
         """Inject dynamic choices for fields like product_uuid and child_unique_id."""
@@ -141,6 +170,39 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
                     'class': 'form-select select2-dropdown',
                     'data-placeholder': 'Search and select a client...'
                 })
+
+                # Add create/associate toggle for Relationship models
+                if model.__name__ in ['Relationship', 'LE_Relationship']:
+                    form.fields['association_mode'] = ChoiceField(
+                        choices=[('existing', 'Search Existing'), ('create', 'Create New')],
+                        label="Association Mode",
+                        initial='existing',
+                        required=False,
+                        widget=RadioSelect(attrs={'class': 'form-check-input'})
+                    )
+                    form.fields['new_client_name'] = CharField(
+                        label="New Client Name (First and Last)",
+                        required=False,
+                        widget=TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter full name'})
+                    )
+                    form.fields['new_client_type'] = ChoiceField(
+                        choices=[('np', 'Natural Person'), ('le', 'Legal Entity')],
+                        label="New Client Type",
+                        required=False,
+                        initial='np',
+                        widget=Select(attrs={'class': 'form-select'})
+                    )
+                    # child_unique_id is not strictly required if we are creating a new one
+                    form.fields['child_unique_id'].required = False
+
+                    # Reorder fields to put association logic at the top
+                    field_order = ['association_mode', 'child_unique_id', 'new_client_name', 'new_client_type']
+                    # Append all other fields
+                    for field_name in form.fields:
+                        if field_name not in field_order:
+                            field_order.append(field_name)
+                    form.order_fields(field_order)
+
             except Exception as e:
                 print(f"DEBUG: Failed to load client choices for child_unique_id: {e}")
 
@@ -207,7 +269,9 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
             'is_edit': bool(record_id),
             'client_uuid': client_uuid or (instance.client_uuid if instance and hasattr(instance, 'client_uuid') else None),
             'user_role': self.request.user.role,
-            'section': section
+            'section': section,
+            'is_relationship': model.__name__ in ['Relationship', 'LE_Relationship'],
+            'association_fields': ['association_mode', 'child_unique_id', 'new_client_name', 'new_client_type']
         })
         return context
 
@@ -257,6 +321,24 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
         if form.is_valid():
             obj = form.save(commit=False)
             
+            # Handle new Relationship logic
+            if model.__name__ in ['Relationship', 'LE_Relationship']:
+                association_mode = request.POST.get('association_mode', 'existing')
+                if association_mode == 'create':
+                    new_name = request.POST.get('new_client_name')
+                    new_type = request.POST.get('new_client_type')
+                    if not new_name:
+                        form.add_error('new_client_name', 'Name is required when creating a new client.')
+                        return self.render_to_response(self.get_context_data(form=form))
+                    
+                    new_client_uuid = self._create_minimal_client(new_name, new_type)
+                    obj.child_unique_id = str(new_client_uuid)
+                    obj.first_and_last_name = new_name
+                else:
+                    if not request.POST.get('child_unique_id'):
+                        form.add_error('child_unique_id', 'Please select an existing client or choose Create New.')
+                        return self.render_to_response(self.get_context_data(form=form))
+
             # 1. Handle Client Model (Sync ID and client_uuid)
             if table_name in ['bankingrelationship', 'le_bankingrelationship']:
                 if not obj.client_uuid:
