@@ -101,7 +101,6 @@ class BankingRelationship(ClientRelatedModel):
     communication_br = models.CharField(max_length=50, choices=COMMUNICATION_BR_CHOICES, blank=True, null=True, verbose_name="Communication mode")
     third_postal_address = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Third Postal Address")
     beneficial_owner = models.CharField(max_length=50, choices=BENEFICIAL_OWNER_CHOICES, blank=True, null=True, verbose_name="Beneficial Owner")
-    id_doc_provided = models.CharField(max_length=50, choices=ID_DOC_PROVIDED_CHOICES, blank=True, null=True)
     language = models.CharField(max_length=50, choices=LANGUAGE_CHOICES, blank=True, null=True, verbose_name="Language")
     opened_in_ubs_premises = models.CharField(max_length=50, choices=OPENED_IN_UBS_PREMISES_CHOICES, blank=True, null=True, verbose_name="Account Opening Location")
     account_and_securities_statements = models.CharField(max_length=100, choices=ACCOUNT_STATEMENTS_CHOICES, blank=True, null=True, verbose_name="transaction statements")
@@ -255,9 +254,6 @@ class Address(ClientRelatedModel):
         ('Correspondence', 'Correspondence'),
         ('Domicile', 'Domicile'),
         ('Permanent', 'Permanent'),
-        ('Tax domicile', 'Tax domicile'),
-        ('Fiscal residence', 'Fiscal residence'),
-        ('Third party', 'Third party'),
     ]
 
     first_and_last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="full name")
@@ -576,19 +572,6 @@ class Product(ClientRelatedModel):
     def __str__(self):
         return f"{self.portfolio_name} ({self.portfolio_id})"
 
-class Account(ClientRelatedModel):
-    product_uuid = models.UUIDField(db_index=True, null=True, blank=True)
-    reference_currency = models.CharField(max_length=3, default='USD')
-
-    @property
-    def product_info(self):
-        """Virtual field to show product details in tables without a hard FK."""
-        try:
-            from .models import Product
-            p = Product.objects.get(id=self.product_uuid)
-            return f"{p.portfolio_name} ({p.portfolio_id})"
-        except:
-            return "N/A"
 class CDOKList(ClientRelatedModel):
     cdok = models.CharField(max_length=255, null=True, blank=True)
     signed = models.CharField(max_length=255, null=True, blank=True, choices=YES_NO_CHOICES) # (flag)
