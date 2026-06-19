@@ -193,14 +193,8 @@ class LE_Address(ClientRelatedModel):
     TYPE_CHOICES = [
         ('Correspondence', 'Correspondence'),
         ('Domicile', 'Domicile'),
-        ('Legal Address', 'Legal Address'),
-        ('Residence', 'Residence'),
-        ('Tax domicile', 'Tax domicile'),
-        ('Fiscal residence', 'Fiscal residence'),
-        ('Third party', 'Third party'),
-        ('Domicile (residenza di pergamena)', 'Domicile (residenza di pergamena)'),
-        ('Correspondence (corrispondenza di pergamena)', 'Correspondence (corrispondenza di pergamena)'),
-        ('Permanent (non in pergamena ma inserito a mano)', 'Permanent (non in pergamena ma inserito a mano)'),
+        ('Legal Residence', 'Legal Residence'),
+        ('Permanent', 'Permanent'),
     ]
     first_and_last_name = models.CharField(max_length=255, null=True, blank=True, verbose_name="full name")
     type_of_address = models.CharField(max_length=100, choices=TYPE_CHOICES, null=True, blank=True, verbose_name="address type")
@@ -540,24 +534,6 @@ class LE_Product(ClientRelatedModel):
     class Meta:
         verbose_name = "Product"
         verbose_name_plural = "Products"
-
-class LE_Account(ClientRelatedModel):
-    product_uuid = models.UUIDField(db_index=True, null=True, blank=True)
-    reference_currency = models.CharField(max_length=3, default='USD')
-
-    @property
-    def product_info(self):
-        """Virtual field to show product details in tables without a hard FK."""
-        try:
-            from .models import Product
-            p = Product.objects.get(id=self.product_uuid)
-            return f"{p.portfolio_name} ({p.portfolio_id})"
-        except:
-            return "N/A"
-
-    class Meta:
-        verbose_name = "Account"
-        verbose_name_plural = "Accounts"
 
 
 class LE_Company(ClientRelatedModel):
