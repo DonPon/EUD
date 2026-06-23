@@ -353,17 +353,23 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
             print(f"DEBUG: Successfully saved {table_name}: {obj.id}")
             
             # Dynamic redirection based on section
+            redirect_url = None
             if hasattr(obj, 'client_uuid') and obj.client_uuid:
                 if section == 'le':
-                    return redirect(reverse('clients_le:detail', kwargs={'client_uuid': obj.client_uuid}))
-                return redirect(reverse('clients:detail', kwargs={'client_uuid': obj.client_uuid}))
+                    redirect_url = reverse('clients_le:detail', kwargs={'client_uuid': obj.client_uuid})
+                else:
+                    redirect_url = reverse('clients:detail', kwargs={'client_uuid': obj.client_uuid})
+            elif table_name == 'user':
+                redirect_url = reverse('users:management')
+            elif section == 'le':
+                redirect_url = reverse('clients_le:list')
+            else:
+                redirect_url = reverse('clients:list')
             
-            if table_name == 'user':
-                return redirect(reverse('users:management'))
-            
-            if section == 'le':
-                return redirect(reverse('clients_le:list'))
-            return redirect(reverse('clients:list'))
+            if not record_id and model.__name__ in ['Relationship', 'LE_Relationship', 'BankingRelationship', 'LE_BankingRelationship']:
+                redirect_url += "?ui_confetti_success=true"
+
+            return redirect(redirect_url)
             
         print(f"DEBUG: Form validation failed for {table_name}: {form.errors}")
         return self.render_to_response(self.get_context_data(form=form))
