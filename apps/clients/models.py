@@ -101,7 +101,6 @@ class BankingRelationship(ClientRelatedModel):
     communication_br = models.CharField(max_length=50, choices=COMMUNICATION_BR_CHOICES, blank=True, null=True, verbose_name="Communication mode")
     third_postal_address = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Third Postal Address")
     beneficial_owner = models.CharField(max_length=50, choices=BENEFICIAL_OWNER_CHOICES, blank=True, null=True, verbose_name="Beneficial Owner")
-    id_doc_provided = models.CharField(max_length=50, choices=ID_DOC_PROVIDED_CHOICES, blank=True, null=True)
     language = models.CharField(max_length=50, choices=LANGUAGE_CHOICES, blank=True, null=True, verbose_name="Language")
     opened_in_ubs_premises = models.CharField(max_length=50, choices=OPENED_IN_UBS_PREMISES_CHOICES, blank=True, null=True, verbose_name="Account Opening Location")
     account_and_securities_statements = models.CharField(max_length=100, choices=ACCOUNT_STATEMENTS_CHOICES, blank=True, null=True, verbose_name="transaction statements")
@@ -211,41 +210,50 @@ class PersonalInformation(ClientRelatedModel):
 
     # technical_account = models.CharField(max_length=255, blank=True, null=True, verbose_name="type of legal entity")
     # type_of_relationship = models.CharField(max_length=100, choices=ROLE_CHOICES, blank=True, null=True, verbose_name="role in Banking Relationship")
-    first_and_last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="First and last name")
-    first_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="first name")
-    last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="last name")
-    additional_designation = models.CharField(max_length=255, null=True, blank=True, verbose_name="Additional designation")
-    name_at_birth = models.CharField(max_length=255, blank=True, null=True, verbose_name="name at birth")
-    # type_id_NCI = models.CharField(max_length=255, blank=True, null=True, verbose_name="type of identification (NCI)")
-    fiscal_it_number = models.CharField(max_length=255, blank=True, null=True, verbose_name="Fiscal code (IT)")
-    identificationsnummer_de = models.CharField(max_length=255, null=True, blank=True, verbose_name="Identificationsnummer (DE)")
-    type_id_document = models.CharField(max_length=255, blank=True, null=True, verbose_name="Type of ID Document")
-    id_number = models.CharField(max_length=255, null=True, blank=True, verbose_name="ID number")
-    issuing_authority = models.CharField(max_length=255, blank=True, null=True, verbose_name="Issuing authority")
-    place_of_issue_city = models.CharField(max_length=255, blank=True, null=True, verbose_name="place of issue (city)")
-    id_place_of_issue_city = models.CharField(max_length=255, null=True, blank=True, verbose_name="place of issue (city)")
-    place_of_issue_country = models.CharField(max_length=255, null=True, blank=True, verbose_name="place of issue (country)")
-    date_of_issue = models.DateField(null=True, blank=True, verbose_name="Date of issue")
-    expiry_date = models.DateField(null=True, blank=True, verbose_name="expiry date")
-    copy_id_provided = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="copy of ID provided")
-    place_of_birth = models.CharField(max_length=255, blank=True, null=True, verbose_name="Place of birth")
-    country_of_birth = models.CharField(max_length=255, blank=True, null=True, verbose_name="Country of birth")
-    date_of_birth = models.DateField(null=True, blank=True, verbose_name="Date of birth")
-    marital_status = models.CharField(max_length=100, blank=True, null=True, verbose_name="marital status")
-    occupation_sector = models.CharField(max_length=255, blank=True, null=True, verbose_name="occupation")
-    sensitive_client = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="sensitive client")
-    correspondence_language = models.CharField(max_length=255, null=True, blank=True, verbose_name="Correspondence language")
-    sae_code = models.CharField(max_length=255, null=True, blank=True, verbose_name="SAE code")
-    ao_number = models.CharField(max_length=255, null=True, blank=True, verbose_name="AO number")
+    # Row 1
+    first_and_last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="First and last name") # Left 1
+    fiscal_it_number = models.CharField(max_length=255, blank=True, null=True, verbose_name="Fiscal code (IT)") # Right 1
+    # Row 2
+    first_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="first name") # Left 2
+    identificationsnummer_de = models.CharField(max_length=255, null=True, blank=True, verbose_name="Identificationsnummer (DE)") # Right 2
+    # Row 3
+    last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="last name") # Left 3
+    type_id_document = models.CharField(max_length=255, blank=True, null=True, verbose_name="Type of ID Document") # Right 3
+    # Row 4
+    additional_designation = models.CharField(max_length=255, null=True, blank=True, verbose_name="Additional designation") # Left 4
+    id_number = models.CharField(max_length=255, null=True, blank=True, verbose_name="ID number") # Right 4
+    # Row 5
+    name_at_birth = models.CharField(max_length=255, blank=True, null=True, verbose_name="name at birth") # Left 5
+    copy_id_provided = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="copy of ID provided") # Right 5
+    # Row 6
+    date_of_birth = models.DateField(null=True, blank=True, verbose_name="Date of birth") # Left 6
+    issuing_authority = models.CharField(max_length=255, blank=True, null=True, verbose_name="Issuing authority") # Right 6
+    # Row 7
+    place_of_birth = models.CharField(max_length=255, blank=True, null=True, verbose_name="Place of birth") # Left 7
+    date_of_issue = models.DateField(null=True, blank=True, verbose_name="Date of issue") # Right 7
+    # Row 8
+    country_of_birth = models.CharField(max_length=255, blank=True, null=True, verbose_name="Country of birth") # Left 8
+    expiry_date = models.DateField(null=True, blank=True, verbose_name="expiry date") # Right 8
+    # Row 9
+    marital_status = models.CharField(max_length=100, blank=True, null=True, verbose_name="marital status") # Left 9
+    place_of_issue_city = models.CharField(max_length=255, blank=True, null=True, verbose_name="place of issue (city)") # Right 9
+    # Row 10
+    occupation_sector = models.CharField(max_length=255, blank=True, null=True, verbose_name="occupation") # Left 10
+    place_of_issue_country = models.CharField(max_length=255, null=True, blank=True, verbose_name="place of issue (country)") # Right 10
+    # Row 11
+    sensitive_client = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="sensitive client") # Left 11
+    id_place_of_issue_city = models.CharField(max_length=255, null=True, blank=True, verbose_name="country of issue (id)") # Right 11
+    # Row 12
+    correspondence_language = models.CharField(max_length=255, null=True, blank=True, verbose_name="Correspondence language") # Left 12
+    sae_code = models.CharField(max_length=255, null=True, blank=True, verbose_name="SAE code") # Right 12
+    # Row 13
+    ao_number = models.CharField(max_length=255, null=True, blank=True, verbose_name="AO number") # Left 13
 
 class Address(ClientRelatedModel):
     TYPE_CHOICES = [
         ('Correspondence', 'Correspondence'),
         ('Domicile', 'Domicile'),
-        ('Residence', 'Residence'),
-        ('Tax domicile', 'Tax domicile'),
-        ('Fiscal residence', 'Fiscal residence'),
-        ('Third party', 'Third party'),
+        ('Permanent', 'Permanent'),
     ]
 
     first_and_last_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="full name")
@@ -507,17 +515,14 @@ class Product(ClientRelatedModel):
     sustainable_investing = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Sustainable Investing")
     sustainability_preference = models.CharField(max_length=255, blank=True, null=True, verbose_name="Sustainability preference")
     focus_equity = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Focus")
-    alternative_investment = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True)
     direct_instrument = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="direct instrument")
     initial_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="initial amount")
-    currency_hedging = models.CharField(max_length=100, blank=True, null=True)
     transaction_confirmation = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="transaction confirmation")
     white_KYC_provided = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="white KYC provided")
     fiduciary_mandate_provided = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="fiduciary mandate provided")
     fiscal_regime = models.CharField(max_length=255, blank=True, null=True, verbose_name="fiscal regime")
     ntac = models.CharField(max_length=50, choices=NTAC_CHOICES, blank=True, null=True, verbose_name="ntac")
     reporting_loss = models.CharField(max_length=50, choices=REPORTING_LOSS_CHOICES, blank=True, null=True, verbose_name="reporting")
-    share_focus = models.CharField(max_length=255, blank=True, null=True)
     hedging_foreign_currency = models.CharField(max_length=255, blank=True, null=True, verbose_name="hedging foreign currency")
     date_of_alignment = models.CharField(max_length=255, blank=True, null=True, verbose_name="align date")
     end_date_alignment = models.DateField(null=True, blank=True, verbose_name="end date")
@@ -567,19 +572,6 @@ class Product(ClientRelatedModel):
     def __str__(self):
         return f"{self.portfolio_name} ({self.portfolio_id})"
 
-class Account(ClientRelatedModel):
-    product_uuid = models.UUIDField(db_index=True, null=True, blank=True)
-    reference_currency = models.CharField(max_length=3, default='USD')
-
-    @property
-    def product_info(self):
-        """Virtual field to show product details in tables without a hard FK."""
-        try:
-            from .models import Product
-            p = Product.objects.get(id=self.product_uuid)
-            return f"{p.portfolio_name} ({p.portfolio_id})"
-        except:
-            return "N/A"
 class CDOKList(ClientRelatedModel):
     cdok = models.CharField(max_length=255, null=True, blank=True)
     signed = models.CharField(max_length=255, null=True, blank=True, choices=YES_NO_CHOICES) # (flag)

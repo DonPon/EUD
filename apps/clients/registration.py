@@ -3,7 +3,7 @@ from .models import (
     BankingRelationship, AdditionalFormDE, PersonalInformation, Address,
     Communication, ClientAdvisor, Nationality, 
     TaxDomicile, EBanking,
-    Product, MeetingPreparation, Relationship, Account, CDOKList
+    Product, MeetingPreparation, Relationship, CDOKList
 )
 
 def register_clients_models():
@@ -15,7 +15,7 @@ def register_clients_models():
             'id', 'client_uuid', 'name_of_banking_relationship', 'banking_relationship',
             'additional_br', 'partner_id', 'type_of_account', 'type_of_signature',
             'segment_type', 'client_segment', 'csc', 'communication_br',
-            'third_postal_address', 'beneficial_owner', 'id_doc_provided', 'language',
+            'third_postal_address', 'beneficial_owner', 'language',
             'opened_in_ubs_premises', 'account_and_securities_statements',
             'type_and_purpose', 'type_and_purpose_specify', 'reporting_obligation',
             'br_client_type', 'earning_statements', 'earning_statements_fees',
@@ -116,10 +116,10 @@ def register_clients_models():
             'reference_currency', 'investment_strategy', 'ip_risk_tolerance',
             'investment_service', 'investment_amount', 'selected_service',
             'all_in', 'sustainable_investing', 'sustainability_preference',
-            'focus_equity', 'alternative_investment', 'direct_instrument',
-            'initial_amount', 'currency_hedging', 'transaction_confirmation',
+            'focus_equity', 'direct_instrument',
+            'initial_amount', 'transaction_confirmation',
             'white_KYC_provided', 'fiduciary_mandate_provided', 'fiscal_regime',
-            'ntac', 'reporting_loss', 'share_focus', 'hedging_foreign_currency',
+            'ntac', 'reporting_loss', 'hedging_foreign_currency',
             'date_of_alignment', 'end_date_alignment', 'type_of_business_settlement',
             'special_conditions', 'discount_applied', 'discount_amount_percent',
             'flat_fee_applied', 'flat_fee_percent', 'invested_assets', 'income_pa',
@@ -140,14 +140,6 @@ def register_clients_models():
         ],
         'list_display': ['portfolio_name', 'portfolio_id', 'investment_amount', 'reference_currency', 'status'],
         'filter_fields': ['status', 'reference_currency', 'investment_service'],
-    })
-
-    CrudRegistry.register(Account, {
-        'section': 'np',
-        'fields': ['id', 'client_uuid', 'product_uuid', 'product_info', 'reference_currency', 'created_at'],
-        'list_display': ['product_info', 'reference_currency'],
-        'filter_fields': ['client_uuid', 'product_uuid', 'reference_currency'],
-        'search_fields': ['reference_currency'],
     })
 
     CrudRegistry.register(ClientAdvisor, {
