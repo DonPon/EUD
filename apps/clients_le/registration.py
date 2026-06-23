@@ -1,5 +1,5 @@
 from apps.generic_crud.registry import CrudRegistry
-from .models import LE_TaxDomicile, LE_AdditionalFormDE, LE_Account, LE_BankingRelationship, LE_ClientAdvisor, LE_Company, LE_EBanking, LE_Address, LE_Communication, LE_MeetingPreparation, LE_Nationality, LE_PersonalInformation, LE_Product, LE_Relationship
+from .models import LE_TaxDomicile, LE_AdditionalFormDE, LE_BankingRelationship, LE_ClientAdvisor, LE_Company, LE_EBanking, LE_Address, LE_Communication, LE_MeetingPreparation, LE_Nationality, LE_PersonalInformation, LE_Product, LE_Relationship
 
 def register_le_clients_models():
     """Register all Legal Entity models for generic CRUD."""
@@ -152,14 +152,6 @@ def register_le_clients_models():
         ],
         'list_display': ['portfolio_name', 'portfolio_id', 'investment_amount', 'reference_currency', 'status'],
         'filter_fields': ['status', 'reference_currency', 'investment_service'],
-    })
-
-    CrudRegistry.register(LE_Account, {
-        'section': 'le',
-        'fields': ['id', 'client_uuid', 'product_uuid', 'product_info', 'reference_currency', 'created_at'],
-        'list_display': ['product_info', 'reference_currency'],
-        'filter_fields': ['client_uuid', 'product_uuid', 'reference_currency'],
-        'search_fields': ['reference_currency'],
     })
 
     CrudRegistry.register(LE_ClientAdvisor, {
