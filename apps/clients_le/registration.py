@@ -1,5 +1,5 @@
 from apps.generic_crud.registry import CrudRegistry
-from .models import LE_TaxDomicile, LE_AdditionalFormDE, LE_BankingRelationship, LE_ClientAdvisor, LE_Company, LE_EBanking, LE_Address, LE_Communication, LE_MeetingPreparation, LE_Nationality, LE_PersonalInformation, LE_Product, LE_Relationship
+from .models import LE_TaxDomicile, LE_AdditionalFormDE, LE_BankingRelationship, LE_ClientAdvisor, LE_Company, LE_EBanking, LE_Address, LE_Communication, LE_MeetingPreparation, LE_Nationality, LE_Product, LE_Relationship
 
 def register_le_clients_models():
     """Register all Legal Entity models for generic CRUD."""
@@ -38,23 +38,6 @@ def register_le_clients_models():
         'list_display': ['name_of_company', 'type_of_company', 'lei_code',],
         'filter_fields': ['type_of_company', 'form_of_legal_entity', 'fiduciary_mandate'],
         'search_fields': ['name_of_company', 'lei_code'],
-    })
-
-    CrudRegistry.register(LE_PersonalInformation, {
-        'section': 'le',
-        'fields': [
-            'id', 'client_uuid', 'legal_name', 'legal_form', 'registration_number',
-            'country_of_registration', 'date_of_registration', 'tax_id',
-            'lei_code', 'industry_sector', 'website',
-            # Personal Information Fields
-            'first_name', 'last_name', 'first_and_last_name', 'name_at_birth',
-            'federal_state', 'date_of_birth', 'place_of_birth', 'country_of_birth',
-            'marital_status', 'occupation_sector', 'indication_tin',
-            'sensitive_client', 'executor', 'beneficial_owner', 'tef'
-        ],
-        'list_display': ['legal_name', 'legal_form', 'first_and_last_name', 'lei_code'],
-        'filter_fields': ['legal_form', 'country_of_registration', 'sensitive_client', 'executor', 'beneficial_owner'],
-        'search_fields': ['legal_name', 'registration_number', 'tax_id', 'first_name', 'last_name'],
     })
 
     CrudRegistry.register(LE_Nationality, {
