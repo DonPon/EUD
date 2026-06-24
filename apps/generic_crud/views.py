@@ -149,7 +149,13 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
                 np_clients = BankingRelationship.objects.all().order_by('name_of_banking_relationship')
                 for client in np_clients:
                     personal = PersonalInformation.objects.filter(client_uuid=client.client_uuid).first()
-                    display_name = f"[NP] {personal.first_and_last_name if personal else client.name_of_banking_relationship}"
+                    name = personal.first_and_last_name if personal else None
+                    if not name and personal:
+                        name = f"{personal.first_name or ''} {personal.last_name or ''}".strip()
+                    if not name:
+                        name = client.name_of_banking_relationship
+                    
+                    display_name = f"[NP] {name or 'N/A'}"
                     choices.append((str(client.client_uuid), display_name.strip()))
                 
                 # Add LE clients
