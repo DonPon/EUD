@@ -141,53 +141,12 @@ class LE_BankingRelationship(ClientRelatedModel):
     
     @property
     def first_and_last_name(self):
-        personal = LE_PersonalInformation.objects.filter(client_uuid=self.client_uuid).first()
-        return personal.first_and_last_name if personal and personal.first_and_last_name else self.name_of_banking_relationship
+        company = LE_Company.objects.filter(client_uuid=self.client_uuid).first()
+        return company.name_of_company if company and company.name_of_company else self.name_of_banking_relationship
 
     class Meta:
         verbose_name = "LE Banking Relationship"
         verbose_name_plural = "LE Banking Relationships"
-
-class LE_PersonalInformation(ClientRelatedModel):
-    """Detailed information for Legal Entities."""
-    LEGAL_FORM_CHOICES = [
-        ('AG', 'Aktiengesellschaft (AG)'),
-        ('GmbH', 'Gesellschaft mit beschränkter Haftung (GmbH)'),
-        ('Foundation', 'Foundation'),
-        ('Trust', 'Trust'),
-        ('Other', 'Other'),
-    ]
-
-    legal_name = models.CharField(max_length=255, blank=True, null=True)
-    legal_form = models.CharField(max_length=100, choices=LEGAL_FORM_CHOICES, blank=True, null=True)
-    registration_number = models.CharField(max_length=100, blank=True, null=True)
-    country_of_registration = models.CharField(max_length=100, blank=True, null=True)
-    date_of_registration = models.DateField(null=True, blank=True)
-    tax_id = models.CharField(max_length=100, blank=True, null=True, verbose_name="Tax ID / VAT")
-    lei_code = models.CharField(max_length=100, blank=True, null=True, verbose_name="LEI Code")
-    industry_sector = models.CharField(max_length=255, blank=True, null=True)
-    website = models.URLField(blank=True, null=True)
-
-    # Personal Information Fields
-    first_name = models.CharField(max_length=255, blank=True, null=True)
-    last_name = models.CharField(max_length=255, blank=True, null=True)
-    first_and_last_name = models.CharField(max_length=255, blank=True, null=True)
-    name_at_birth = models.CharField(max_length=255, blank=True, null=True)
-    federal_state = models.CharField(max_length=255, blank=True, null=True)
-    date_of_birth = models.DateField(null=True, blank=True)
-    place_of_birth = models.CharField(max_length=255, blank=True, null=True)
-    country_of_birth = models.CharField(max_length=255, blank=True, null=True)
-    marital_status = models.CharField(max_length=100, blank=True, null=True)
-    occupation_sector = models.CharField(max_length=255, blank=True, null=True)
-    indication_tin = models.CharField(max_length=255, blank=True, null=True)
-    sensitive_client = models.CharField(max_length=255, blank=True, null=True)
-    executor = models.CharField(max_length=255, blank=True, null=True)
-    beneficial_owner = models.CharField(max_length=255, blank=True, null=True)
-    tef = models.CharField(max_length=255, blank=True, null=True)
-
-    class Meta:
-        verbose_name = "LE Personal Information"
-        verbose_name_plural = "LE Personal Information"
 
 class LE_Address(ClientRelatedModel):
     TYPE_CHOICES = [
@@ -365,13 +324,19 @@ class LE_Relationship(ClientRelatedModel):
 
     @property
     def full_name(self):
-        """Get the full name of the related client from PersonalInformation."""
+        """Get the full name of the related client for LE or NP."""
         # Try LE first
         try:
-            from .models import LE_PersonalInformation
-            personal = LE_PersonalInformation.objects.get(client_uuid=self.child_unique_id)
-            return personal.first_and_last_name or "N/A"
-        except (LE_PersonalInformation.DoesNotExist, ImportError, ValueError):
+            from .models import LE_BankingRelationship, LE_Company
+            banking_rel = LE_BankingRelationship.objects.get(client_uuid=self.child_unique_id)
+            name = banking_rel.name_of_banking_relationship
+            
+            if not name:
+                company = LE_Company.objects.filter(client_uuid=self.child_unique_id).first()
+                name = company.name_of_company if company else None
+                
+            return name or "N/A"
+        except (LE_BankingRelationship.DoesNotExist, ImportError, ValueError):
             
             # Try NP
             try:

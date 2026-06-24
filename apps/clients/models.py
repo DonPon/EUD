@@ -410,7 +410,7 @@ class Relationship(ClientRelatedModel):
         return f"Relation: {self.client_uuid} -> {self.child_unique_id}"
     @property
     def full_name(self):
-        """Get the full name of the related client from PersonalInformation."""
+        """Get the full name of the related client for NP or LE."""
         # Try NP first
         try:
             from .models import PersonalInformation
@@ -419,10 +419,16 @@ class Relationship(ClientRelatedModel):
         except (PersonalInformation.DoesNotExist, ValueError):
             # Try LE
             try:
-                from apps.clients_le.models import LE_PersonalInformation
-                personal = LE_PersonalInformation.objects.get(client_uuid=self.child_unique_id)
-                return personal.first_and_last_name or "N/A"
-            except (LE_PersonalInformation.DoesNotExist, ImportError, ValueError):
+                from apps.clients_le.models import LE_BankingRelationship, LE_Company
+                banking_rel = LE_BankingRelationship.objects.get(client_uuid=self.child_unique_id)
+                name = banking_rel.name_of_banking_relationship
+                
+                if not name:
+                    company = LE_Company.objects.filter(client_uuid=self.child_unique_id).first()
+                    name = company.name_of_company if company else None
+                    
+                return name or "N/A"
+            except (LE_BankingRelationship.DoesNotExist, ImportError, ValueError):
                 return "N/A"
 
     @property

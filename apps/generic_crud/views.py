@@ -105,15 +105,15 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
                 first_and_last_name=name
             )
         else:
-            from apps.clients_le.models import LE_BankingRelationship, LE_PersonalInformation
+            from apps.clients_le.models import LE_BankingRelationship, LE_Company
             LE_BankingRelationship.objects.create(
                 client_uuid=client_uuid,
                 name_of_banking_relationship=name,
                 status=['pending_review']
             )
-            LE_PersonalInformation.objects.create(
+            LE_Company.objects.create(
                 client_uuid=client_uuid,
-                first_and_last_name=name
+                # name_of_company=name
             )
         return client_uuid
 
@@ -141,7 +141,7 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
         if 'child_unique_id' in form.fields:
             try:
                 from apps.clients.models import BankingRelationship, PersonalInformation
-                from apps.clients_le.models import LE_BankingRelationship, LE_PersonalInformation
+                from apps.clients_le.models import LE_BankingRelationship, LE_Company
                 
                 choices = [('', '--- Select Client ---')]
                 
@@ -155,8 +155,12 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
                 # Add LE clients
                 le_clients = LE_BankingRelationship.objects.all().order_by('name_of_banking_relationship')
                 for client in le_clients:
-                    personal = LE_PersonalInformation.objects.filter(client_uuid=client.client_uuid).first()
-                    display_name = f"[LE] {personal.first_and_last_name if (personal and personal.first_and_last_name) else (personal.legal_name if personal else client.name_of_banking_relationship)}"
+                    name = client.name_of_banking_relationship
+                    if not name:
+                        company = LE_Company.objects.filter(client_uuid=client.client_uuid).first()
+                        name = company.name_of_company if company else None
+                    
+                    display_name = f"[LE] {name or 'N/A'}"
                     choices.append((str(client.client_uuid), display_name.strip()))
                 
                 # Replace the field with a choice field
