@@ -413,9 +413,16 @@ class Relationship(ClientRelatedModel):
         """Get the full name of the related client for NP or LE."""
         # Try NP first
         try:
-            from .models import PersonalInformation
+            from .models import PersonalInformation, BankingRelationship
             personal = PersonalInformation.objects.get(client_uuid=self.child_unique_id)
-            return personal.first_and_last_name or "N/A"
+            name = personal.first_and_last_name
+            if not name:
+                name = f"{personal.first_name or ''} {personal.last_name or ''}".strip()
+            if not name:
+                br = BankingRelationship.objects.filter(client_uuid=self.child_unique_id).first()
+                name = br.name_of_banking_relationship if br else None
+            
+            return name or "N/A"
         except (PersonalInformation.DoesNotExist, ValueError):
             # Try LE
             try:
