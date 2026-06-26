@@ -162,7 +162,9 @@
                     </div>
 
                     <div class="d-flex justify-content-between mt-4 pt-3 border-top">
-                        {% if client_uuid %}
+                        {% if cancel_url %}
+                            <a href="{{ cancel_url }}" class="btn btn-outline-secondary px-4">Cancel</a>
+                        {% elif client_uuid %}
                             {% if section == 'le' %}
                                 <a href="{% url 'clients_le:detail' client_uuid=client_uuid %}" class="btn btn-outline-secondary px-4">Cancel</a>
                             {% else %}

@@ -7,6 +7,7 @@ def register_repapering_models():
         'fields': ['id', 'name'],
         'list_display': ['name'],
         'search_fields': ['name'],
+        'cancel_url_name': 'repapering:scenario_list',
     })
 
     CrudRegistry.register(DocumentRequirement, {
@@ -18,4 +19,5 @@ def register_repapering_models():
         'list_display': ['scenario', 'cdok', 'duplicate', 'granularity', 'pdf_template'],
         'search_fields': ['cdok', 'scenario__name'],
         'filter_fields': ['scenario', 'duplicate', 'granularity'],
+        'cancel_url_name': 'repapering:scenario_detail', # Needs argument
     })

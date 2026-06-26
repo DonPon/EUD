@@ -291,6 +291,20 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
         # Apply dynamic choices (e.g. Portfolio dropdown)
         self._apply_dynamic_choices(form, model, client_uuid or (instance.client_uuid if instance and hasattr(instance, 'client_uuid') else None))
         
+        # Determine Cancel URL
+        cancel_url = None
+        cancel_url_name = config['config'].get('cancel_url_name')
+        if cancel_url_name:
+            if cancel_url_name == 'repapering:scenario_detail':
+                # Special handling for Repapering with scenario ID
+                scenario_id = self.request.GET.get('scenario') or (instance.scenario.id if instance and hasattr(instance, 'scenario') else None)
+                if scenario_id:
+                    cancel_url = reverse(cancel_url_name, kwargs={'pk': scenario_id})
+                else:
+                    cancel_url = reverse('repapering:scenario_list')
+            else:
+                cancel_url = reverse(cancel_url_name)
+        
         context.update({
             'form': form,
             'table_name': table_name,
@@ -300,7 +314,8 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
             'user_role': self.request.user.role,
             'section': section,
             'is_relationship': model.__name__ in ['Relationship', 'LE_Relationship'],
-            'association_fields': ['association_mode', 'child_unique_id', 'new_client_name', 'new_client_type']
+            'association_fields': ['association_mode', 'child_unique_id', 'new_client_name', 'new_client_type'],
+            'cancel_url': cancel_url # Passed to template
         })
         return context
 
