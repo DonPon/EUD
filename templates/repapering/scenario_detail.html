@@ -53,9 +53,10 @@
                             <td>{% if req.duplicate %}<i class="bi bi-check-circle-fill text-success"></i> Yes{% else %}<i class="bi bi-x-circle text-danger"></i> No{% endif %}</td>
                             <td>{{ req.granularity }}</td>
                             <td>
-                                <div><strong>Name:</strong> {{ req.input_filename|default:"-" }}</div>
                                 {% if req.pdf_template %}
-                                    <div><a href="{{ req.pdf_template.url }}" target="_blank" class="text-decoration-none"><i class="bi bi-file-pdf text-danger"></i> View Template</a></div>
+                                    <div><a href="{{ req.pdf_template.url }}" target="_blank" class="text-decoration-none"><i class="bi bi-file-pdf text-danger"></i> {{ req.pdf_template.name|cut:"repapering_templates/" }}</a></div>
+                                {% else %}
+                                    -
                                 {% endif %}
                             </td>
                             <td>{{ req.output_folder_structure|default:"-" }}</td>

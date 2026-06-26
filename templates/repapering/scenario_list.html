@@ -5,7 +5,39 @@
 {% block content %}
 <div class="row">
     <div class="col-12">
+        <div class="alert alert-primary shadow-sm mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <strong><i class="bi bi-info-circle-fill me-2"></i>Repapering Rules</strong><br>
+                    Use this section to manage Scenarios and Document Mappings. The <strong>Database</strong> is the sole source of truth. All changes are automatically audited.
+                </div>
+                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#docsModal">View Documentation</button>
+            </div>
+        </div>
+
         <div class="card">
+            <!-- Modal -->
+            <div class="modal fade" id="docsModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary text-white">
+                            <h5 class="modal-title">Repapering Documentation</h5>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <h6>System of Record</h6>
+                            <p>This module uses the <strong>Django Database</strong> as the single source of truth for all scenario definitions and document requirements.</p>
+                            <h6>Rules & Conditions</h6>
+                            <p>The <strong>Rules / Special Conditions</strong> field contains logical constraints (e.g., <code>ClientType == 'NP'</code>). This field is set to read-only in the UI to maintain consistency and prevent unauthorized modifications to technical requirements.</p>
+                            <h6>Audit & History</h6>
+                            <p>All changes to mappings or scenarios are fully tracked via <code>django-simple-history</code>. You can view the history of any record through the audit logs.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="card-header d-flex justify-content-between align-items-center bg-white">
                 <h5 class="mb-0">Repapering Scenarios</h5>
                 <div>

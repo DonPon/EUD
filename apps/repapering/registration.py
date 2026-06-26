@@ -13,7 +13,7 @@ def register_repapering_models():
         'section': 'repapering',
         'fields': [
             'id', 'scenario', 'cdok', 'duplicate', 'granularity', 
-            'output_folder_structure', 'input_filename', 'pdf_template', 
+            'output_folder_structure', 'pdf_template', 
             'rules_special_conditions'
         ],
         'list_display': ['scenario', 'cdok', 'duplicate', 'granularity', 'pdf_template'],
