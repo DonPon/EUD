@@ -7,4 +7,5 @@ class RepaperingConfig(AppConfig):
     def ready(self):
         from apps.repapering.registration import register_repapering_models
         register_repapering_models()
+        import apps.repapering.signals
 
