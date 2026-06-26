@@ -51,9 +51,6 @@ python start_app.py --port 8003
 python start_app.py --config-file "path/to/config.yaml" --port 8003
 ```
 
-#### Database Management
-Do not create or run migrations; user will do it manually.
-
 #### Seeding Data
 Seed scripts are located in the `seeds/` directory and should be run after migration.
 ```bash
