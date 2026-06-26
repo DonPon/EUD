@@ -237,6 +237,10 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
         client_uuid = self.request.GET.get('client_uuid')
         if client_uuid:
             initial['client_uuid'] = client_uuid
+            
+        scenario_id = self.request.GET.get('scenario')
+        if scenario_id:
+            initial['scenario'] = scenario_id
 
         # Custom widgets for UX and robustness
         widgets = {}
@@ -268,6 +272,15 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
                         )
             except:
                 pass
+
+        # Apply read_only fields
+        read_only_fields = config['config'].get('read_only_fields', [])
+        for field_name in read_only_fields:
+            if field_name in form.fields:
+                form.fields[field_name].widget.attrs['readonly'] = True
+                # Remove disabled so it still posts the value back
+                form.fields[field_name].widget.attrs.pop('disabled', None)
+                form.fields[field_name].required = False
 
         # Apply dynamic choices (e.g. Portfolio dropdown)
         self._apply_dynamic_choices(form, model, client_uuid or (instance.client_uuid if instance and hasattr(instance, 'client_uuid') else None))
@@ -307,7 +320,7 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
                 widgets[field.name] = Select(choices=[(True, 'Yes'), (False, 'No')])
 
         form_class = modelform_factory(model, exclude=exclude, widgets=widgets)
-        form = form_class(request.POST, instance=instance)
+        form = form_class(request.POST, request.FILES, instance=instance)
         
         # Re-apply MultipleChoiceField for JSONFields so validation passes
         for field_name in form.fields:
@@ -364,7 +377,17 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
             
             # Dynamic redirection based on section
             redirect_url = None
-            if hasattr(obj, 'client_uuid') and obj.client_uuid:
+            if section == 'repapering':
+                # Custom redirect for repapering app
+                if table_name == 'scenario':
+                    redirect_url = reverse('repapering:scenario_list')
+                elif table_name == 'documentrequirement':
+                    scenario_id = request.GET.get('scenario') or (obj.scenario.id if hasattr(obj, 'scenario') else None)
+                    if scenario_id:
+                        redirect_url = reverse('repapering:scenario_detail', kwargs={'pk': scenario_id})
+                    else:
+                        redirect_url = reverse('repapering:scenario_list')
+            elif hasattr(obj, 'client_uuid') and obj.client_uuid:
                 if section == 'le':
                     redirect_url = reverse('clients_le:detail', kwargs={'client_uuid': obj.client_uuid})
                 else:

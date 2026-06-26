@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     'apps.clients',
     'apps.clients_le',
     'apps.generic_crud',
+    'apps.repapering',
     'apps.audit',
     'apps.dashboard_bots',
 ]

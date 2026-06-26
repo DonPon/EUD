@@ -52,6 +52,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'clients_le:list' %}">LE Clients</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'repapering:scenario_list' %}">Repapering</a>
+                    </li>
                     {% if user.role == 'ADMIN' %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'users:management' %}">Users</a>

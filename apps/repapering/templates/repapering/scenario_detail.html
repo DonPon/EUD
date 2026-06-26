@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Scenario: {{ scenario.scenario_id }} - EUD Manager{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="mb-3 d-flex justify-content-between align-items-center">
+            <h4 class="fw-bold mb-0">
+                <a href="{% url 'repapering:scenario_list' %}" class="text-decoration-none text-muted me-2"><i class="bi bi-arrow-left"></i></a>
+                Scenario: {{ scenario.name }} <span class="badge bg-secondary ms-2">{{ scenario.scenario_id }}</span>
+            </h4>
+            <div>
+                {% if user.role != 'VIEWER' %}
+                    <a href="{% url 'generic-edit' table_name='scenario' pk=scenario.id %}" class="btn btn-outline-primary btn-sm me-2">Edit Scenario</a>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if scenario.description %}
+        <div class="alert alert-info mb-4">
+            {{ scenario.description }}
+        </div>
+        {% endif %}
+
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center bg-white">
+                <h5 class="mb-0">Mapped Documents</h5>
+                <div>
+                    {% if user.role != 'VIEWER' %}
+                        <!-- We pass the scenario_id via GET so the generic form can pre-select it -->
+                        <a href="{% url 'generic-add' table_name='documentrequirement' %}?scenario={{ scenario.id }}" class="btn btn-ubs btn-sm">+ Add Document Mapping</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped table-bordered w-100">
+                    <thead>
+                        <tr>
+                            <th>CDOK</th>
+                            <th>Duplicate</th>
+                            <th>Granularity</th>
+                            <th>Filename / Template</th>
+                            <th>Output Folder</th>
+                            <th>Rules (View Only)</th>
+                            <th style="width: 150px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for req in requirements %}
+                        <tr>
+                            <td><span class="badge bg-dark">{{ req.cdok }}</span></td>
+                            <td>{% if req.duplicate %}<i class="bi bi-check-circle-fill text-success"></i> Yes{% else %}<i class="bi bi-x-circle text-danger"></i> No{% endif %}</td>
+                            <td>{{ req.granularity }}</td>
+                            <td>
+                                <div><strong>Name:</strong> {{ req.input_filename|default:"-" }}</div>
+                                {% if req.pdf_template %}
+                                    <div><a href="{{ req.pdf_template.url }}" target="_blank" class="text-decoration-none"><i class="bi bi-file-pdf text-danger"></i> View Template</a></div>
+                                {% endif %}
+                            </td>
+                            <td>{{ req.output_folder_structure|default:"-" }}</td>
+                            <td class="text-muted small">{{ req.rules_special_conditions|default:"-" }}</td>
+                            <td>
+                                {% if user.role != 'VIEWER' %}
+                                    <div class="d-flex gap-1">
+                                        <a href="{% url 'generic-edit' table_name='documentrequirement' pk=req.id %}?scenario={{ scenario.id }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+                                        <form method="post" action="{% url 'repapering:requirement_delete' pk=req.id %}" onsubmit="return confirm('Are you sure you want to delete this document mapping?');">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                        </form>
+                                    </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center py-4 text-muted">No documents mapped for this scenario yet.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
