@@ -1,15 +1,15 @@
+import uuid
 from django.db import models
 from simple_history.models import HistoricalRecords
 from apps.core.models import BaseUUIDModel
 
 class Scenario(BaseUUIDModel):
-    scenario_id = models.CharField(max_length=50, unique=True, help_text="e.g. A_NP_RES")
+    scenario_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=255, help_text='e.g. "A - Natural Person Resident"')
-    description = models.TextField(blank=True, null=True)
     history = HistoricalRecords()
 
     def __str__(self):
-        return f"{self.scenario_id} - {self.name}"
+        return f"{self.name}"
 
 class DocumentRequirement(BaseUUIDModel):
     GRANULARITY_CHOICES = [
@@ -28,4 +28,4 @@ class DocumentRequirement(BaseUUIDModel):
     history = HistoricalRecords()
 
     def __str__(self):
-        return f"{self.scenario.scenario_id} - {self.cdok}"
+        return f"{self.scenario.name} - {self.cdok}"

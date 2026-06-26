@@ -60,18 +60,14 @@
                 <table class="table table-striped table-bordered w-100">
                     <thead>
                         <tr>
-                            <th>Scenario ID</th>
                             <th>Name</th>
-                            <th>Description</th>
                             <th style="width: 120px;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for scenario in scenarios %}
                         <tr>
-                            <td><strong>{{ scenario.scenario_id }}</strong></td>
-                            <td>{{ scenario.name }}</td>
-                            <td>{{ scenario.description|default:"-" }}</td>
+                            <td><strong>{{ scenario.name }}</strong></td>
                             <td>
                                 <a href="{% url 'repapering:scenario_detail' pk=scenario.id %}" class="btn btn-sm btn-primary">View / Map Docs</a>
                             </td>

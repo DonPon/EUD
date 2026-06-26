@@ -4,9 +4,9 @@ from .models import Scenario, DocumentRequirement
 def register_repapering_models():
     CrudRegistry.register(Scenario, {
         'section': 'repapering',
-        'fields': ['id', 'scenario_id', 'name', 'description'],
-        'list_display': ['scenario_id', 'name'],
-        'search_fields': ['scenario_id', 'name'],
+        'fields': ['id', 'name'],
+        'list_display': ['name'],
+        'search_fields': ['name'],
     })
 
     CrudRegistry.register(DocumentRequirement, {
@@ -16,6 +16,6 @@ def register_repapering_models():
             'output_folder_structure', 'pdf_template'
         ],
         'list_display': ['scenario', 'cdok', 'duplicate', 'granularity', 'pdf_template'],
-        'search_fields': ['cdok', 'scenario__scenario_id', 'scenario__name'],
+        'search_fields': ['cdok', 'scenario__name'],
         'filter_fields': ['scenario', 'duplicate', 'granularity'],
     })
