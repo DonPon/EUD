@@ -1,10 +1,8 @@
-import uuid
 from django.db import models
 from simple_history.models import HistoricalRecords
 from apps.core.models import BaseUUIDModel
 
 class Scenario(BaseUUIDModel):
-    scenario_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=255, help_text='e.g. "A - Natural Person Resident"')
     history = HistoricalRecords()
 
