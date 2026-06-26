@@ -1,5 +1,5 @@
 from django.views.generic import ListView, DetailView, DeleteView, View
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.urls import reverse_lazy, reverse
 from django.shortcuts import redirect
 from django.http import HttpResponse, HttpResponseRedirect
@@ -7,6 +7,17 @@ from django.contrib import messages
 from .models import Scenario, DocumentRequirement
 from apps.generic_crud.registry import CrudRegistry
 from .utils import export_repapering_to_json, import_repapering_from_json
+
+
+class EditorOrAdminRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.role in ['ADMIN', 'EDITOR']
+
+
+class AdminRequiredMixin(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.role == 'ADMIN'
+
 
 class ScenarioListView(LoginRequiredMixin, ListView):
     model = Scenario
@@ -29,20 +40,20 @@ class ScenarioDetailView(LoginRequiredMixin, DetailView):
         context['requirements'] = requirements
         return context
 
-class DocumentRequirementDeleteView(LoginRequiredMixin, DeleteView):
+class DocumentRequirementDeleteView(LoginRequiredMixin, EditorOrAdminRequiredMixin, DeleteView):
     model = DocumentRequirement
     
     def get_success_url(self):
         return reverse('repapering:scenario_detail', kwargs={'pk': self.object.scenario.id})
 
-class ExportRepaperingView(LoginRequiredMixin, View):
+class ExportRepaperingView(LoginRequiredMixin, AdminRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         json_data = export_repapering_to_json()
         response = HttpResponse(json_data, content_type='application/json')
         response['Content-Disposition'] = 'attachment; filename="repapering_settings.json"'
         return response
 
-class ImportRepaperingView(LoginRequiredMixin, View):
+class ImportRepaperingView(LoginRequiredMixin, AdminRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         if 'file' not in request.FILES:
             messages.error(request, "No file uploaded.")

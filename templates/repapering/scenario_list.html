@@ -44,9 +44,11 @@
             <div class="card-header d-flex justify-content-between align-items-center bg-white">
                 <h5 class="mb-0">Repapering Scenarios</h5>
                 <div>
-                    {% if user.role != 'VIEWER' %}
+                    {% if user.role == 'ADMIN' %}
                         <a href="{% url 'repapering:export' %}" class="btn btn-outline-secondary btn-sm me-2">Export JSON</a>
                         <button class="btn btn-outline-secondary btn-sm me-2" data-bs-toggle="modal" data-bs-target="#importModal">Import JSON</button>
+                    {% endif %}
+                    {% if user.role != 'VIEWER' %}
                         <a href="{% url 'generic-add' table_name='scenario' %}" class="btn btn-ubs btn-sm">+ Add Scenario</a>
                     {% endif %}
                 </div>
