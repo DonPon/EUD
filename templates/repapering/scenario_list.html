@@ -5,16 +5,6 @@
 {% block content %}
 <div class="row">
     <div class="col-12">
-        <div class="alert alert-info shadow-sm d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <strong><i class="bi bi-info-circle-fill me-2"></i>Repapering Rules Engine</strong><br>
-                All mapping configurations are automatically exported to <code>repapering_config.json</code> upon save. Rules logic is driven by this file. Changes are tracked via audit logs.
-            </div>
-            <div>
-                <button class="btn btn-sm btn-outline-info bg-white" data-bs-toggle="modal" data-bs-target="#docsModal">Documentation</button>
-            </div>
-        </div>
-
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center bg-white">
                 <h5 class="mb-0">Repapering Scenarios</h5>
@@ -51,29 +41,6 @@
                         {% endfor %}
                     </tbody>
                 </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Docs Modal -->
-<div class="modal fade" id="docsModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">Repapering Architecture</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <h6>Config File Structure</h6>
-                <p>The system synchronizes all UI mappings into <code>repapering_config.json</code> in the project root. This JSON acts as the source of truth for the document evaluation backend.</p>
-                <h6>Rules & Conditions</h6>
-                <p>The <strong>Rules / Special Conditions</strong> field contains logical constraints (e.g., <code>ClientType == 'NP'</code>) and is read-only in the interface to prevent accidental breakage of technical requirements. It is populated by the backend/config file.</p>
-                <h6>Audit & Versioning</h6>
-                <p>Changes in the UI are tracked via <code>HistoricalRecords</code>. Additionally, <code>repapering_config.json</code> should be version-controlled via Git to maintain history of rule updates.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

@@ -1,0 +1,21 @@
+{
+    "scenarios": [
+        {
+            "scenario_id": "A_NP_RES",
+            "name": "A - Natural Person Resident",
+            "description": ""
+        }
+    ],
+    "document_requirements": [
+        {
+            "scenario_id": "A_NP_RES",
+            "cdok": "66781",
+            "duplicate": false,
+            "granularity": "One for each Co-owner",
+            "output_folder_structure": "test-folder",
+            "input_filename": "66781",
+            "pdf_template": null,
+            "rules_special_conditions": ""
+        }
+    ]
+}
