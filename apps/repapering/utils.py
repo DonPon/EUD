@@ -8,9 +8,7 @@ def export_repapering_to_json():
     data = []
     for scenario in Scenario.objects.all():
         scenario_data = {
-            'scenario_id': scenario.scenario_id,
             'name': scenario.name,
-            'description': scenario.description,
             'requirements': []
         }
         for req in scenario.requirements.all():
@@ -27,15 +25,10 @@ def export_repapering_to_json():
 def import_repapering_from_json(json_data):
     data = json.loads(json_data)
     with transaction.atomic():
-        # Optional: Decide if we should clear existing scenarios or just update
-        # For this implementation, we'll update scenarios and replace requirements
+        # Update or create scenarios based on name
         for s_data in data:
             scenario, _ = Scenario.objects.update_or_create(
-                scenario_id=s_data['scenario_id'],
-                defaults={
-                    'name': s_data['name'],
-                    'description': s_data['description']
-                }
+                name=s_data['name']
             )
             # Replace all requirements
             scenario.requirements.all().delete()
