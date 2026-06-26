@@ -219,8 +219,14 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
 # Media files
+
+if _config:
+    media_path = _config.get("media_path", BASE_DIR / "CDOKS")
+else:
+    media_path = BASE_DIR / "CDOKS"
+
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = media_path
 
 LOGIN_URL = '/admin/login/'
 LOGOUT_REDIRECT_URL = '/'

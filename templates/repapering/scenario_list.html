@@ -8,10 +8,10 @@
         <div class="alert alert-primary shadow-sm mb-4">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <strong><i class="bi bi-info-circle-fill me-2"></i>Repapering Rules</strong><br>
-                    Use this section to manage Scenarios and Document Mappings. The <strong>Database</strong> is the sole source of truth. All changes are automatically audited.
+                    <strong><i class="bi bi-info-circle-fill me-2"></i>Document Requirements Management</strong><br>
+                    Manage scenarios and their required document templates here. Changes are tracked automatically.
                 </div>
-                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#docsModal">View Documentation</button>
+                <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#docsModal">Learn More</button>
             </div>
         </div>
 
@@ -21,16 +21,16 @@
                 <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header bg-primary text-white">
-                            <h5 class="modal-title">Repapering Documentation</h5>
+                            <h5 class="modal-title">Managing Document Requirements</h5>
                             <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <h6>System of Record</h6>
-                            <p>This module uses the <strong>Django Database</strong> as the single source of truth for all scenario definitions and document requirements.</p>
-                            <h6>Rules & Conditions</h6>
-                            <p>The <strong>Rules / Special Conditions</strong> field contains logical constraints (e.g., <code>ClientType == 'NP'</code>). This field is set to read-only in the UI to maintain consistency and prevent unauthorized modifications to technical requirements.</p>
-                            <h6>Audit & History</h6>
-                            <p>All changes to mappings or scenarios are fully tracked via <code>django-simple-history</code>. You can view the history of any record through the audit logs.</p>
+                            <h6>How to Use This Section</h6>
+                            <p>This section allows you to define which documents are needed for different scenarios. You can add, edit, or remove document mappings as needed.</p>
+                            <h6>PDF Templates</h6>
+                            <p>For each requirement, you can attach or replace the PDF template. When you replace an old template with a new one, the old file is automatically removed from the system.</p>
+                            <h6>Tracking Changes</h6>
+                            <p>Every change you make—whether updating a mapping, replacing a template, or deleting a requirement—is securely logged. You can view the history of these actions if needed.</p>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

@@ -42,7 +42,6 @@
                             <th>Granularity</th>
                             <th>Filename / Template</th>
                             <th>Output Folder</th>
-                            <th>Rules (View Only)</th>
                             <th style="width: 150px;">Actions</th>
                         </tr>
                     </thead>
@@ -60,7 +59,6 @@
                                 {% endif %}
                             </td>
                             <td>{{ req.output_folder_structure|default:"-" }}</td>
-                            <td class="text-muted small">{{ req.rules_special_conditions|default:"-" }}</td>
                             <td>
                                 {% if user.role != 'VIEWER' %}
                                     <div class="d-flex gap-1">

@@ -13,11 +13,9 @@ def register_repapering_models():
         'section': 'repapering',
         'fields': [
             'id', 'scenario', 'cdok', 'duplicate', 'granularity', 
-            'output_folder_structure', 'pdf_template', 
-            'rules_special_conditions'
+            'output_folder_structure', 'pdf_template'
         ],
         'list_display': ['scenario', 'cdok', 'duplicate', 'granularity', 'pdf_template'],
         'search_fields': ['cdok', 'scenario__scenario_id', 'scenario__name'],
         'filter_fields': ['scenario', 'duplicate', 'granularity'],
-        'read_only_fields': ['rules_special_conditions'],
     })

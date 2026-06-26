@@ -25,7 +25,6 @@ class DocumentRequirement(BaseUUIDModel):
     granularity = models.CharField(max_length=255, choices=GRANULARITY_CHOICES)
     output_folder_structure = models.CharField(max_length=500, blank=True, null=True)
     pdf_template = models.FileField(upload_to='repapering_templates/', blank=True, null=True, verbose_name="PDF Template")
-    rules_special_conditions = models.TextField(blank=True, null=True, verbose_name="Rules/Special Conditions")
     history = HistoricalRecords()
 
     def __str__(self):

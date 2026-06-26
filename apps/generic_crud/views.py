@@ -69,7 +69,8 @@ class DynamicViewSetFactory:
         return type(viewset_name, (DynamicViewSet,), {})
 
 from django.views.generic import TemplateView
-from django.forms import modelform_factory, DateInput, Select, ChoiceField, RadioSelect, CharField, TextInput
+from django.forms import modelform_factory, DateInput, Select, ChoiceField, RadioSelect, CharField, TextInput, FileInput, ClearableFileInput
+import django
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -254,6 +255,11 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
         form_class = modelform_factory(model, exclude=exclude, widgets=widgets)
         form = kwargs.get('form') or form_class(instance=instance, initial=initial)
         
+        # Disable clearable checkbox for FileFields
+        for field_name, field in form.fields.items():
+            if isinstance(field.widget, (FileInput, ClearableFileInput)):
+                field.widget.clearable = False
+
         # Handle JSONFields that should be Multi-Select
         for field_name in form.fields:
             try:
