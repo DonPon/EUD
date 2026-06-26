@@ -7,4 +7,6 @@ urlpatterns = [
     path('', views.ScenarioListView.as_view(), name='scenario_list'),
     path('scenario/<int:pk>/', views.ScenarioDetailView.as_view(), name='scenario_detail'),
     path('requirement/<int:pk>/delete/', views.DocumentRequirementDeleteView.as_view(), name='requirement_delete'),
+    path('export/', views.ExportRepaperingView.as_view(), name='export'),
+    path('import/', views.ImportRepaperingView.as_view(), name='import'),
 ]
