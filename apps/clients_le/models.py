@@ -101,7 +101,7 @@ class LE_BankingRelationship(ClientRelatedModel):
     banking_relationship = models.CharField(max_length=255, null=True, blank=True, verbose_name="Banking Relationship")
     additional_br = models.CharField(max_length=255, null=True, blank=True, verbose_name="Additional Banking Relationship")
     partner_id = models.CharField(max_length=255, null=True, blank=True, verbose_name="Partner ID")
-    segment_type = models.CharField(max_length=10, choices=SEGMENT_TYPE_CHOICES, null=True, blank=True)
+    segment_type = models.CharField(max_length=255, choices=SEGMENT_TYPE_CHOICES, null=True, blank=True)
     client_segment = models.CharField(max_length=255, null=True, blank=True, verbose_name="Client Segment")
     csc = models.CharField(max_length=255, null=True, blank=True, verbose_name="CSC")
     communication_br = models.CharField(max_length=50, choices=COMMUNICATION_BR_CHOICES, blank=True, null=True, verbose_name="Communication mode")
