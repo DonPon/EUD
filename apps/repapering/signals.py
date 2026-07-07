@@ -1,3 +1,10 @@
+"""
+This file contains signal handlers for the DocumentRequirement model. 
+It ensures that when a DocumentRequirement instance is deleted, its associated PDF template file 
+is also deleted from the storage. Additionally, it handles the case where a PDF template is updated, 
+ensuring that the old file is removed to prevent orphaned files in the storage.
+"""
+
 from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
 from .models import DocumentRequirement

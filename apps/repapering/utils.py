@@ -1,3 +1,10 @@
+"""
+This file contains utility functions for exporting and importing repapering settings in JSON format.
+The `export_repapering_to_json` function retrieves all scenarios and their associated document requirements,
+serializing them into a JSON string. The `import_repapering_from_json` function takes a JSON string, 
+deserializes it, and updates or creates scenarios and their document requirements in the database, 
+ensuring that existing requirements are replaced with the new ones from the JSON data.
+"""
 import json
 import csv
 import io

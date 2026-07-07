@@ -178,6 +178,7 @@ The `seeds/` directory contains scripts to populate the database with test data:
 | `seeds/create_user.py` | Creates the admin user account |
 | `seeds/seed_bots.py` | Seeds BOTS table with test data |
 | `seeds/simulate_bots.py` | Simulates BOTS data runs |
+| `seeds/seed_repapering.py` | Seeds sample repapering scenarios |
 
 **All seed scripts support the `--config-file` argument:**
 
@@ -249,6 +250,7 @@ EUD/
 │   ├── clients/           # Main client management app
 │   ├── generic_crud/      # Generic CRUD engine
 │   ├── audit/             # Audit logging
+│   ├── repapering/        # Document requirement scenarios & mappings
 │   └── ...
 ├── eud_gui/               # Project settings and configuration
 ├── templates/             # HTML templates
@@ -257,4 +259,7 @@ EUD/
 ├── manage.py              # Django management script
 ├── start_app.py           # Custom launcher with config support
 └── config.example.yaml    # Example configuration file
+```
+
+> For detailed documentation on individual modules, see their dedicated READMEs under `apps/<module>/README.md`.
 ```
