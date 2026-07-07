@@ -69,7 +69,8 @@ class DynamicViewSetFactory:
         return type(viewset_name, (DynamicViewSet,), {})
 
 from django.views.generic import TemplateView
-from django.forms import modelform_factory, DateInput, Select, ChoiceField, RadioSelect, CharField, TextInput
+from django.forms import modelform_factory, DateInput, Select, ChoiceField, RadioSelect, CharField, TextInput, FileInput, ClearableFileInput
+import django
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -237,6 +238,10 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
         client_uuid = self.request.GET.get('client_uuid')
         if client_uuid:
             initial['client_uuid'] = client_uuid
+            
+        scenario_id = self.request.GET.get('scenario')
+        if scenario_id:
+            initial['scenario'] = scenario_id
 
         # Custom widgets for UX and robustness
         widgets = {}
@@ -250,6 +255,11 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
         form_class = modelform_factory(model, exclude=exclude, widgets=widgets)
         form = kwargs.get('form') or form_class(instance=instance, initial=initial)
         
+        # Disable clearable checkbox for FileFields
+        for field_name, field in form.fields.items():
+            if isinstance(field.widget, (FileInput, ClearableFileInput)):
+                field.widget.clearable = False
+
         # Handle JSONFields that should be Multi-Select
         for field_name in form.fields:
             try:
@@ -269,8 +279,31 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
             except:
                 pass
 
+        # Apply read_only fields
+        read_only_fields = config['config'].get('read_only_fields', [])
+        for field_name in read_only_fields:
+            if field_name in form.fields:
+                form.fields[field_name].widget.attrs['readonly'] = True
+                # Remove disabled so it still posts the value back
+                form.fields[field_name].widget.attrs.pop('disabled', None)
+                form.fields[field_name].required = False
+
         # Apply dynamic choices (e.g. Portfolio dropdown)
         self._apply_dynamic_choices(form, model, client_uuid or (instance.client_uuid if instance and hasattr(instance, 'client_uuid') else None))
+        
+        # Determine Cancel URL
+        cancel_url = None
+        cancel_url_name = config['config'].get('cancel_url_name')
+        if cancel_url_name:
+            if cancel_url_name == 'repapering:scenario_detail':
+                # Special handling for Repapering with scenario ID
+                scenario_id = self.request.GET.get('scenario') or (instance.scenario.id if instance and hasattr(instance, 'scenario') else None)
+                if scenario_id:
+                    cancel_url = reverse(cancel_url_name, kwargs={'pk': scenario_id})
+                else:
+                    cancel_url = reverse('repapering:scenario_list')
+            else:
+                cancel_url = reverse(cancel_url_name)
         
         context.update({
             'form': form,
@@ -281,7 +314,8 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
             'user_role': self.request.user.role,
             'section': section,
             'is_relationship': model.__name__ in ['Relationship', 'LE_Relationship'],
-            'association_fields': ['association_mode', 'child_unique_id', 'new_client_name', 'new_client_type']
+            'association_fields': ['association_mode', 'child_unique_id', 'new_client_name', 'new_client_type'],
+            'cancel_url': cancel_url # Passed to template
         })
         return context
 
@@ -307,7 +341,7 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
                 widgets[field.name] = Select(choices=[(True, 'Yes'), (False, 'No')])
 
         form_class = modelform_factory(model, exclude=exclude, widgets=widgets)
-        form = form_class(request.POST, instance=instance)
+        form = form_class(request.POST, request.FILES, instance=instance)
         
         # Re-apply MultipleChoiceField for JSONFields so validation passes
         for field_name in form.fields:
@@ -364,7 +398,17 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
             
             # Dynamic redirection based on section
             redirect_url = None
-            if hasattr(obj, 'client_uuid') and obj.client_uuid:
+            if section == 'repapering':
+                # Custom redirect for repapering app
+                if table_name == 'scenario':
+                    redirect_url = reverse('repapering:scenario_list')
+                elif table_name == 'documentrequirement':
+                    scenario_id = request.GET.get('scenario') or (obj.scenario.id if hasattr(obj, 'scenario') else None)
+                    if scenario_id:
+                        redirect_url = reverse('repapering:scenario_detail', kwargs={'pk': scenario_id})
+                    else:
+                        redirect_url = reverse('repapering:scenario_list')
+            elif hasattr(obj, 'client_uuid') and obj.client_uuid:
                 if section == 'le':
                     redirect_url = reverse('clients_le:detail', kwargs={'client_uuid': obj.client_uuid})
                 else:

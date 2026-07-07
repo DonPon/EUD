@@ -161,3 +161,7 @@ cython_debug/
 # VSCode
 .vscode/
 GEMINI.md
+
+# CDOKS & confidential PDFs
+CDOKS/
+*.pdf

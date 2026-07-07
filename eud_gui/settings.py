@@ -78,6 +78,7 @@ INSTALLED_APPS = [
     'apps.clients',
     'apps.clients_le',
     'apps.generic_crud',
+    'apps.repapering',
     'apps.audit',
     'apps.dashboard_bots',
 ]
@@ -216,6 +217,16 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# Media files
+
+if _config:
+    media_path = _config.get("media_path", BASE_DIR / "CDOKS")
+else:
+    media_path = BASE_DIR / "CDOKS"
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = media_path
 
 LOGIN_URL = '/admin/login/'
 LOGOUT_REDIRECT_URL = '/'
