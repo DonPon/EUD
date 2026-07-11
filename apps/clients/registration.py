@@ -3,7 +3,7 @@ from .models import (
     BankingRelationship, AdditionalFormDE, PersonalInformation, Address,
     Communication, ClientAdvisor, Nationality, 
     TaxDomicile, EBanking,
-    Product, MeetingPreparation, Relationship, CDOKList
+    Product, Relationship, CDOKList
 )
 
 def register_clients_models():
@@ -112,7 +112,7 @@ def register_clients_models():
     CrudRegistry.register(Product, {
         'section': 'np',
         'fields': [
-            'id', 'client_uuid', 'portfolio_id', 'portfolio_name', 'email_waiver',
+            'id', 'client_uuid', 'portfolio_id', 'portfolio_name', 'salesroom_code', 'withdrawal_sent_to', 'email_waiver',
             'reference_currency', 'investment_strategy', 'ip_risk_tolerance',
             'investment_service', 'investment_amount', 'selected_service',
             'all_in', 'sustainable_investing', 'sustainability_preference',
@@ -125,8 +125,13 @@ def register_clients_models():
             'flat_fee_applied', 'flat_fee_percent', 'invested_assets', 'income_pa',
             'current_return_on_assets', 'target_roa', 'net_new_money_potential',
             'business_case_communication', 'fee_model', 'mandate_fee',
-            'service_and_execution', 'no_discount', 'no_discount_amount_percent',
+            'no_discount', 'no_discount_amount_percent',
             'no_flat_fee', 'no_flat_fee_amount', 'transaction_fee',
+            'tra_no_discount', 'tra_no_discount_amount_percent', 'tra_no_flat_fee', 'tra_no_flat_fee_amount',
+            'remboursements', 'rei_no_discount', 'rei_no_discount_amount_percent', 'rei_no_flat_fee', 'rei_no_flat_fee_amount',
+            'service_and_execution',
+            'shares_fixed_funds_fee', 'shares_fixed_funds_fee_amount', 'shares_fixed_funds_discount', 'shares_fixed_funds_discount_amou',
+            'shares_fixed_fee', 'shares_fixed_fee_amount', 'shares_fixed_discount', 'shares_fixed_discount_amount',
             'standard_fee_discount', 'shares_fee', 'shares_fee_amount',
             'shares_discount', 'shares_discount_amount', 'investment_funds_fee',
             'investment_fund_fee_amount', 'investment_fund_discount',
@@ -150,21 +155,6 @@ def register_clients_models():
         ],
         'list_display': ['role_client_advisor', 'first_and_last_name', 'branch', 'desk', 'gpn'],
         'filter_fields': ['role_client_advisor', 'branch'],
-    })
-
-    CrudRegistry.register(MeetingPreparation, {
-        'section': 'np',
-        'fields': [
-            'id', 'client_uuid', 'place', 'date_of_meeting', 'time',
-            'number_of_participants', 'room_booking', 'hospitality',
-            'technical_equipment_needed', 'parking_space_client', 'pool_car',
-            'from_date', 'from_time', 'to_date', 'to_time',
-            'planned_contact', 'contact_CST', 'stored_reporting_t2_ptf',
-            'performance_since_beginning', 'performance_before_tax',
-            'performance_since_start', 'health_check', 'remarks_documents',
-            'investor_profile_link', 'email_waiver'
-        ],
-        'list_display': ['date_of_meeting', 'time', 'place', 'hospitality'],
     })
 
     CrudRegistry.register(AdditionalFormDE, {

@@ -20,8 +20,8 @@ class BankingRelationship(ClientRelatedModel):
         ('131', '131'),
     ]
     COMMUNICATION_BR_CHOICES = [
-        ('Phone', 'Phone'),
-        ('Email', 'Email'),
+        ('Recording phone calls', 'Recording phone calls'),
+        ('Declaration emails', 'Declaration emails'),
     ]
     BENEFICIAL_OWNER_CHOICES = [
         ('Same as owner', 'Same as owner'),
@@ -41,13 +41,16 @@ class BankingRelationship(ClientRelatedModel):
         ('Inside premises', 'Inside premises'),
         ('Outside premises', 'Outside premises'),
     ]
-    ACCOUNT_STATEMENTS_CHOICES = [
+    ACCOUNT_AND_SECURITIES_STATEMENTS_CHOICES = [
         ('Monthly', 'Monthly'),
-        ('Daily', 'Daily'),
+        ('Additional on a daily basis (providing that revenues are generated)', 'Additional on a daily basis (providing that revenues are generated)'),
+        ('Collective settlement/Transaction list', 'Collective settlement/Transaction list'),
     ]
     TYPE_AND_PURPOSE_CHOICES = [
-        ('Payment', 'Payment'),
-        ('Investment', 'Investment'),
+        ('Payment transaction', 'Payment transaction'),
+        ('Asset/ cash investment', 'Asset/ cash investment'),
+        ('Credit business', 'Credit business'),
+        ('Other', 'Other'),
     ]
     REPORTING_OBLIGATION_CHOICES = [
         ('Reported by UBS', 'Reported by UBS'),
@@ -98,13 +101,13 @@ class BankingRelationship(ClientRelatedModel):
     segment_type = models.CharField(max_length=255, choices=SEGMENT_TYPE_CHOICES, null=True, blank=True)
     client_segment = models.CharField(max_length=255, blank=True, null=True, verbose_name="Client Segment")
     csc = models.CharField(max_length=50, blank=True, null=True, verbose_name="CSC")
-    communication_br = models.CharField(max_length=50, choices=COMMUNICATION_BR_CHOICES, blank=True, null=True, verbose_name="Communication mode")
+    communication_br = models.JSONField(default=list, blank=True, null=True, verbose_name="Communication Mode")
     third_postal_address = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Third Postal Address")
     beneficial_owner = models.CharField(max_length=50, choices=BENEFICIAL_OWNER_CHOICES, blank=True, null=True, verbose_name="Beneficial Owner")
     language = models.CharField(max_length=50, choices=LANGUAGE_CHOICES, blank=True, null=True, verbose_name="Language")
     opened_in_ubs_premises = models.CharField(max_length=50, choices=OPENED_IN_UBS_PREMISES_CHOICES, blank=True, null=True, verbose_name="Account Opening Location")
-    account_and_securities_statements = models.CharField(max_length=100, choices=ACCOUNT_STATEMENTS_CHOICES, blank=True, null=True, verbose_name="transaction statements")
-    type_and_purpose = models.CharField(max_length=100, choices=TYPE_AND_PURPOSE_CHOICES, blank=True, null=True, verbose_name="Purpose of Banking Relations")
+    account_and_securities_statements = models.JSONField(default=list, blank=True, null=True, verbose_name="Transaction Statements")
+    type_and_purpose = models.JSONField(default=list, blank=True, null=True, verbose_name="Purpose Of Banking Relations")
     type_and_purpose_specify = models.CharField(max_length=255, blank=True, null=True, verbose_name="Details of Purpose")
     reporting_obligation = models.CharField(max_length=50, choices=REPORTING_OBLIGATION_CHOICES, blank=True, null=True, verbose_name="Reporting Accordance")
     br_client_type = models.CharField(max_length=50, choices=BR_CLIENT_TYPE_CHOICES, blank=True, null=True, verbose_name="Client Type")
@@ -352,39 +355,6 @@ class EBanking(ClientRelatedModel):
         verbose_name = "E-Banking"
         verbose_name_plural = "E-Banking"
 
-class MeetingPreparation(ClientRelatedModel):
-    PLACE_CHOICES = [('Internal', 'Internal'), ('External', 'External')]
-    HOSPITALITY_CHOICES = [
-        ('None', 'None'),
-        ('Cold drinks, coffee or tea on request', 'Cold drinks, coffee or tea on request'),
-        ('Breakfast', 'Breakfast'),
-        ('Lunch', 'Lunch'),
-    ]
-
-    place = models.CharField(max_length=50, choices=PLACE_CHOICES, blank=True, null=True, verbose_name="place")
-    date_of_meeting = models.DateField(null=True, blank=True, verbose_name="meeting date")
-    time = models.TimeField(null=True, blank=True, verbose_name="time")
-    number_of_participants = models.IntegerField(null=True, blank=True, verbose_name="participants")
-    room_booking = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="room booking")
-    hospitality = models.CharField(max_length=100, choices=HOSPITALITY_CHOICES, blank=True, null=True, verbose_name="hospitality")
-    technical_equipment_needed = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="equipment")
-    parking_space_client = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="parking")
-    pool_car = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="pool car")
-    from_date = models.DateField(null=True, blank=True, verbose_name="from date")
-    from_time = models.TimeField(null=True, blank=True, verbose_name="from time")
-    to_date = models.DateField(null=True, blank=True, verbose_name="to date")
-    to_time = models.TimeField(null=True, blank=True, verbose_name="to time")
-    planned_contact = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="planned contact")
-    contact_CST = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="cst contact")
-    stored_reporting_t2_ptf = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="stored report")
-    performance_since_beginning = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="since begin")
-    performance_before_tax = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="before tax")
-    performance_since_start = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="since start")
-    health_check = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="health check")
-    remarks_documents = models.CharField(max_length=255, blank=True, null=True, verbose_name="remarks")
-    investor_profile_link = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="profile link")
-    email_waiver = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="email waiver")
-
 class Relationship(ClientRelatedModel):
     """The Edge Table / Graph."""
     RELATIONSHIP_CHOICES = [
@@ -513,10 +483,21 @@ class Product(ClientRelatedModel):
         ('Monthly', 'Monthly'),
         ('Individual', 'Individual'),
     ]
+    SENDING_OF_DOCUMENTS_CHOICES = [
+        ('To client', 'To client'),
+        ('To Client Advisor', 'To Client Advisor'),
+        ('Digitally', 'Digitally'),
+    ]
+    SERVICE_AND_EXECUTION_CHOICES = [
+        ('Monthly', 'Monthly'),
+        ('Individual', 'Individual'),
+    ]
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     portfolio_id = models.CharField(max_length=255, blank=True, null=True, verbose_name="Portfolio ID")
     portfolio_name = models.CharField(max_length=255, blank=True, null=True, verbose_name="Portfolio Name")
+    salesroom_code = models.CharField(max_length=255, blank=True, null=True, verbose_name="Salesroom Code")
+    withdrawal_sent_to = models.CharField(max_length=50, choices=SENDING_OF_DOCUMENTS_CHOICES, blank=True, null=True, verbose_name="Sending of documents")
     email_waiver = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Email waiver")
     reference_currency = models.CharField(max_length=10, blank=True, null=True, verbose_name="Currency")
     investment_strategy = models.CharField(max_length=255, blank=True, null=True, verbose_name="Strategy")
@@ -553,12 +534,30 @@ class Product(ClientRelatedModel):
     business_case_communication = models.TextField(blank=True, null=True, verbose_name="business")
     fee_model = models.CharField(max_length=255, blank=True, null=True, verbose_name="fee model")
     mandate_fee = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="mandate")
-    service_and_execution = models.CharField(max_length=255, blank=True, null=True, verbose_name="execution")
-    no_discount = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="no discount")
-    no_discount_amount_percent = models.CharField(max_length=255, null=True, blank=True, verbose_name="no discount percent")
-    no_flat_fee = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="no flat")
-    no_flat_fee_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="no flat amount")
-    transaction_fee = models.CharField(max_length=255, null=True, blank=True, verbose_name="transaction fee")
+    no_discount = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Mandate, Discount")
+    no_discount_amount_percent = models.CharField(max_length=255, null=True, blank=True, verbose_name="Mandate, Discount Amount")
+    no_flat_fee = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Mandate, Flat Fee")
+    no_flat_fee_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="Mandate, Flat Fee Amount")
+    transaction_fee = models.CharField(max_length=255, null=True, blank=True, verbose_name="Transaction")
+
+    tra_no_discount = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Transaction, Discount")
+    tra_no_discount_amount_percent = models.CharField(max_length=255, null=True, blank=True, verbose_name="Transaction, Discount")
+    tra_no_flat_fee = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Transaction, Fee, Amount")
+    tra_no_flat_fee_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="Transaction, Fee, Amount")
+    remboursements = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Remboursement")
+    rei_no_discount = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Remboursement, Discount")
+    rei_no_discount_amount_percent = models.CharField(max_length=255, null=True, blank=True, verbose_name="Remboursement, Discount, Amount")
+    rei_no_flat_fee = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Remboursement, Fee")
+    rei_no_flat_fee_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="Remboursement, Fee, Amount")
+    service_and_execution = models.CharField(max_length=255, choices=SERVICE_AND_EXECUTION_CHOICES, blank=True, null=True, verbose_name="Service And Execution")
+    shares_fixed_funds_fee = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="shares + Fixed Income + Funds, Fee")
+    shares_fixed_funds_fee_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="shares + Fixed Income + Funds, Fee Amount")
+    shares_fixed_funds_discount = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="shares + Fixed Income + Funds, Discount")
+    shares_fixed_funds_discount_amou = models.CharField(max_length=255, null=True, blank=True, verbose_name="shares + Fixed Income, Discount Amount")
+    shares_fixed_fee = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="shares + Fixed Income, Fee")
+    shares_fixed_fee_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="shares + Fixed Income, Fee Amount")
+    shares_fixed_discount = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="shares + Fixed Income, Discount")
+    shares_fixed_discount_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="shares + Fixed Income, Discount Amount")
     standard_fee_discount = models.CharField(max_length=255, null=True, blank=True, verbose_name="standard discount")
     shares_fee = models.CharField(max_length=255, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="shares fee")
     shares_fee_amount = models.CharField(max_length=255, null=True, blank=True, verbose_name="shares fee amount")

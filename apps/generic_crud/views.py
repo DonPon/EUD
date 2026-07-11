@@ -272,6 +272,7 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
                         choices = getattr(model, choices_attr)
                         form.fields[field_name] = MultipleChoiceField(
                             choices=choices,
+                            label=model_field.verbose_name,
                             widget=SelectMultiple(attrs={'class': 'form-select', 'size': '5'}),
                             required=False,
                             initial=getattr(instance, field_name) if instance else []
@@ -353,6 +354,7 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
                         from django.forms import MultipleChoiceField
                         form.fields[field_name] = MultipleChoiceField(
                             choices=getattr(model, choices_attr),
+                            label=model_field.verbose_name,
                             required=False
                         )
             except:
