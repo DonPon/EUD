@@ -20,7 +20,7 @@ def register_le_clients_models():
             'send_documents', 'further_notes', 'status', 'created_at', 'first_and_last_name'
         ],
         'list_display': ['name_of_banking_relationship', 'banking_relationship', 'client_segment', 'status'],
-        'filter_fields': ['client_segment', 'csc', 'language', 'type_and_purpose', 'reporting_obligation'],
+        'filter_fields': ['client_segment', 'csc', 'language', 'reporting_obligation'],
         'search_fields': ['status', 'name_of_banking_relationship', 'client_segment', 'banking_relationship'],
     })
 
