@@ -53,7 +53,7 @@
                             <td>{{ req.granularity }}</td>
                             <td>
                                 {% if req.pdf_template %}
-                                    <div><a href="{{ req.pdf_template.url }}" target="_blank" class="text-decoration-none"><i class="bi bi-file-pdf text-danger"></i> {{ req.pdf_template.name|cut:"repapering_templates/" }}</a></div>
+                                    <div><a href="{{ req.pdf_template_url }}" target="_blank" class="text-decoration-none"><i class="bi bi-file-pdf text-danger"></i> {{ req.pdf_template_filename }}</a></div>
                                 {% else %}
                                     -
                                 {% endif %}
