@@ -95,7 +95,7 @@
                         </div>
 
                         <!-- New Client Name -->
-                        <div class="col-md-8 field-wrapper-new_client_name mb-0">
+                        <div class="col-md-6 field-wrapper-new_client_name mb-0">
                             <label for="{{ form.new_client_name.id_for_label }}" class="form-label fw-bold">{{ form.new_client_name.label }}</label>
                             {{ form.new_client_name }}
                             {% if form.new_client_name.errors %}
@@ -103,8 +103,17 @@
                             {% endif %}
                         </div>
 
+                        <!-- New Client Date of Birth -->
+                        <div class="col-md-6 field-wrapper-new_client_date_of_birth mb-0">
+                            <label for="{{ form.new_client_date_of_birth.id_for_label }}" class="form-label fw-bold">{{ form.new_client_date_of_birth.label }}</label>
+                            {{ form.new_client_date_of_birth }}
+                            {% if form.new_client_date_of_birth.errors %}
+                                <div class="invalid-feedback d-block">{{ form.new_client_date_of_birth.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+
                         <!-- New Client Type -->
-                        <div class="col-md-4 field-wrapper-new_client_type mb-0">
+                        <div class="col-md-12 field-wrapper-new_client_type mb-0">
                             <label for="{{ form.new_client_type.id_for_label }}" class="form-label fw-bold">{{ form.new_client_type.label }}</label>
                             {{ form.new_client_type }}
                             {% if form.new_client_type.errors %}
@@ -274,20 +283,24 @@
                 const mode = $('input[name="association_mode"]:checked').val();
                 const searchWrapper = $('.field-wrapper-child_unique_id');
                 const nameWrapper = $('.field-wrapper-new_client_name');
+                const dobWrapper = $('.field-wrapper-new_client_date_of_birth');
                 const typeWrapper = $('.field-wrapper-new_client_type');
 
                 if (mode === 'create') {
                     searchWrapper.hide();
                     nameWrapper.show();
+                    dobWrapper.show();
                     typeWrapper.show();
                 } else if (mode === 'existing') {
                     searchWrapper.show();
                     nameWrapper.hide();
+                    dobWrapper.hide();
                     typeWrapper.hide();
                 } else {
                     // Initial state or unexpected
                     searchWrapper.hide();
                     nameWrapper.hide();
+                    dobWrapper.hide();
                     typeWrapper.hide();
                 }
             }

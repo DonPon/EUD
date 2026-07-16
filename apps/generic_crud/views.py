@@ -69,7 +69,7 @@ class DynamicViewSetFactory:
         return type(viewset_name, (DynamicViewSet,), {})
 
 from django.views.generic import TemplateView
-from django.forms import modelform_factory, DateInput, Select, ChoiceField, RadioSelect, CharField, TextInput, FileInput, ClearableFileInput
+from django.forms import modelform_factory, DateInput, Select, ChoiceField, RadioSelect, CharField, TextInput, FileInput, ClearableFileInput, DateField
 import django
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -89,7 +89,7 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
             exclude.append('client_uuid')
         return exclude
 
-    def _create_minimal_client(self, name, client_type):
+    def _create_minimal_client(self, name, client_type, date_of_birth=None):
         """Create a basic BankingRelationship and PersonalInformation record."""
         import uuid
         client_uuid = uuid.uuid4()
@@ -103,7 +103,8 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
             )
             PersonalInformation.objects.create(
                 client_uuid=client_uuid,
-                first_and_last_name=name
+                first_and_last_name=name,
+                date_of_birth=date_of_birth
             )
         else:
             from apps.clients_le.models import LE_BankingRelationship, LE_Company
@@ -114,7 +115,6 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
             )
             LE_Company.objects.create(
                 client_uuid=client_uuid,
-                # name_of_company=name
             )
         return client_uuid
 
@@ -203,11 +203,16 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
                         initial='np',
                         widget=Select(attrs={'class': 'form-select'})
                     )
+                    form.fields['new_client_date_of_birth'] = DateField(
+                        label="Date of Birth",
+                        required=False,
+                        widget=DateInput(attrs={'class': 'form-control', 'type': 'date'})
+                    )
                     # child_unique_id is not strictly required if we are creating a new one
                     form.fields['child_unique_id'].required = False
 
                     # Reorder fields to put association logic at the top
-                    field_order = ['association_mode', 'child_unique_id', 'new_client_name', 'new_client_type']
+                    field_order = ['association_mode', 'child_unique_id', 'new_client_name', 'new_client_date_of_birth', 'new_client_type']
                     # Append all other fields
                     for field_name in form.fields:
                         if field_name not in field_order:
@@ -315,7 +320,7 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
             'user_role': self.request.user.role,
             'section': section,
             'is_relationship': model.__name__ in ['Relationship', 'LE_Relationship'],
-            'association_fields': ['association_mode', 'child_unique_id', 'new_client_name', 'new_client_type'],
+            'association_fields': ['association_mode', 'child_unique_id', 'new_client_name', 'new_client_date_of_birth', 'new_client_type'],
             'cancel_url': cancel_url # Passed to template
         })
         return context
@@ -373,11 +378,36 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
                 if association_mode == 'create':
                     new_name = request.POST.get('new_client_name')
                     new_type = request.POST.get('new_client_type')
+                    new_dob_str = request.POST.get('new_client_date_of_birth')
+                    
                     if not new_name:
                         form.add_error('new_client_name', 'Name is required when creating a new client.')
                         return self.render_to_response(self.get_context_data(form=form))
                     
-                    new_client_uuid = self._create_minimal_client(new_name, new_type)
+                    if not new_dob_str:
+                        form.add_error('new_client_date_of_birth', 'Date of birth is required when creating a new client.')
+                        return self.render_to_response(self.get_context_data(form=form))
+                    
+                    from datetime import datetime
+                    try:
+                        new_dob = datetime.strptime(new_dob_str, '%Y-%m-%d').date()
+                    except (ValueError, TypeError):
+                        form.add_error('new_client_date_of_birth', 'Invalid date format.')
+                        return self.render_to_response(self.get_context_data(form=form))
+                    
+                    # Duplicate detection for NP clients
+                    if new_type == 'np':
+                        from apps.clients.models import PersonalInformation
+                        existing = PersonalInformation.objects.filter(
+                            first_and_last_name__iexact=new_name,
+                            date_of_birth=new_dob
+                        ).first()
+                        if existing:
+                            form.add_error('new_client_name', 
+                                f'A client with name "{new_name}" and date of birth "{new_dob}" already exists. Please search for them instead.')
+                            return self.render_to_response(self.get_context_data(form=form))
+                    
+                    new_client_uuid = self._create_minimal_client(new_name, new_type, new_dob)
                     obj.child_unique_id = str(new_client_uuid)
                     obj.first_and_last_name = new_name
                 else:
