@@ -116,7 +116,7 @@ class LE_BankingRelationship(ClientRelatedModel):
     type_and_purpose = models.JSONField(default=list, blank=True, null=True, verbose_name="Purpose Of Banking Relations")
     type_and_purpose_specify = models.CharField(max_length=255, null=True, blank=True, verbose_name="Details of Purpose")
     reporting_obligation = models.CharField(max_length=50, choices=REPORTING_OBLIGATION_CHOICES, blank=True, null=True, verbose_name="Reporting Accordance")
-    br_client_type = models.CharField(max_length=50, choices=BR_CLIENT_TYPE_CHOICES, blank=True, null=True, verbose_name="Client Type")
+    br_client_type = models.CharField(max_length=50, choices=BR_CLIENT_TYPE_CHOICES, blank=True, null=True, verbose_name="Type of Usage")
     earning_statements = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Earnings Statements")
     earning_statements_fees = models.CharField(max_length=10, choices=YES_NO_CHOICES, blank=True, null=True, verbose_name="Fees")
     #fiscal_identifier = models.CharField(max_length=255, null=True, blank=True, verbose_name="Fiscal Identifier")
