@@ -38,7 +38,7 @@
                     <thead>
                         <tr>
                             <th>CDOK</th>
-                            <th>Duplicate</th>
+                            <!--th>Duplicate</th-->
                             <th>Granularity</th>
                             <th>Filename / Template</th>
                             <th>Output Folder</th>
@@ -49,7 +49,7 @@
                         {% for req in requirements %}
                         <tr>
                             <td><span class="badge bg-dark">{{ req.cdok }}</span></td>
-                            <td>{% if req.duplicate %}<i class="bi bi-check-circle-fill text-success"></i> Yes{% else %}<i class="bi bi-x-circle text-danger"></i> No{% endif %}</td>
+                            <!--td>{% if req.duplicate %}<i class="bi bi-check-circle-fill text-success"></i> Yes{% else %}<i class="bi bi-x-circle text-danger"></i> No{% endif %}</td-->
                             <td>{{ req.granularity }}</td>
                             <td>
                                 {% if req.pdf_template %}
