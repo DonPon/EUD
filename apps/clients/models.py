@@ -98,7 +98,7 @@ class BankingRelationship(ClientRelatedModel):
     partner_id = models.CharField(max_length=255, blank=True, null=True, verbose_name="Partner ID")
     type_of_account = models.CharField(max_length=50, choices=TYPE_OF_ACCOUNT_CHOICES, blank=True, null=True, verbose_name="Type of Account")
     type_of_signature = models.CharField(max_length=50, choices=SIGNATURE_CHOICES, blank=True, null=True, verbose_name="Type of Signature")
-    segment_type = models.CharField(max_length=255, choices=SEGMENT_TYPE_CHOICES, null=True, blank=True)
+    segment_type = models.CharField(max_length=255, choices=SEGMENT_TYPE_CHOICES, null=True, blank=True, verbose_name="Client Type")
     client_segment = models.CharField(max_length=255, blank=True, null=True, verbose_name="Client Segment")
     csc = models.CharField(max_length=50, blank=True, null=True, verbose_name="CSC")
     communication_br = models.JSONField(default=list, blank=True, null=True, verbose_name="Communication Mode")
