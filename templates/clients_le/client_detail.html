@@ -42,6 +42,8 @@
     </div>
 </div>
 
+<div id="advisor-table-container"></div>
+
 <!-- LE Hub Information Table -->
 <div class="row mb-4">
     <div class="col-12">
@@ -139,7 +141,8 @@
         }
         // -------------------------------
 
-        const container = $('#dynamic-tables-container');
+        const dynamicContainer = $('#dynamic-tables-container');
+        const advisorContainer = $('#advisor-table-container');
 
         Object.keys(tablesMeta).forEach(tableName => {
             const meta = tablesMeta[tableName];
@@ -171,7 +174,12 @@
                     </div>
                 </div>
             `;
-            container.append(sectionHtml);
+
+            if (tableName === 'le_clientadvisor') {
+                advisorContainer.append(sectionHtml);
+            } else {
+                dynamicContainer.append(sectionHtml);
+            }
 
             const columns = [...meta.columns, {
                 data: 'id',

@@ -43,6 +43,8 @@
     </div>
 </div>
 
+<div id="advisor-table-container"></div>
+
 <!-- Client Information Table -->
 <div class="row mb-4">
     <div class="col-12">
@@ -141,12 +143,11 @@
         }
         // -------------------------------
 
-        const container = $('#dynamic-tables-container');
+        const dynamicContainer = $('#dynamic-tables-container');
+        const advisorContainer = $('#advisor-table-container');
 
-        // Loop through each registered table and create a section
         Object.keys(tablesMeta).forEach(tableName => {
             const meta = tablesMeta[tableName];
-            // Table can be edited if user is not VIEWER AND the table is not marked read_only
             const canEdit = (userRole !== 'VIEWER') && (!meta.read_only);
 
             const sectionHtml = `
@@ -175,7 +176,12 @@
                     </div>
                 </div>
             `;
-            container.append(sectionHtml);
+            
+            if (tableName === 'clientadvisor') {
+                advisorContainer.append(sectionHtml);
+            } else {
+                dynamicContainer.append(sectionHtml);
+            }
 
             // Add actions column to the data columns
             const columns = [...meta.columns, {
