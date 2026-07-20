@@ -1,5 +1,6 @@
 from django.views.generic import ListView, DetailView, View
 from django.shortcuts import get_object_or_404, redirect
+from django.urls import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import BankingRelationship
 from apps.generic_crud.registry import CrudRegistry
@@ -20,7 +21,7 @@ class CompleteReviewView(LoginRequiredMixin, View):
             client.status = status_list
             client.save()
             
-        return redirect('clients:detail', client_uuid=client_uuid)
+        return redirect(reverse('clients:detail', kwargs={'client_uuid': client_uuid}) + '?ui_confetti_success=true')
 
 class BulkStatusUpdateView(LoginRequiredMixin, View):
     def post(self, request):
