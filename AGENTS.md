@@ -25,6 +25,7 @@ The **Europe Domestic GUI (EUD)** is a Django-based application designed to cont
     - `apps/users`: Custom user management with role-based permissions.
     - `apps/audit`: History and audit logging views.
     - `apps/dashboard_bots`: Bot execution control and visualization.
+    - `apps/repapering`: Document requirement scenario mappings (onboarding).
 
 ---
 
@@ -80,6 +81,9 @@ python manage.py test
     - Provide `list_display` for the table view.
 3.  **Migrate:** Run `makemigrations` and `migrate`.
 
+### Git & Committing
+- **No automatic commits or pushes:** Never commit or push changes unless explicitly instructed by the user.
+
 ### Coding Standards
 - **Surgical Changes:** Only modify the registry and models to add/remove fields.
 - **Client Linking:** Always ensure `client_uuid` is handled correctly. For new related models, the CRUD engine handles `client_uuid` injection from GET parameters automatically.
@@ -87,6 +91,37 @@ python manage.py test
 - **UI Customization:**
     - Use `list_display` in the registry for table columns.
     - Use `_apply_dynamic_choices` in `apps/generic_crud/views.py` for fields requiring dynamic dropdowns (e.g., linked products).
+
+---
+
+## Re-papering Module (`apps/repapering/`)
+
+The Repapering module defines **document requirement scenarios** — mappings between banking scenarios (e.g., "A - Natural Person Resident") and the documents needed for each. It serves as the single source of truth consumed by the core banking logic.
+
+### Data Models
+- **Scenario** (`UUID PK`, `name`): A banking scenario category. Has many `DocumentRequirement` records.
+- **DocumentRequirement** (`UUID PK`, FK to `Scenario`, `cdok`, `duplicate`, `granularity`, `output_folder_structure`, `pdf_template`): Maps a document code to a scenario with granularity rules and optional PDF template.
+
+### UI Workflow
+1. **Scenario List** (`/repapering/`) — lists all scenarios with a "View / Map Docs" button.
+2. **Scenario Detail** (`/repapering/scenario/<id>/`) — shows mapped documents; "Add Document Mapping", edit, delete (also removes PDF template).
+3. **Create/Edit forms** — rendered by the Generic CRUD engine; `scenario` FK is pre-selected via GET parameter.
+
+### Permissions
+- **ADMIN:** Full CRUD + Export/Import JSON.
+- **EDITOR:** View scenarios, add/edit/delete document mappings (no export/import).
+- **VIEWER:** Read-only access.
+
+### Import / Export
+- Export: Downloads all scenarios + document requirements as JSON (`repapering_settings.json`).
+- Import: Atomic upsert — scenarios matched by name, requirements fully replaced.
+- **ADMIN only.**
+
+### Custom Views (not Generic CRUD)
+- `ScenarioListView`, `ScenarioDetailView`, `DocumentRequirementDeleteView`, `ExportRepaperingView`, `ImportRepaperingView`.
+
+### Registration
+Both models registered in `apps/repapering/registration.py` — see that file and `apps/repapering/README.md` for full details.
 
 ---
 

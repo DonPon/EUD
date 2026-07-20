@@ -14,6 +14,7 @@ __pycache__/
 # C extensions
 *.so
 *.DS_Store
+.opencode/
 
 # Distribution / packaging
 .Python
@@ -168,3 +169,4 @@ CDOKS/
 *.pdf
 
 progress-checklist.md
+_changes.md

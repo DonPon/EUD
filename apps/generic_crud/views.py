@@ -376,7 +376,7 @@ class GenericFormView(LoginRequiredMixin, TemplateView):
             if model.__name__ in ['Relationship', 'LE_Relationship']:
                 association_mode = request.POST.get('association_mode', 'existing')
                 if association_mode == 'create':
-                    new_name = request.POST.get('new_client_name')
+                    new_name = request.POST.get('new_client_name').strip()
                     new_type = request.POST.get('new_client_type')
                     new_dob_str = request.POST.get('new_client_date_of_birth')
                     
