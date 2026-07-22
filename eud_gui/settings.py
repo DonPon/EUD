@@ -221,7 +221,7 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 # Media files
 
 if _config:
-    media_path = _config.get("media_path", BASE_DIR / "CDOKS")
+    media_path = Path(_config.get("media_path", BASE_DIR) / "CDOKS")
 else:
     media_path = BASE_DIR / "CDOKS"
 

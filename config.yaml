@@ -14,3 +14,5 @@ schema:
 
 sqlite_path:
     - '/path/to/db.sqlite3'  # Path to the SQLite database file (used if DATABASE_TYPE is 'sqlite')
+
+media_path: '/path/to/media'  # Path to the media folder
