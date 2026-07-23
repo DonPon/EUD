@@ -1,0 +1,54 @@
+<div id="kudosModal" class="modal fade" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <!-- Added Header with Close Button -->
+      <div class="modal-header border-0 pb-0">
+        <button type="button" class="btn-close" id="closeHeader" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body text-center pt-0">
+        <h3>Are you enjoying this app?</h3>
+        <p>Give kudos to Franz!</p>
+        
+        <!-- Added URL / Link -->
+        <p class="mb-3">
+          <a href="https://example.com" target="_blank" rel="noopener noreferrer">example.com</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+window.addEventListener('load', () => {
+  // Check if modal was already shown/handled previously
+  if (localStorage.getItem('kudosModalShown')) return;
+
+  setTimeout(() => {
+    const modalElement = document.getElementById('kudosModal');
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+
+    // Helper function to mark as shown and hide modal
+    const markAsShown = () => {
+      localStorage.setItem('kudosModalShown', 'true');
+    };
+
+    document.getElementById('accept').addEventListener('click', () => {
+      markAsShown();
+      modal.hide();
+      confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+    });
+
+    document.getElementById('dismiss').addEventListener('click', () => {
+      markAsShown();
+      modal.hide();
+    });
+
+    // Also mark as shown if closed via the top-right 'x' button or clicking outside
+    modalElement.addEventListener('hide.bs.modal', () => {
+      markAsShown();
+    });
+  }, 1000);
+});
+</script>

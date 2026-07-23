@@ -163,5 +163,8 @@
         }
     </script>
     {% block extra_js %}{% endblock %}
+    {% if user.username == 'franz' %}
+    {% include 'partials/kudos_modal.html' %}
+    {% endif %}
 </body>
 </html>
