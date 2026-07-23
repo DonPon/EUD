@@ -24,7 +24,7 @@ class DocumentRequirement(BaseUUIDModel):
     duplicate = models.BooleanField(default=False)
     granularity = models.CharField(max_length=255, choices=GRANULARITY_CHOICES, null=True, blank=True)
     output_folder_structure = models.CharField(max_length=500, blank=True, null=True)
-    pdf_template = models.FileField(upload_to='repapering_templates/', blank=True, null=True, verbose_name="PDF Template")
+    pdf_template = models.FileField(max_length=1024, upload_to='repapering_templates/', blank=True, null=True, verbose_name="PDF Template")
     history = HistoricalRecords()
 
     def __str__(self):
